@@ -1,4 +1,4 @@
-# mc322-hero-quest :D
+# mc322-hero-quest (uwu)
 
 ## Estrutura de módulos
 
