@@ -1,4 +1,4 @@
-# mc322-hero-quest
+# mc322-hero-quest :)
 
 ## Estrutura de módulos
 
@@ -11,3 +11,4 @@
 - items
     - durable (armaduras e tal)
     - consumable (poções. magias e tal)
+
