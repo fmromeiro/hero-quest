@@ -19,4 +19,10 @@ public class Hero extends Character{
     public Entity getCopy(){
         return new Hero(this);
     }
+
+    public void move(Point.Direction direction) {
+        Point finalPos = this.getPosition();
+        finalPos.sum(direction.getPosition());
+        this.moveTo(finalPos);
+    }
 }

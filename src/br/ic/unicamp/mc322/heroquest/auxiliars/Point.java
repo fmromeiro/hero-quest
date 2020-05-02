@@ -1,10 +1,18 @@
 package br.ic.unicamp.mc322.heroquest.auxiliars;
 
 public class Point {
-    public static final Point UP = new Point(0, -1);
-    public static final Point RIGHT = new Point(1, 0);
-    public static final Point DOWN = new Point(0, 1);
-    public static final Point LEFT = new Point(-1, 0);
+    public enum Direction {
+        UP (new Point(0, -1)),
+        RIGHT(new Point(1, 0)),
+        DOWN(new Point(0, 1)),
+        LEFT(new Point(-1, 0));
+
+        private final Point position;
+
+        Direction(Point direction) { this.position = direction; }
+
+        public Point getPosition() { return new Point(position); }
+    }
 
     private int x, y;
 
