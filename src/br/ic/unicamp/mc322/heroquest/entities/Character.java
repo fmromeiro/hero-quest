@@ -18,6 +18,12 @@ public abstract class Character extends Entity {
         this.defendDice = defendDice;
         this.baseBodyPoints = baseBodyPoints;
         this.mindPoints = mindPoints;
+        this.currentBodyPoints = baseBodyPoints;
+    }
+
+    public Character(Character other) {
+        this(other.name, other.attackDice, other.defendDice, other.baseBodyPoints,
+            other.mindPoints, other.getPosition());
     }
 
     public void takeDamage(int damage) {
