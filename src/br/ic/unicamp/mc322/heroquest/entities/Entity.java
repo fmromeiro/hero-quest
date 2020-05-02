@@ -9,9 +9,7 @@ public abstract class Entity {
         this.position = new Point(point);
     }
 
-    public int getX() { return this.position.getX(); }
-
-    public int getY() { return this.position.getY(); }
+    public Point getPosition() { return new Point(this.position); }
 
     public void moveTo(Point point) {
         this.position.moveTo(point);
