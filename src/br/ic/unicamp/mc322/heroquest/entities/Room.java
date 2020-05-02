@@ -17,4 +17,8 @@ public class Room {
     public void addEntity(Entity entity) {
         this.entities.add(entity.getCopy());
     }
+
+    public void removeEntity(Entity entity) {
+        this.entities.removeIf(x -> x.equals(entity));
+    }
 }

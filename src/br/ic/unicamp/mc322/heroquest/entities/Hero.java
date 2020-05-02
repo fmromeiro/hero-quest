@@ -19,4 +19,11 @@ public class Hero extends Character{
     public Entity getCopy(){
         return new Hero(this);
     }
+
+    @Override
+    public boolean equals(Entity other) {
+        if (!(other instanceof Hero))
+            return false;
+        return super.equals(other);
+    }
 }

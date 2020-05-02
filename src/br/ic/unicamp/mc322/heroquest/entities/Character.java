@@ -72,4 +72,17 @@ public abstract class Character extends Entity {
         return currentBodyPoints;
     }
 
+    @Override
+    public boolean equals(Entity other) {
+        if (!(other instanceof Character))
+            return false;
+
+        Character otherChar = (Character) other;
+        if (!(this.name.equals(otherChar.name) && this.attackDice == otherChar.attackDice
+                && this.defendDice == otherChar.defendDice && this.baseBodyPoints == otherChar.baseBodyPoints
+                && this.mindPoints == otherChar.mindPoints && this.currentBodyPoints == otherChar.currentBodyPoints))
+            return false;
+
+        return super.comparePositions(other);
+    }
 }

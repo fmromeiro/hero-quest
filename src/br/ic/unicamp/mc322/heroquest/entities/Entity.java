@@ -4,7 +4,7 @@ import br.ic.unicamp.mc322.heroquest.auxiliars.Point;
 
 import java.security.InvalidParameterException;
 
-public abstract class Entity {
+public abstract class Entity{
     private final Point position;
 
     public Entity(Point point) {
@@ -18,4 +18,10 @@ public abstract class Entity {
     }
 
     public abstract Entity getCopy();
+
+    public abstract boolean equals(Entity other);
+
+    protected boolean comparePositions(Entity other) {
+        return this.position.getX() == other.position.getX() && this.position.getY() == other.position.getY();
+    }
 }
