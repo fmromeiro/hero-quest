@@ -1,6 +1,6 @@
 package br.ic.unicamp.mc322.heroquest.entities;
 
-import java.util.LinkedList;
+import br.ic.unicamp.mc322.heroquest.auxiliars.Point;
 
 public abstract class Character extends Entity {
     private final String name;
@@ -11,8 +11,8 @@ public abstract class Character extends Entity {
     private int mindPoints;
     private int currentBodyPoints;
 
-    public Character(String name, int attackDice, int defendDice, int baseBodyPoints, int mindPoints, int x, int y) {
-        super(x, y);
+    public Character(String name, int attackDice, int defendDice, int baseBodyPoints, int mindPoints, Point point) {
+        super(point);
         this.name = name;
         this.attackDice = attackDice;
         this.defendDice = defendDice;

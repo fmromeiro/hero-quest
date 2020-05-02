@@ -13,9 +13,9 @@ public class Point {
         this.y = point.y;
     }
 
-    public void moveTo(int x, int y) {
-        this.x = x;
-        this.y = y;
+    public void moveTo(Point point) {
+        this.x = point.x;
+        this.y = point.y;
     }
 
     public int getX() { return this.x; }
