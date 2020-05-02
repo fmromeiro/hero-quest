@@ -4,6 +4,8 @@
 
 - renderer
 - controller
+    - Responsável por organizar as chamadas de método às entities e executar funções fora dos escopos dessas.
+    - Eventualmente pode ter que controlar eventos (para controlar efeitos de poções e armadilhas de veneno)
 - entities
 - input
 - ai
