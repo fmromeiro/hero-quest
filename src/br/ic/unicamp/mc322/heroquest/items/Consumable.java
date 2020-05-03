@@ -1,4 +1,4 @@
-package br.ic.unicamp.mc322.heroquest.itens;
+package br.ic.unicamp.mc322.heroquest.items;
 
 import br.ic.unicamp.mc322.heroquest.entities.StatusModifier;
 
