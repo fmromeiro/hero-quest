@@ -5,17 +5,13 @@ import br.ic.unicamp.mc322.heroquest.entities.StatusModifier;
 public class Consumable extends Item {
     private int charges;
 
-    public Consumable(StatusModifier modifier, int range, int charges) {
-        super(modifier, range);
+    public Consumable(String name, StatusModifier modifier, int range, int charges) {
+        super(name, modifier, range);
         this.charges = charges;
     }
 
     public int getCharges() {
         return charges;
-    }
-
-    public void setCharges(int charges) {
-        this.charges = charges;
     }
 
     public void consume() {

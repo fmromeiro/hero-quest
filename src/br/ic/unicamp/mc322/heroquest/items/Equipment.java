@@ -3,15 +3,15 @@ package br.ic.unicamp.mc322.heroquest.items;
 import br.ic.unicamp.mc322.heroquest.entities.StatusModifier;
 
 public class Equipment extends Item {
-    public enum EquipmentCategory {HEADGEAR, ARMOR, ONEHAND, TWOHAND, STACKABLE}
-    private final EquipmentCategory category;
+    public enum Category {HEADGEAR, ARMOR, ONEHAND, TWOHAND, ARTIFACT}
+    private final Category category;
 
-    public Equipment(StatusModifier modifier, int range, EquipmentCategory category) {
-        super(modifier, range);
+    public Equipment(String name, StatusModifier modifier, int range, Category category) {
+        super(name, modifier, range);
         this.category = category;
     }
 
-    public EquipmentCategory getCategory() {
+    public Category getCategory() {
         return category;
     }
 
