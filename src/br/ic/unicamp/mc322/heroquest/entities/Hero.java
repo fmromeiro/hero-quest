@@ -26,4 +26,10 @@ public class Hero extends Character{
             return false;
         return super.equals(other);
     }
+
+    public void step(Point.Direction direction) {
+        Point finalPos = this.getPosition();
+        finalPos.sum(direction.getPosition());
+        this.moveTo(finalPos);
+    }
 }
