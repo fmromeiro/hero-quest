@@ -9,23 +9,24 @@ public class Room {
     protected static int nextId = 0;
     protected final HashMap<Integer, Entity> entities;
     protected boolean visited;
-    private List<Door>
+    private final List<Door> doors;
 
     public Room(Point topLeft, Point bottomRight) {
         this.topLeft = new Point(topLeft);
         this.bottomRight = new Point(bottomRight);
         this.entities = new HashMap<>();
+        this.doors = new ArrayList<Door>();
         visited = false;
     }
 
     public Room(Room other) {
         this(other.topLeft, other.bottomRight);
         for (int id : other.entities.keySet())
-            this.entities.put(id, other.entities.get(id).getCopy());
+            this.entities.put(id, other.entities.get(id));
     }
 
     public int addEntity(Entity entity) {
-        this.entities.put(nextId, entity.getCopy());
+        this.entities.put(nextId, entity);
         if (entity instanceof Hero)
             this.visited = true;
         return this.nextId++;
