@@ -6,44 +6,34 @@ import java.util.*;
 
 public class Room {
     protected final Point topLeft, bottomRight;
-    protected static int nextId = 0;
-    protected final HashMap<Integer, Entity> entities;
-    protected boolean visited;
+    protected final LinkedList<Entity> entities;
     private final List<Door> doors;
+    private boolean visited;
 
     public Room(Point topLeft, Point bottomRight) {
         this.topLeft = new Point(topLeft);
         this.bottomRight = new Point(bottomRight);
-        this.entities = new HashMap<>();
+        this.entities = new LinkedList<>();
         this.doors = new ArrayList<Door>();
-        visited = false;
+        this.visited = false;
     }
 
     public Room(Room other) {
         this(other.topLeft, other.bottomRight);
-        for (int id : other.entities.keySet())
-            this.entities.put(id, other.entities.get(id));
+        this.entities.addAll(other.entities);
     }
 
-    public int addEntity(Entity entity) {
-        this.entities.put(nextId, entity);
+    public void addEntity(Entity entity) {
+        this.entities.add(entity);
         if (entity instanceof Hero)
             this.visited = true;
-        return this.nextId++;
     }
 
-    public Entity removeEntity(int id) {
-        return this.entities.remove(id);
+    public boolean removeEntity(Entity entity) {
+        return this.entities.remove(entity);
     }
 
-    public Entity removeEntity(Entity entity) {
-        for (int id : this.entities.keySet())
-            if (this.entities.get(id).equals(entity))
-                return this.removeEntity(id);
-        return null;
-    }
-
-    protected boolean hasHero() { return this.entities.values().stream().anyMatch(x -> x instanceof Hero); }
+    protected boolean hasHero() { return this.entities.stream().anyMatch(x -> x instanceof Hero); }
 
     public boolean isVisible() { return this.hasHero(); }
 
@@ -59,7 +49,7 @@ public class Room {
     public Entity entityAt(Point point) throws IllegalArgumentException {
         if (!this.contains(point))
             throw new IllegalArgumentException("Point not in room");
-        return this.entities.values().stream()
+        return this.entities.stream()
                 .filter(x -> x.getPosition().equals(point))
                 .findFirst()
                 .orElse(null);
