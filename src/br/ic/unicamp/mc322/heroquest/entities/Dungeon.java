@@ -1,125 +1,96 @@
 package br.ic.unicamp.mc322.heroquest.entities;
 
 import br.ic.unicamp.mc322.heroquest.auxiliars.Point;
-import br.ic.unicamp.mc322.heroquest.exceptions.ObjectOverlayException;
-import br.ic.unicamp.mc322.heroquest.exceptions.RoomOverlayException;
 
-import java.security.interfaces.RSAMultiPrimePrivateCrtKey;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 public class Dungeon {
-    private final List<Entity> entities;
-    private final List<Room> rooms;
     private final int width, height;
+    private final Tile[][] map;
+    private final Map<Integer, Boolean> visitedRooms;
+    private int nextRoomId;
 
     public Dungeon(int width, int height) {
         this.width = width;
         this.height = height;
-        this.entities = new LinkedList<>();
-        this.rooms = new LinkedList<>();
+        this.map = new Tile[height][width];
+        for (int i = 0; i < height*width; i++)
+            this.map[i/width][i%width] = new Tile(i%width, i/width);
+        this.visitedRooms = new HashMap<>();
+        this.nextRoomId = 0;
     }
 
-    public void addEntity(Entity entity) throws ObjectOverlayException {
-        if (this.entities.stream().anyMatch(ent ->
-                ent.getPosition().getX() == entity.getPosition().getX()
-                        && ent.getPosition().getY() == entity.getPosition().getY()))
-            throw new ObjectOverlayException("There's already a Entity at the specified position");
+    public void addRoom(Point topLeft, Point lowerRight) {
+        for (int y = topLeft.getY(); y < lowerRight.getY(); y++)
+            for (int x = topLeft.getX(); x < lowerRight.getX(); x++)
+                map[y][x].setToRoom(this.nextRoomId);
 
-        this.entities.add(entity);
-
-        if (entity instanceof Hero)
-            this.rooms.stream()
-                    .filter(room -> room.contains(entity.getPosition()))
-                    .forEach(Room::setVisited);
+        this.setBordersToRoom(this.nextRoomId++);
     }
 
-    public void updateHero() {
-        this.entities.stream()
-                .filter(entity -> entity instanceof Hero)
-                .forEach(hero -> this.rooms.stream()
-                        .filter(room -> room.contains(hero.getPosition()))
-                        .forEach(Room::setVisited));
+    public void setBordersToRoom(int roomId) {
+        for (int y = 1; y < height - 1; y++)
+            for (int x = 1; x < width - 1; x++)
+                if (!allAdjacentBelongToSameRoom(y, x, roomId))
+                    map[y][x].setEntity(new Wall(new Point(x, y)));
+                else
+                    map[y][x].setEntity(null);
+
     }
 
-    public void addRoom(Point topLeft, Point lowerRight) throws RoomOverlayException {
-        if (this.rooms.stream().anyMatch(room ->
-                        room.contains(topLeft) || room.contains(lowerRight)))
-            throw new RoomOverlayException("Requested room would overlap with other room");
-
-        this.rooms.add(new Room(topLeft, lowerRight));
+    private boolean allAdjacentBelongToSameRoom(int y, int x, int roomId) {
+        return map[y - 1][x].isInRoom(roomId)
+                && map[y + 1][x].isInRoom(roomId)
+                && map[y][x - 1].isInRoom(roomId)
+                && map[y][x + 1].isInRoom(roomId);
     }
 
-    public void addCorridor(Point topLeft, Point lowerRight) throws RoomOverlayException {
-        if (this.rooms.stream().anyMatch(room ->
-                room.contains(topLeft) || room.contains(lowerRight)))
-            throw new RoomOverlayException("Requested corridor would overlap with other room");
-
-        Corridor corridor = new Corridor();
-        corridor.addRoom(topLeft, lowerRight);
-        this.rooms.add(corridor);
+    public void setDoor(int x, int y) {
+        this.map[y][x].setEntity(new Door(new Point(x, y)));
     }
 
-    public void addRoomToCorridor(int id, Point topLeft, Point lowerRight)
-            throws RoomOverlayException, NoSuchElementException {
-        if (this.rooms.stream().anyMatch(room ->
-                room.contains(topLeft) || room.contains(lowerRight)))
-            throw new RoomOverlayException("Requested corridor would overlap with other room");
+    public void addToRoom(int roomId, Point topLeft, Point lowerRight) {
+        if (roomId >= this.nextRoomId)
+            throw new NoSuchElementException("There's no room with Id " + roomId);
 
-        ((Corridor)this.rooms.stream()
-                .filter(room -> room instanceof Corridor && room.getId() == id)
-                .findAny()
-                .orElseThrow(() -> new NoSuchElementException("Couldn't find corridor with Id "+ id)))
-                .addRoom(topLeft, lowerRight);
+        for (int y = topLeft.getY(); y < lowerRight.getY(); y++)
+            for (int x = topLeft.getX(); x < lowerRight.getX(); x++)
+                map[y][x].setToRoom(roomId);
+
+        this.setBordersToRoom(roomId);
     }
 }
 
-class Room {
-    protected static int nextId = 0;
-    protected final int id;
-    protected final Point topLeft, lowerRight;
-    protected boolean visited;
+class Tile {
+    private Entity currentEntity;
+    private final Set<Integer> rooms;
+    private final Point position;
 
-    protected Room(Point topLeft, Point lowerRight) {
-        this.id = nextId++;
-        this.topLeft = topLeft;
-        this.lowerRight = lowerRight;
-        this.visited = false;
+    public Tile(int x, int y) {
+        this.currentEntity = null;
+        this.rooms = new HashSet<>();
+        this.position = new Point(x, y);
     }
 
-    public int getId() {
-        return id;
+    public void setToRoom(int roomIndex) {
+        this.rooms.add(roomIndex);
     }
 
-    public boolean isVisited() {
-        return visited;
+    public Entity getEntity() { return this.currentEntity; }
+
+    public Entity removeEntity() {
+        Entity current = this.currentEntity;
+        this.currentEntity = null;
+        return current;
     }
 
-    public void setVisited() {
-        this.visited = true;
+    public void setEntity(Entity entity) {
+        this.currentEntity = entity;
+        if (entity != null)
+            entity.moveTo(this.position);
     }
 
-    public boolean contains(Point point) {
-        return point.getX() >= topLeft.getX() && point.getX() <= lowerRight.getX()
-                && point.getY() >= topLeft.getY() && point.getY() <= lowerRight.getY();
-    }
-}
-
-class Corridor extends Room {
-    protected final List<Room> rooms;
-
-    protected Corridor() {
-        super(null, null);
-        this.rooms = new LinkedList<Room>();
-    }
-
-    protected void addRoom(Point topLeft, Point lowerRight) {
-        this.rooms.add(new Room(topLeft, lowerRight));
-    }
-
-    @Override
-    public boolean contains(Point point) {
-        return this.rooms.stream().anyMatch(room -> room.contains(point));
+    protected boolean isInRoom(int roomId) {
+        return this.rooms.contains(roomId);
     }
 }
