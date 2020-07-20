@@ -26,17 +26,11 @@ public class Point {
         this.y = point.y;
     }
 
-    public void moveTo(Point point) {
-        this.x = point.x;
-        this.y = point.y;
-    }
-
     public int getX() { return this.x; }
 
     public int getY() { return this.y; }
 
-    public void sum(Point other) {
-        this.x += other.x;
-        this.y += other.y;
+    public static Point sum(Point a, Point b) {
+        return new Point(a.x + b.x, a.y + b.y);
     }
 }

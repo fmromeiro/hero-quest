@@ -8,13 +8,7 @@ public class Hero extends Character{
         super(name, attackDice, defendDice, baseBodyPoints, mindPoints, point, true);
     }
 
-    public Hero(Hero other) {
-        super(other);
-    }
-
     public void move(Point.Direction direction) {
-        Point finalPos = this.getPosition();
-        finalPos.sum(direction.getPosition());
-        this.moveTo(finalPos);
+        this.moveTo(Point.sum(this.getPosition(), direction.getPosition()));
     }
 }

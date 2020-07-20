@@ -5,8 +5,8 @@ import br.ic.unicamp.mc322.heroquest.auxiliars.Point;
 import java.security.InvalidParameterException;
 
 public abstract class Entity{
-    private final Point position;
-    protected final boolean seeThrough;
+    private Point position;
+    protected boolean seeThrough;
 
     public Entity(Point point, boolean seeThrough) {
         this.position = new Point(point);
@@ -20,6 +20,6 @@ public abstract class Entity{
     }
 
     public void moveTo(Point point) {
-        this.position.moveTo(point);
+        this.position = point;
     }
 }
