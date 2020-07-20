@@ -30,8 +30,8 @@ public abstract class Character extends Entity {
     private int mindPoints;
     private int currentBodyPoints;
 
-    public Character(String name, int attackDice, int defendDice, int baseBodyPoints, int mindPoints, Point point) {
-        super(point);
+    public Character(String name, int attackDice, int defendDice, int baseBodyPoints, int mindPoints, Point point, boolean seeThrough) {
+        super(point, seeThrough);
         this.name = name;
         this.attackDice = attackDice;
         this.defendDice = defendDice;
@@ -40,11 +40,6 @@ public abstract class Character extends Entity {
         this.currentBodyPoints = baseBodyPoints;
         this.statusModifiers = new HashMap<>();
         this.statusModifierIndex = 0;
-    }
-
-    public Character(Character other) {
-        this(other.name, other.attackDice, other.defendDice, other.baseBodyPoints,
-            other.mindPoints, other.getPosition());
     }
 
     public void takeDamage(int damage) {
