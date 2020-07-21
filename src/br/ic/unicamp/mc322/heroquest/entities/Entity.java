@@ -22,4 +22,6 @@ public abstract class Entity{
     public void moveTo(Point point) {
         this.position = point;
     }
+
+    public abstract String getStringRepresentation();
 }

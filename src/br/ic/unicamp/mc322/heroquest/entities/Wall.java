@@ -9,4 +9,9 @@ public class Wall extends Entity{
 
     @Override
     public void moveTo(Point point) {}
+
+    @Override
+    public String getStringRepresentation() {
+        return "▓▓";
+    }
 }

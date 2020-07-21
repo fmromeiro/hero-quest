@@ -10,6 +10,11 @@ public class Door extends Entity {
     @Override
     public void moveTo(Point point) {}
 
+    @Override
+    public String getStringRepresentation() {
+        return seeThrough ? "CC" : "OO";
+    }
+
     public void open() {
         this.seeThrough = true;
     }

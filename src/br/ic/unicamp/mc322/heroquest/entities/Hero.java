@@ -11,4 +11,9 @@ public class Hero extends Character{
     public void move(Point.Direction direction) {
         this.moveTo(Point.sum(this.getPosition(), direction.getPosition()));
     }
+
+    @Override
+    public String getStringRepresentation() {
+        return "ME";
+    }
 }
