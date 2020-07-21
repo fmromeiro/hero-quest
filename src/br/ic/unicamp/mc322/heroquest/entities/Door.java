@@ -3,8 +3,21 @@ package br.ic.unicamp.mc322.heroquest.entities;
 import br.ic.unicamp.mc322.heroquest.auxiliars.Point;
 
 public class Door extends Entity {
+    private boolean open;
+
     public Door(Point position) {
         super(position, false);
+        this.open = false;
+    }
+
+    @Override
+    public boolean canSeeThrough() {
+        return this.open;
+    }
+
+    @Override
+    public boolean canBeOverlapped() {
+        return this.open;
     }
 
     @Override
@@ -12,14 +25,14 @@ public class Door extends Entity {
 
     @Override
     public String getStringRepresentation() {
-        return seeThrough ? "CC" : "OO";
+        return open ? "--" : "══";
     }
 
     public void open() {
-        this.seeThrough = true;
+        this.open = true;
     }
 
     public void close() {
-        this.seeThrough = false;
+        this.open = false;
     }
 }

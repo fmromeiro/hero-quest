@@ -1,12 +1,16 @@
 package br.ic.unicamp.mc322.heroquest.controller;
 
 import br.ic.unicamp.mc322.heroquest.auxiliars.Point;
+import br.ic.unicamp.mc322.heroquest.entities.Door;
 import br.ic.unicamp.mc322.heroquest.entities.Dungeon;
 import br.ic.unicamp.mc322.heroquest.entities.Entity;
 import br.ic.unicamp.mc322.heroquest.entities.Hero;
+import br.ic.unicamp.mc322.heroquest.entities.Character;
 
+import javax.swing.text.Position;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class HeroQuest {
     private Dungeon dungeon;
@@ -66,12 +70,13 @@ public class HeroQuest {
     public void setUp() throws Exception {
         // randomizar inimigos, tesouros, armadilhas etc
         this.dungeon = createDefaultMap();
-        this.dungeon.addEntity(new Hero("Player", 2, 2, 10, 5, new Point(1, 1)), new Point(13, 9));
+        this.dungeon.addEntity(new Door(new Point(15, 8)), new Point(15, 8));
+        this.dungeon.addEntity(new Hero("Player", 2, 2, 10, 5, new Point(1, 1)), new Point(16, 9));
         Renderer.printVisibleMap(dungeon);
     }
 
     public void mainLoop() {
-        List<Entity> entities = this.dungeon.getEntities();
+        List<Entity> entities = this.dungeon.getEntities().stream().filter(ent -> ent instanceof Character).collect(Collectors.toUnmodifiableList());
         for (Entity entity : entities) {
             this.handleTurn(entity);
             Renderer.printVisibleMap(this.dungeon);
@@ -94,15 +99,23 @@ public class HeroQuest {
         System.out.println("Player's turn");
         String input = scanner.nextLine().toLowerCase();
         String[] commands = input.split("\\s+");
-        if (commands.length == 2 && commands[0].equals("move")) {
-            Point.Direction direction = Point.Direction.UP;
-            switch (commands[1]) {
-                case "up": direction = Point.Direction.UP; break;
-                case "right": direction = Point.Direction.RIGHT; break;
-                case "down": direction = Point.Direction.DOWN; break;
-                case "left": direction = Point.Direction.LEFT; break;
+        if (commands.length == 2)
+            if (commands[0].equals("move")) {
+                Point.Direction direction = Point.Direction.UP;
+                switch (commands[1]) {
+                    case "up": direction = Point.Direction.UP; break;
+                    case "right": direction = Point.Direction.RIGHT; break;
+                    case "down": direction = Point.Direction.DOWN; break;
+                    case "left": direction = Point.Direction.LEFT; break;
+                }
+                this.dungeon.moveEntity(hero, Point.sum(hero.getPosition(), direction.getPosition()));
             }
-            this.dungeon.moveEntity(hero, Point.sum(hero.getPosition(), direction.getPosition()));
-        }
+            else if (commands[0].equals("open")) {
+                this.dungeon.getEntities().stream()
+                        .filter(ent -> Point.manhattanDistance(hero.getPosition(), ent.getPosition()) == 1)
+                        .filter(ent -> ent instanceof Door)
+                        .forEach(ent -> ((Door)ent).open());
+
+            }
     }
 }

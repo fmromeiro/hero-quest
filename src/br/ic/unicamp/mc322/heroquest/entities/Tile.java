@@ -7,11 +7,13 @@ import java.util.Set;
 
 public class Tile {
     private Entity currentEntity;
+    private Entity secondaryEntity;
     private final Set<Integer> rooms;
     private final Point position;
 
     protected Tile(int x, int y) {
         this.currentEntity = null;
+        this.secondaryEntity = null;
         this.rooms = new HashSet<>();
         this.position = new Point(x, y);
     }
@@ -28,11 +30,18 @@ public class Tile {
 
     public Entity removeEntity() {
         Entity current = this.currentEntity;
-        this.currentEntity = null;
+        if (this.secondaryEntity != null) {
+            this.currentEntity = this.secondaryEntity;
+            this.secondaryEntity = null;
+        }
+        else
+            this.currentEntity = null;
         return current;
     }
 
     public void setEntity(Entity entity) {
+        if (this.currentEntity!= null && this.currentEntity.canBeOverlapped())
+            this.secondaryEntity = this.currentEntity;
         this.currentEntity = entity;
         if (entity != null)
             entity.moveTo(this.position);
@@ -53,4 +62,6 @@ public class Tile {
     public Set<Integer> getRooms() {
         return new HashSet<>(this.rooms);
     }
+
+    public boolean canSetEntity() { return this.currentEntity == null || this.currentEntity.canBeOverlapped(); }
 }

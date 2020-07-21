@@ -98,4 +98,12 @@ public class Point {
 
         return points;
     }
+
+    public static double euclideanDistance(Point a, Point b) {
+        return Math.hypot(a.x - b.x, a.y - b.y);
+    }
+
+    public static int manhattanDistance(Point a, Point b) {
+        return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+    }
 }

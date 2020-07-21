@@ -81,4 +81,9 @@ public abstract class Character extends Entity {
                 .mapToInt(x -> x.getModifier())
                 .sum();
     }
+
+    @Override
+    public boolean canBeOverlapped() {
+        return false;
+    }
 }

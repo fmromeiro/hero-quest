@@ -6,18 +6,15 @@ import java.security.InvalidParameterException;
 
 public abstract class Entity{
     private Point position;
-    protected boolean seeThrough;
-
     public Entity(Point point, boolean seeThrough) {
         this.position = new Point(point);
-        this.seeThrough = seeThrough;
     }
 
     public Point getPosition() { return new Point(this.position); }
 
-    public boolean canSeeThrough() {
-        return seeThrough;
-    }
+    public abstract boolean canSeeThrough();
+
+    public abstract boolean canBeOverlapped();
 
     public void moveTo(Point point) {
         this.position = point;

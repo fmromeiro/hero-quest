@@ -13,6 +13,11 @@ public class Hero extends Character{
     }
 
     @Override
+    public boolean canSeeThrough() {
+        return true;
+    }
+
+    @Override
     public String getStringRepresentation() {
         return "ME";
     }

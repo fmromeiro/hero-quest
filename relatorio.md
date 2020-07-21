@@ -32,4 +32,4 @@ Para implementar a linha de visão, usamos o [Algoritmo de Bresenham](https://en
 [implemented-map]: https://i.imgur.com/cKFxcQA.png
 [bresenham-line-algorithm]: https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
 [roguebasin-bresenham-python]: http://www.roguebasin.com/index.php?title=Bresenham%27s_Line_Algorithm#Python
-[bresenham-weird-borders]: http://doryen.eptalys.net
+[bresenham-weird-borders]: https://sites.google.com/site/jicenospam/visibilitydetermination
