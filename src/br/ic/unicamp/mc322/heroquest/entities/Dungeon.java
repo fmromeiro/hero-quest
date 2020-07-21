@@ -34,22 +34,22 @@ public class Dungeon {
             for (int x = 1; x < width - 1; x++)
                 if (map[y][x].isInRoom(roomId))
                     if (!allAdjacentBelongToSameRoom(y, x, roomId))
-                        map[y][x].setEntity(new Wall(new Point(x, y)));
+                        map[y][x].setEntity(new Wall());
                     else
                         map[y][x].setEntity(null);
 
         for (int y = 0; y < height; y++) {
             if (map[y][0].isInRoom(roomId))
-                map[y][0].setEntity(new Wall(new Point(0, y)));
+                map[y][0].setEntity(new Wall());
             if (map[y][width - 1].isInRoom(roomId))
-                map[y][width - 1].setEntity(new Wall(new Point(width - 1, y)));
+                map[y][width - 1].setEntity(new Wall());
         }
 
         for (int x = 0; x < width; x++) {
             if (map[0][x].isInRoom(roomId))
-                map[0][x].setEntity(new Wall(new Point(x, 0)));
+                map[0][x].setEntity(new Wall());
             if (map[height - 1][x].isInRoom(roomId))
-                map[height - 1][x].setEntity(new Wall(new Point(x, height - 1)));
+                map[height - 1][x].setEntity(new Wall());
         }
     }
 
@@ -94,7 +94,7 @@ public class Dungeon {
     public void addEntity(Entity entity, Point position) throws Exception {
         this.map[position.getY()][position.getX()].setEntity(entity);
 
-        if (entity instanceof Hero) {
+        if (entity instanceof Character && ((Character)entity).isHero()) {
             this.visitedRooms.addAll(this.map[position.getY()][position.getX()].getRooms());
         }
     }
@@ -115,7 +115,7 @@ public class Dungeon {
             for (Point point : line) {
                 visibilityMatrix[point.getY()][point.getX()] |= visible;
                 Entity current = this.map[point.getY()][point.getX()].getEntity();
-                if (current instanceof Wall && ((Wall)current).isSeen())
+                if (current instanceof StaticEntity && ((StaticEntity)current).isSeen())
                     visibilityMatrix[point.getY()][point.getX()] = true;
                 if (visible && current != null && !current.canSeeThrough())
                     visible = false;
@@ -136,23 +136,21 @@ public class Dungeon {
             for (int x = 0; x <= midWidth; x++)
                 if ((!visibilityMatrix[y][x])
                         && (visibilityMatrix[y - 1][x]
-                        && this.map[y - 1][x].getEntity() == null
-                        || visibilityMatrix[y][x + 1]
-                        && this.map[y][x + 1].getEntity() == null)
-                        && (this.map[y][x].getEntity() instanceof Wall
-                        || this.map[y][x].getEntity() instanceof Door))
+                            && this.map[y - 1][x].getEntity() == null
+                            || visibilityMatrix[y][x + 1]
+                            && this.map[y][x + 1].getEntity() == null)
+                        && (this.map[y][x].getEntity() instanceof StaticEntity))
                     visibilityMatrix[y][x] = true;
 
         // 2° quadrante
         for (int y = midHeight; y < height; y++)
             for (int x = midWidth; x < width; x++)
-                if (!visibilityMatrix[y][x])
-                    if (visibilityMatrix[y - 1][x]
+                if (!visibilityMatrix[y][x]
+                        && (visibilityMatrix[y - 1][x]
                             && this.map[y - 1][x].getEntity() == null
                             || visibilityMatrix[y][x - 1]
                             && this.map[y][x - 1].getEntity() == null)
-                        if (this.map[y][x].getEntity() instanceof Wall
-                                || this.map[y][x].getEntity() instanceof Door)
+                        && this.map[y][x].getEntity() instanceof StaticEntity)
                             visibilityMatrix[y][x] = true;
 
         // 3º quadrante
@@ -160,11 +158,10 @@ public class Dungeon {
             for (int x = midWidth; x < width; x++)
                 if ((!visibilityMatrix[y][x])
                         && (visibilityMatrix[y + 1][x]
-                        && this.map[y + 1][x].getEntity() == null
-                        || visibilityMatrix[y][x - 1]
-                        && this.map[y][x - 1].getEntity() == null)
-                        && (this.map[y][x].getEntity() instanceof Wall
-                        || this.map[y][x].getEntity() instanceof Door))
+                            && this.map[y + 1][x].getEntity() == null
+                            || visibilityMatrix[y][x - 1]
+                            && this.map[y][x - 1].getEntity() == null)
+                        && (this.map[y][x].getEntity() instanceof StaticEntity))
                     visibilityMatrix[y][x] = true;
 
         // 4º quadrante
@@ -172,18 +169,17 @@ public class Dungeon {
             for (int x = 0; x <= midWidth; x++)
                 if ((!visibilityMatrix[y][x])
                         && (visibilityMatrix[y + 1][x]
-                        && this.map[y + 1][x].getEntity() == null
-                        || visibilityMatrix[y][x + 1]
-                        && this.map[y][x + 1].getEntity() == null)
-                        && (this.map[y][x].getEntity() instanceof Wall
-                        || this.map[y][x].getEntity() instanceof Door))
+                            && this.map[y + 1][x].getEntity() == null
+                            || visibilityMatrix[y][x + 1]
+                            && this.map[y][x + 1].getEntity() == null)
+                        && (this.map[y][x].getEntity() instanceof StaticEntity))
                     visibilityMatrix[y][x] = true;
 
     }
 
     public boolean[][] getHeroVisibility() {
         boolean[][] visibilityMatrix = new boolean[height][width];
-        Hero hero = getHero();
+        Character hero = getHero();
         if (hero == null)
             return visibilityMatrix;
         visibilityMatrix = getVisibilityFrom(hero.getPosition());
@@ -192,20 +188,19 @@ public class Dungeon {
                 HashSet<Integer> intersection = new HashSet<>(map[y][x].getRooms());
                 intersection.retainAll(this.visitedRooms);
                 visibilityMatrix[y][x] &= !intersection.isEmpty();
-                if (visibilityMatrix[y][x] && this.map[y][x].getEntity() instanceof Wall)
-                    ((Wall) this.map[y][x].getEntity()).setAsSeen();
+                if (visibilityMatrix[y][x] && this.map[y][x].getEntity() instanceof StaticEntity)
+                    ((StaticEntity) this.map[y][x].getEntity()).setAsSeen();
             }
         return visibilityMatrix;
     }
 
-    public Hero getHero() {
-        Tile possibleHero = Arrays.stream(this.map)
+    public Character getHero() {
+        return Arrays.stream(this.map)
                 .flatMap(Arrays::stream)
-                .filter(tile -> tile.getEntity() instanceof Hero)
+                .filter(tile -> tile.getEntity() instanceof Character)
+                .map(tile -> (Character)tile.getEntity())
+                .filter(Character::isHero)
                 .findAny().orElse(null);
-        if (possibleHero != null)
-            return (Hero)possibleHero.getEntity();
-        return null;
     }
 
     public void moveEntity(Entity entity, Point whereTo) {
@@ -221,7 +216,7 @@ public class Dungeon {
         if (map[whereTo.getY()][whereTo.getX()].canSetEntity())
             map[whereTo.getY()][whereTo.getX()].setEntity(entity);
 
-        if (entity instanceof Hero) {
+        if (entity instanceof Character && ((Character) entity).isHero()) {
             this.visitedRooms.addAll(this.map[whereTo.getY()][whereTo.getX()].getRooms());
         }
     }

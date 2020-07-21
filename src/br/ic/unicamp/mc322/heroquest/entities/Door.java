@@ -2,12 +2,23 @@ package br.ic.unicamp.mc322.heroquest.entities;
 
 import br.ic.unicamp.mc322.heroquest.auxiliars.Point;
 
-public class Door extends Entity {
+public class Door implements StaticEntity {
     private boolean open;
+    private boolean seen = false;
+    private Point position;
 
-    public Door(Point position) {
-        super(position, false);
+    public Door() {
         this.open = false;
+    }
+
+    @Override
+    public Point getPosition() {
+        return position;
+    }
+
+    @Override
+    public void setPosition(Point position) {
+        this.position = this.position == null ? position : null;
     }
 
     @Override
@@ -21,9 +32,6 @@ public class Door extends Entity {
     }
 
     @Override
-    public void moveTo(Point point) {}
-
-    @Override
     public String getStringRepresentation() {
         return open ? "--" : "══";
     }
@@ -34,5 +42,15 @@ public class Door extends Entity {
 
     public void close() {
         this.open = false;
+    }
+
+    @Override
+    public void setAsSeen() {
+        this.seen = true;
+    }
+
+    @Override
+    public boolean isSeen() {
+        return this.seen;
     }
 }

@@ -4,21 +4,14 @@ import br.ic.unicamp.mc322.heroquest.auxiliars.Point;
 
 import java.security.InvalidParameterException;
 
-public abstract class Entity{
-    private Point position;
-    public Entity(Point point, boolean seeThrough) {
-        this.position = new Point(point);
-    }
+public interface Entity {
+    Point getPosition();
 
-    public Point getPosition() { return new Point(this.position); }
+    void setPosition(Point position);
 
-    public abstract boolean canSeeThrough();
+    boolean canSeeThrough();
 
-    public abstract boolean canBeOverlapped();
+    boolean canBeOverlapped();
 
-    public void moveTo(Point point) {
-        this.position = point;
-    }
-
-    public abstract String getStringRepresentation();
+    String getStringRepresentation();
 }

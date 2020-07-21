@@ -4,7 +4,7 @@ import br.ic.unicamp.mc322.heroquest.auxiliars.Point;
 
 import java.util.HashMap;
 
-public abstract class Character extends Entity {
+public class Character implements Entity {
 
     public enum Attribute {
         ATTACKDICE("Attack Dice"),
@@ -30,8 +30,12 @@ public abstract class Character extends Entity {
     private int mindPoints;
     private int currentBodyPoints;
 
-    public Character(String name, int attackDice, int defendDice, int baseBodyPoints, int mindPoints, Point point, boolean seeThrough) {
-        super(point, seeThrough);
+    private Point position;
+
+    private final String stringRepresentation;
+    private final boolean isHero;
+
+    private Character(String name, int attackDice, int defendDice, int baseBodyPoints, int mindPoints, String stringRepresentation, boolean isHero) {
         this.name = name;
         this.attackDice = attackDice;
         this.defendDice = defendDice;
@@ -40,6 +44,12 @@ public abstract class Character extends Entity {
         this.currentBodyPoints = baseBodyPoints;
         this.statusModifiers = new HashMap<>();
         this.statusModifierIndex = 0;
+        this.stringRepresentation = stringRepresentation;
+        this.isHero = isHero;
+    }
+
+    public static Character getDefaultHero(String name) {
+        return new Character(name, 2, 2, 10, 5, "ME", true);
     }
 
     public void takeDamage(int damage) {
@@ -82,8 +92,30 @@ public abstract class Character extends Entity {
                 .sum();
     }
 
+    public boolean isHero() { return this.isHero; }
+
+    @Override
+    public Point getPosition() {
+        return this.position;
+    }
+
+    @Override
+    public void setPosition(Point position) {
+        this.position = position;
+    }
+
+    @Override
+    public boolean canSeeThrough() {
+        return this.isHero();
+    }
+
     @Override
     public boolean canBeOverlapped() {
         return false;
+    }
+
+    @Override
+    public String getStringRepresentation() {
+        return this.stringRepresentation;
     }
 }

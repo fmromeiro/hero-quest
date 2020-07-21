@@ -4,7 +4,6 @@ import br.ic.unicamp.mc322.heroquest.auxiliars.Point;
 import br.ic.unicamp.mc322.heroquest.entities.Door;
 import br.ic.unicamp.mc322.heroquest.entities.Dungeon;
 import br.ic.unicamp.mc322.heroquest.entities.Entity;
-import br.ic.unicamp.mc322.heroquest.entities.Hero;
 import br.ic.unicamp.mc322.heroquest.entities.Character;
 
 import javax.swing.text.Position;
@@ -70,8 +69,8 @@ public class HeroQuest {
     public void setUp() throws Exception {
         // randomizar inimigos, tesouros, armadilhas etc
         this.dungeon = createDefaultMap();
-        this.dungeon.addEntity(new Door(new Point(15, 8)), new Point(15, 8));
-        this.dungeon.addEntity(new Hero("Player", 2, 2, 10, 5, new Point(1, 1)), new Point(16, 9));
+        this.dungeon.addEntity(new Door(), new Point(15, 8));
+        this.dungeon.addEntity(Character.getDefaultHero("Player"), new Point(16, 9));
         Renderer.printVisibleMap(dungeon);
     }
 
@@ -90,12 +89,12 @@ public class HeroQuest {
     }
 
     public void handleTurn(Entity entity) {
-        if (entity instanceof Hero) {
-            handleMoveInput((Hero)entity);
+        if (entity instanceof Character) {
+            handleMoveInput((Character)entity);
         }
     }
 
-    public void handleMoveInput(Hero hero) {
+    public void handleMoveInput(Character hero) {
         System.out.println("Player's turn");
         String input = scanner.nextLine().toLowerCase();
         String[] commands = input.split("\\s+");
