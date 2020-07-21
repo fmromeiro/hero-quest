@@ -14,4 +14,9 @@ public class Consumable extends Item {
     public void consume(Character c) {
         effect.accept(c);
     }
+
+    @Override
+    public Item copy() {
+        return new Consumable(this.name, this.getModifier(), this.getRange(), this.effect);
+    }
 }

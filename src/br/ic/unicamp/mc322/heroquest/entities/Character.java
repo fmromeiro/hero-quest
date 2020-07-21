@@ -128,4 +128,20 @@ public abstract class Character extends Entity {
         }
     }
 
+    public void equip(int index, char hand) {
+        Item item = inventory.itemAt(index);
+        if(item instanceof Equipment) {
+            Equipment equipment = (Equipment) inventory.getItem(index);
+            if (equipment.getCategory() == Equipment.Category.ONEHAND) {
+                if (hand == 'r') {
+                    inventory.addItem(body.remove("RIGHT_HAND"));
+                    body.put("RIGHT_HAND", equipment);
+                } else if (hand == 'l') {
+                    inventory.addItem(body.remove("LEFT_HAND"));
+                    body.put("LEFT_HAND", equipment);
+                }
+            }
+        }
+    }
+
 }

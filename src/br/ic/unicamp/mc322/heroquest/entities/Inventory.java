@@ -22,4 +22,7 @@ public class Inventory {
         return item;
     }
 
+    public Item itemAt(int index) {
+        return itemInventory.get(index).copy();
+    }
 }

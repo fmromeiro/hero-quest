@@ -30,5 +30,8 @@ public class Equipment extends Item {
     public Category getCategory() {
         return category;
     }
-
+    @Override
+    public Item copy() {
+        return new Equipment(this.name, this.getModifier(), this.getRange(), this.category);
+    }
 }
