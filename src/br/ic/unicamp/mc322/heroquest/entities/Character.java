@@ -3,6 +3,7 @@ package br.ic.unicamp.mc322.heroquest.entities;
 import br.ic.unicamp.mc322.heroquest.auxiliars.Point;
 
 import java.util.HashMap;
+import java.util.Random;
 
 public class Character implements Entity {
 
@@ -35,7 +36,9 @@ public class Character implements Entity {
     private final String stringRepresentation;
     private final boolean isHero;
 
-    private Character(String name, int attackDice, int defendDice, int baseBodyPoints, int mindPoints, String stringRepresentation, boolean isHero) {
+    private static final Random rng = new Random();
+
+    protected Character(String name, int attackDice, int defendDice, int baseBodyPoints, int mindPoints, String stringRepresentation, boolean isHero) {
         this.name = name;
         this.attackDice = attackDice;
         this.defendDice = defendDice;
@@ -82,6 +85,10 @@ public class Character implements Entity {
 
     public void removeModifier(int index) {
         statusModifiers.remove(index);
+    }
+
+    public int getSteps() {
+        return rng.ints(1, 7).limit(2).sum();
     }
 
     private int getModifiersFor(Attribute attribute) {

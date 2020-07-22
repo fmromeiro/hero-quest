@@ -30,6 +30,8 @@ public class Point {
 
     public int getY() { return this.y; }
 
+    public boolean equals(Point other) { return this.x == other.x && this.y == other.y; }
+
     public static Point sum(Point a, Point b) {
         return new Point(a.x + b.x, a.y + b.y);
     }
