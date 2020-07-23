@@ -1,34 +1,23 @@
 package br.ic.unicamp.mc322.heroquest.spells;
 
+import br.ic.unicamp.mc322.heroquest.auxiliars.Point;
+import br.ic.unicamp.mc322.heroquest.auxiliars.TriConsumer;
 import br.ic.unicamp.mc322.heroquest.entities.Character;
+import br.ic.unicamp.mc322.heroquest.entities.Tile;
+
+import java.util.List;
 
 public abstract class Spell {
-    public enum Element {
-        WATER("Water Spell"),
-        EARTH("Earth Spell"),
-        FIRE("Fire Spell"),
-        AIR("Air Spell"),
-        CHAOS("Chaos Spell");
-
-        private final String name;
-
-        Element(String name) { this.name = name; }
-
-        public String getName() { return name; }
-    }
     private final String name;
-    private final Element element;
     private final int range;
     private int quantity;
-    public Spell(String name, Element spellElement, int range, int quantity) {
+    private final TriConsumer<Point, Point, List<Tile>> runner;
+
+    protected Spell(String name, int range, int quantity, TriConsumer<Point, Point, List<Tile>> runner) {
         this.name = name;
-        this.element = spellElement;
         this.range = range;
         this.quantity = quantity;
-    }
-
-    public Element getElement() {
-        return element;
+        this.runner = runner;
     }
 
     public String getName() {
@@ -51,6 +40,8 @@ public abstract class Spell {
         if(hasCharge()) quantity--;
     }
 
-    public abstract void castSpell(Character target);
+    public void castSpell(Point source, Point target, List<Tile> map) {
+        this.runner.accept(source, target, map);
+    };
 
 }
