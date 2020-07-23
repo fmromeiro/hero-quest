@@ -1,25 +1,22 @@
 package br.ic.unicamp.mc322.heroquest.items;
 
+import br.ic.unicamp.mc322.heroquest.entities.Character;
 import br.ic.unicamp.mc322.heroquest.entities.StatusModifier;
 
+import java.util.function.Consumer;
+
 public class Consumable extends Item {
-    private int charges;
-
-    public Consumable(String name, StatusModifier modifier, int range, int charges) {
+    Consumer<Character> effect;
+    public Consumable(String name, StatusModifier modifier, int range, Consumer<Character> effect) {
         super(name, modifier, range);
-        this.charges = charges;
+        this.effect = effect;
+    }
+    public void consume(Character c) {
+        effect.accept(c);
     }
 
-    public int getCharges() {
-        return charges;
+    @Override
+    public Item copy() {
+        return new Consumable(this.name, this.getModifier(), this.getRange(), this.effect);
     }
-
-    public void consume() {
-        this.charges--;
-    }
-
-    public void storeConsumable() {
-        this.charges++;
-    }
-
 }

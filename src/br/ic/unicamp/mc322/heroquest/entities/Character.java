@@ -1,9 +1,13 @@
 package br.ic.unicamp.mc322.heroquest.entities;
 
 import br.ic.unicamp.mc322.heroquest.auxiliars.Point;
+import br.ic.unicamp.mc322.heroquest.items.Consumable;
+import br.ic.unicamp.mc322.heroquest.items.Equipment;
+import br.ic.unicamp.mc322.heroquest.items.Item;
 
 import java.util.HashMap;
 import java.util.Random;
+import java.util.Map;
 
 public class Character implements Entity {
 
@@ -38,6 +42,9 @@ public class Character implements Entity {
 
     private static final Random rng = new Random();
 
+    private Inventory inventory;
+    private Map<String, Equipment> body;
+
     protected Character(String name, int attackDice, int defendDice, int baseBodyPoints, int mindPoints, String stringRepresentation, boolean isHero) {
         this.name = name;
         this.attackDice = attackDice;
@@ -49,8 +56,10 @@ public class Character implements Entity {
         this.statusModifierIndex = 0;
         this.stringRepresentation = stringRepresentation;
         this.isHero = isHero;
-    }
 
+        this.inventory = new Inventory();
+        this.body = new HashMap<>();
+    }
     public static Character getDefaultHero(String name) {
         return new Character(name, 2, 2, 10, 5, "ME", true);
     }
@@ -67,7 +76,6 @@ public class Character implements Entity {
 
     public int getAttribute(Attribute attribute) {
         int modifier = this.getModifiersFor(attribute);
-        // TODO: esse método pode buscar por modificadores de equipamentos e somá-los antes de retornar
         switch (attribute) {
             case ATTACKDICE: return this.attackDice + modifier;
             case DEFENDDICE: return this.defendDice + modifier;
@@ -95,7 +103,11 @@ public class Character implements Entity {
         return this.statusModifiers
                 .values().stream()
                 .filter(x -> x.getAttribute() == attribute)
-                .mapToInt(x -> x.getModifier())
+                .mapToInt(StatusModifier::getModifier)
+                .sum() +
+                this.body.values().stream()
+                .filter(x -> x.getModifier().getAttribute() == attribute)
+                .mapToInt(x -> x.getModifier().getModifier())
                 .sum();
     }
 
@@ -114,6 +126,51 @@ public class Character implements Entity {
     @Override
     public boolean canSeeThrough() {
         return this.isHero();
+
+    public void selectItem(int index) {
+        Item item = inventory.getItem(index);
+        if(item instanceof Equipment)
+            equip((Equipment) item);
+        else if (item instanceof Consumable)
+            ((Consumable) item).consume(this);
+        }
+
+    public void equip(Equipment equipment) {
+        String key = equipment.getCategory().getCategoryName();
+        if(key.equals("ONE_HAND"))
+            if(body.get("RIGHT_HAND") == null)
+                body.put("RIGHT_HAND", equipment);
+            else {
+                inventory.addItem(body.remove("LEFT_HAND"));
+                body.put("LEFT_HAND", equipment);
+            }
+        else
+        if(key.equals("TWO_HAND")) {
+            inventory.addItem(body.remove("RIGHT_HAND"));
+            body.put("RIGHT_HAND", equipment);
+            inventory.addItem(body.remove("LEFT_HAND"));
+            body.put("LEFT_HAND", equipment);
+        }
+        else {
+            inventory.addItem(body.remove(key));
+            body.put(key, equipment);
+        }
+    }
+
+    public void equip(int index, char hand) {
+        Item item = inventory.itemAt(index);
+        if(item instanceof Equipment) {
+            Equipment equipment = (Equipment) inventory.getItem(index);
+            if (equipment.getCategory() == Equipment.Category.ONEHAND) {
+                if (hand == 'r') {
+                    inventory.addItem(body.remove("RIGHT_HAND"));
+                    body.put("RIGHT_HAND", equipment);
+                } else if (hand == 'l') {
+                    inventory.addItem(body.remove("LEFT_HAND"));
+                    body.put("LEFT_HAND", equipment);
+                }
+            }
+        }
     }
 
     @Override
