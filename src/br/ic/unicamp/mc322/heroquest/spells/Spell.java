@@ -7,7 +7,7 @@ import br.ic.unicamp.mc322.heroquest.entities.Tile;
 
 import java.util.List;
 
-public abstract class Spell {
+public class Spell {
     private final String name;
     private final int range;
     private int quantity;
