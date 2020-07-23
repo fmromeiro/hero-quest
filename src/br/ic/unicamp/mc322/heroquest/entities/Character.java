@@ -58,7 +58,6 @@ public class Character implements Entity {
         this.statusModifierIndex = 0;
         this.stringRepresentation = stringRepresentation;
         this.isHero = isHero;
-
         this.inventory = new Inventory();
         this.body = new HashMap<>();
     }
