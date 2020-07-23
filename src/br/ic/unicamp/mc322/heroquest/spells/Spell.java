@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-public abstract class Spell {
+public class Spell {
     private final String name;
     private final int range;
     private int quantity;
