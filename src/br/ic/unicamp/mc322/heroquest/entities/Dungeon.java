@@ -117,6 +117,8 @@ public class Dungeon {
                 Entity current = this.map[point.getY()][point.getX()].getEntity();
                 if (current instanceof Wall && ((Wall)current).isSeen())
                     visibilityMatrix[point.getY()][point.getX()] = true;
+                else if (current instanceof Door && ((Door)current).isSeen())
+                    visibilityMatrix[point.getY()][point.getX()] = true;
                 if (visible && current != null && !current.canSeeThrough())
                     visible = false;
             }
@@ -194,6 +196,8 @@ public class Dungeon {
                 visibilityMatrix[y][x] &= !intersection.isEmpty();
                 if (visibilityMatrix[y][x] && this.map[y][x].getEntity() instanceof Wall)
                     ((Wall) this.map[y][x].getEntity()).setAsSeen();
+                else if (visibilityMatrix[y][x] && this.map[y][x].getEntity() instanceof Door)
+                    ((Door) this.map[y][x].getEntity()).setAsSeen();
             }
         return visibilityMatrix;
     }

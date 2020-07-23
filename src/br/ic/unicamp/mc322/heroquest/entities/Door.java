@@ -4,6 +4,7 @@ import br.ic.unicamp.mc322.heroquest.auxiliars.Point;
 
 public class Door extends Entity {
     private boolean open;
+    private boolean seen;
 
     public Door(Point position) {
         super(position, false);
@@ -35,4 +36,8 @@ public class Door extends Entity {
     public void close() {
         this.open = false;
     }
+
+    public void setAsSeen() { this.seen = true; }
+
+    public boolean isSeen() { return this.seen; }
 }
