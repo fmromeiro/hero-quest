@@ -69,16 +69,19 @@ public class HeroQuest {
         this.dungeon = createDefaultMap();
         this.dungeon.addEntity(new Door(), new Point(15, 8));
         this.dungeon.addEntity(Character.getDefaultHero("Player"), new Point(16, 9));
-        this.dungeon.addEntity(Character.getMeleeSkeleton("Skeleton"), new Point(32, 25));
-        //Renderer.printVisibleMap(dungeon);
-        Renderer.printWholeMap(dungeon);
+//        this.dungeon.addEntity(Character.getMeleeSkeleton("Skeleton"), new Point(16, 25));
+//        this.dungeon.addEntity(Character.getSkeletonMage("Skeleton Mage"), new Point(34, 25));
+//        this.dungeon.addEntity(Character.getGoblin("Goblin"), new Point(32, 25));
+        Renderer.printVisibleMap(dungeon);
+//        Renderer.printWholeMap(dungeon);
     }
 
     public void mainLoop() {
         List<Entity> entities = this.dungeon.getEntities().stream().filter(ent -> ent instanceof Character).collect(Collectors.toUnmodifiableList());
         for (Entity entity : entities) {
             this.handleTurn(entity);
-            Renderer.printWholeMap(dungeon);
+//            Renderer.printWholeMap(dungeon);
+            Renderer.printVisibleMap(dungeon);
         }
     }
 

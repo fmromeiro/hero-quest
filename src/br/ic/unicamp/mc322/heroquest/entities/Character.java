@@ -65,10 +65,18 @@ public class Character implements Entity {
     }
 
     public static Enemy getMeleeSkeleton(String name) {
-        Enemy skeleton = new Enemy(name, 2, 2, 1, 0, "SK",EnemyFunctions.followHero, null);
+        Enemy skeleton = new Enemy(name, 2, 2, 1, 0, "SK", 6, EnemyFunctions.moveRandomly, null);
         return skeleton;
     }
 
+    public static Enemy getSkeletonMage(String name) {
+        Enemy skeletonMage = new Enemy(name, 2, 2, 1, 0, "SM", 6, EnemyFunctions.moveRandomly, null);
+        return skeletonMage;
+    }
+    public static Enemy getGoblin(String name) {
+        Enemy goblin = new Enemy(name, 2, 1, 1, 1, "GB", 10, EnemyFunctions.followHero, null);
+        return goblin;
+    }
     public void takeDamage(int damage) {
         this.currentBodyPoints = Math.max(this.currentBodyPoints - damage, 0);
     }

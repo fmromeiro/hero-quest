@@ -101,6 +101,9 @@ public class EnemyFunctions {
 
         Point[] possibleSteps = { new Point(0, -1), new Point(1, 0), new Point(0, 1), new Point(-1, 0) };
 
+        int bestPathCost = Integer.MAX_VALUE;
+        List<Point> bestPath = null;
+
         while (!openSet.isEmpty()) {
             Point current = openSet.poll();
             if (current.equals(goal))
@@ -108,6 +111,14 @@ public class EnemyFunctions {
 
             if (!current.equals(start) && obstacles.stream().anyMatch(ent -> ent.getPosition().equals(current)))
                 continue;
+
+            if (Point.manhattanDistance(current, goal) < bestPathCost) {
+                bestPathCost = Point.manhattanDistance(current, goal);
+                bestPath = reconstructPath(cameFrom, current);
+            }
+
+            if (openSet.size() > 100 && reconstructPath(cameFrom, current).size() >= 50)
+                return bestPath;
 
             for (Point step : possibleSteps) {
                 Point destination = Point.sum(current, step);

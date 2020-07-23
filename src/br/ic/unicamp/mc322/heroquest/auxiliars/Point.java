@@ -1,5 +1,7 @@
 package br.ic.unicamp.mc322.heroquest.auxiliars;
 
+import java.util.Objects;
+
 public class Point {
     public enum Direction {
         UP (new Point(0, -1)),
@@ -31,6 +33,13 @@ public class Point {
     public int getY() { return this.y; }
 
     public boolean equals(Point other) { return this.x == other.x && this.y == other.y; }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        if (other == null || getClass() != other.getClass()) return false;
+        return this.equals((Point)other);
+    }
 
     public static Point sum(Point a, Point b) {
         return new Point(a.x + b.x, a.y + b.y);

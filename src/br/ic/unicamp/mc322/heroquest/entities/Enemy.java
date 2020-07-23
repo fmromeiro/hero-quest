@@ -11,15 +11,22 @@ import java.util.function.Function;
 public class Enemy extends Character {
     protected final BiFunction<Enemy, List<Entity>,  List<Point>> moverFunction;
     protected final BiConsumer<Enemy, List<Entity>> attackerFunction;
+    protected final int movementSquares;
 
     protected Enemy(String name, int attackDice, int defendDice,
                     int baseBodyPoints, int mindPoints,
-                    String stringRepresentation,
+                    String stringRepresentation, int movementSquares,
                     BiFunction<Enemy, List<Entity>,  List<Point>> moverFunction,
                     BiConsumer<Enemy, List<Entity>> attackerFunction) {
         super(name, attackDice, defendDice, baseBodyPoints, mindPoints, stringRepresentation, false);
+        this.movementSquares = movementSquares;
         this.moverFunction = moverFunction;
         this.attackerFunction = attackerFunction;
+    }
+
+    @Override
+    public int getSteps() {
+        return this.movementSquares;
     }
 
     public List<Point> getMovement(List<Entity> entities) { return this.moverFunction.apply(this, entities); }
