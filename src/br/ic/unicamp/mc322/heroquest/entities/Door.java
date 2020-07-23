@@ -40,10 +40,6 @@ public class Door implements StaticEntity {
         this.open = true;
     }
 
-    public void close() {
-        this.open = false;
-    }
-
     @Override
     public void setAsSeen() {
         this.seen = true;

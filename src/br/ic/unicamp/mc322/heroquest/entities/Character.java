@@ -64,6 +64,11 @@ public class Character implements Entity {
         return new Character(name, 2, 2, 10, 5, "ME", true);
     }
 
+    public static Enemy getMeleeSkeleton(String name) {
+        Enemy skeleton = new Enemy(name, 2, 2, 1, 0, "ME",EnemyFunctions.moveRandomly, null);
+        return skeleton;
+    }
+
     public void takeDamage(int damage) {
         this.currentBodyPoints = Math.max(this.currentBodyPoints - damage, 0);
     }
