@@ -65,7 +65,7 @@ public class Character implements Entity {
     }
 
     public static Enemy getMeleeSkeleton(String name) {
-        Enemy skeleton = new Enemy(name, 2, 2, 1, 0, "ME",EnemyFunctions.moveRandomly, null);
+        Enemy skeleton = new Enemy(name, 2, 2, 1, 0, "SK",EnemyFunctions.followHero, null);
         return skeleton;
     }
 

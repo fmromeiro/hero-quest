@@ -22,6 +22,6 @@ public class Enemy extends Character {
         this.attackerFunction = attackerFunction;
     }
 
-    BiFunction<Enemy, List<Entity>,  List<Point>> moverFunction() { return this.moverFunction; }
-    BiConsumer<Enemy, List<Entity>> attackerFunction() { return this.attackerFunction; };
+    public List<Point> getMovement(List<Entity> entities) { return this.moverFunction.apply(this, entities); }
+    public void getAttackerFunction(List<Entity> entities) { this.attackerFunction.accept(this, entities); };
 }

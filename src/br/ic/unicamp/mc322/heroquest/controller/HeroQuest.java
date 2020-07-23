@@ -1,9 +1,7 @@
 package br.ic.unicamp.mc322.heroquest.controller;
 
 import br.ic.unicamp.mc322.heroquest.auxiliars.Point;
-import br.ic.unicamp.mc322.heroquest.entities.Door;
-import br.ic.unicamp.mc322.heroquest.entities.Dungeon;
-import br.ic.unicamp.mc322.heroquest.entities.Entity;
+import br.ic.unicamp.mc322.heroquest.entities.*;
 import br.ic.unicamp.mc322.heroquest.entities.Character;
 
 import javax.swing.text.Position;
@@ -71,14 +69,16 @@ public class HeroQuest {
         this.dungeon = createDefaultMap();
         this.dungeon.addEntity(new Door(), new Point(15, 8));
         this.dungeon.addEntity(Character.getDefaultHero("Player"), new Point(16, 9));
-        Renderer.printVisibleMap(dungeon);
+        this.dungeon.addEntity(Character.getMeleeSkeleton("Skeleton"), new Point(32, 25));
+        //Renderer.printVisibleMap(dungeon);
+        Renderer.printWholeMap(dungeon);
     }
 
     public void mainLoop() {
         List<Entity> entities = this.dungeon.getEntities().stream().filter(ent -> ent instanceof Character).collect(Collectors.toUnmodifiableList());
         for (Entity entity : entities) {
             this.handleTurn(entity);
-            Renderer.printVisibleMap(this.dungeon);
+            Renderer.printWholeMap(dungeon);
         }
     }
 
@@ -89,9 +89,10 @@ public class HeroQuest {
     }
 
     public void handleTurn(Entity entity) {
-        if (entity instanceof Character) {
+        if (((Character) entity).isHero())
             handleMoveInput((Character)entity);
-        }
+        else if (entity instanceof Enemy)
+            handleEnemyMove((Enemy)entity);
     }
 
     public void handleMoveInput(Character hero) {
@@ -116,5 +117,11 @@ public class HeroQuest {
                         .forEach(ent -> ((Door)ent).open());
 
             }
+    }
+
+    public void handleEnemyMove(Enemy enemy) {
+        List<Point> path = enemy.getMovement(this.dungeon.getEntities());
+        if (path != null && path.size() > 1)
+            this.dungeon.moveEntity(enemy, path.get(path.size() - 2));
     }
 }
