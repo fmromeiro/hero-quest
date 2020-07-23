@@ -126,6 +126,7 @@ public class Character implements Entity {
     @Override
     public boolean canSeeThrough() {
         return this.isHero();
+    }
 
     public void selectItem(int index) {
         Item item = inventory.getItem(index);
