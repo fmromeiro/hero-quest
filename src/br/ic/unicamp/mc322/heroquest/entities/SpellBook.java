@@ -1,5 +1,6 @@
 package br.ic.unicamp.mc322.heroquest.entities;
 
+import br.ic.unicamp.mc322.heroquest.auxiliars.Point;
 import br.ic.unicamp.mc322.heroquest.spells.Spell;
 
 import java.util.ArrayList;
@@ -26,9 +27,9 @@ public class SpellBook {
         return spellBook.get(index);
     }
 
-    public boolean castSpell(int index, Character target) {
+    public boolean castSpell(int index, Character source, Point target, Tile[][] map) throws Exception {
         if(itemAt(index).hasCharge()) {
-            itemAt(index).castSpell(target);
+            itemAt(index).castSpell(source.getPosition(), target, map);
             itemAt(index).useCharge();
             return true;
         } else return false;

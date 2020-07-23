@@ -143,10 +143,10 @@ public abstract class Character extends Entity {
     }
 
     public int attack() {
-        return Dice.throwDice(attackDice, Dice.DiceValue.SKULL);
+        return Dice.rollCombatDice(attackDice, Dice.DiceValue.SKULL);
     }
     public int defend() {
-        return Dice.throwDice(defendDice, defendDiceValue);
+        return Dice.rollCombatDice(defendDice, defendDiceValue);
     }
 
     @Override
