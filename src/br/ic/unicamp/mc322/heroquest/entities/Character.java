@@ -1,5 +1,6 @@
 package br.ic.unicamp.mc322.heroquest.entities;
 
+import br.ic.unicamp.mc322.heroquest.auxiliars.Dice;
 import br.ic.unicamp.mc322.heroquest.auxiliars.Point;
 import br.ic.unicamp.mc322.heroquest.items.Consumable;
 import br.ic.unicamp.mc322.heroquest.items.Equipment;
@@ -35,6 +36,8 @@ public class Character implements Entity {
     private int mindPoints;
     private int currentBodyPoints;
 
+    private Dice.DiceValue defendDiceValue;
+
     private Point position;
 
     private final String stringRepresentation;
@@ -44,8 +47,7 @@ public class Character implements Entity {
 
     private Inventory inventory;
     private Map<String, Equipment> body;
-
-    protected Character(String name, int attackDice, int defendDice, int baseBodyPoints, int mindPoints, String stringRepresentation, boolean isHero) {
+    protected Character(String name, int attackDice, int defendDice, int baseBodyPoints, int mindPoints, String stringRepresentation, boolean isHero, Dice.DiceValue defendDiceValue) {
         this.name = name;
         this.attackDice = attackDice;
         this.defendDice = defendDice;
@@ -61,7 +63,7 @@ public class Character implements Entity {
         this.body = new HashMap<>();
     }
     public static Character getDefaultHero(String name) {
-        return new Character(name, 2, 2, 10, 5, "ME", true);
+        return new Character(name, 2, 2, 10, 5, "ME", true, Dice.DiceValue.HERO_SHIELD);
     }
 
     public static Enemy getMeleeSkeleton(String name) {
@@ -185,6 +187,13 @@ public class Character implements Entity {
                 }
             }
         }
+    }
+
+    public int attack() {
+        return Dice.throwDice(attackDice, Dice.DiceValue.SKULL);
+    }
+    public int defend() {
+        return Dice.throwDice(defendDice, defendDiceValue);
     }
 
     @Override

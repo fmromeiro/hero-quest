@@ -1,5 +1,6 @@
 package br.ic.unicamp.mc322.heroquest.entities;
 
+import br.ic.unicamp.mc322.heroquest.auxiliars.Dice;
 import br.ic.unicamp.mc322.heroquest.auxiliars.Point;
 
 import java.util.List;
@@ -18,7 +19,7 @@ public class Enemy extends Character {
                     String stringRepresentation, int movementSquares,
                     BiFunction<Enemy, List<Entity>,  List<Point>> moverFunction,
                     BiConsumer<Enemy, List<Entity>> attackerFunction) {
-        super(name, attackDice, defendDice, baseBodyPoints, mindPoints, stringRepresentation, false);
+        super(name, attackDice, defendDice, baseBodyPoints, mindPoints, stringRepresentation, false, Dice.DiceValue.MONSTER_SHIELD);
         this.movementSquares = movementSquares;
         this.moverFunction = moverFunction;
         this.attackerFunction = attackerFunction;
