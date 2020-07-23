@@ -11,8 +11,9 @@
 - ai
 - auxiliars
 - items
-    - durable (armaduras e tal)
-    - consumable (poções. magias e tal)
+    - equipment (armaduras e tal)
+    - consumable (poções e tal)
+- spells
 
 ---
 
