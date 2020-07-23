@@ -71,8 +71,8 @@ public abstract class Character extends Entity {
         }
     }
 
-    public int addModifier(Attribute attribute, int modifier) {
-        statusModifiers.put(this.statusModifierIndex, new StatusModifier(attribute, modifier));
+    public int addModifier(StatusModifier modifier) {
+        statusModifiers.put(this.statusModifierIndex, new StatusModifier(modifier.getAttribute(), modifier.getModifier()));
         this.statusModifierIndex++;
         return this.statusModifierIndex - 1;
     }

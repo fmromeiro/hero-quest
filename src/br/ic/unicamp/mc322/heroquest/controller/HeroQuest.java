@@ -76,7 +76,7 @@ public class HeroQuest {
     }
 
     public void mainLoop() {
-        List<Entity> entities = this.dungeon.getEntities().stream().filter(ent -> ent instanceof Character).collect(Collectors.toUnmodifiableList());
+        List<Entity> entities = this.dungeon.getEntities().stream().filter(ent -> ent instanceof Character).collect(Collectors.toList());
         for (Entity entity : entities) {
             this.handleTurn(entity);
             Renderer.printVisibleMap(this.dungeon);

@@ -1,5 +1,7 @@
 package br.ic.unicamp.mc322.heroquest.spells;
 
+import br.ic.unicamp.mc322.heroquest.entities.Character;
+
 public abstract class Spell {
     public enum Element {
         WATER("Water Spell"),
@@ -17,10 +19,12 @@ public abstract class Spell {
     private final String name;
     private final Element element;
     private final int range;
-    public Spell(String name, Element spellElement, int range) {
+    private int quantity;
+    public Spell(String name, Element spellElement, int range, int quantity) {
         this.name = name;
         this.element = spellElement;
         this.range = range;
+        this.quantity = quantity;
     }
 
     public Element getElement() {
@@ -34,4 +38,19 @@ public abstract class Spell {
     public int getRange() {
         return range;
     }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public boolean hasCharge() {
+        return quantity > 0;
+    }
+
+    public void useCharge() {
+        if(hasCharge()) quantity--;
+    }
+
+    public abstract void castSpell(Character target);
+
 }
