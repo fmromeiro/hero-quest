@@ -1,5 +1,6 @@
 package br.ic.unicamp.mc322.heroquest.entities;
 
+import br.ic.unicamp.mc322.heroquest.auxiliars.Dice;
 import br.ic.unicamp.mc322.heroquest.auxiliars.Point;
 import br.ic.unicamp.mc322.heroquest.items.Consumable;
 import br.ic.unicamp.mc322.heroquest.items.Equipment;
@@ -34,9 +35,11 @@ public abstract class Character extends Entity {
     private int mindPoints;
     private int currentBodyPoints;
 
+    private Dice.DiceValue defendDiceValue;
+
     private Inventory inventory;
     private Map<String, Equipment> body;
-    public Character(String name, int attackDice, int defendDice, int baseBodyPoints, int mindPoints, Point point, boolean seeThrough) {
+    public Character(String name, int attackDice, int defendDice, int baseBodyPoints, int mindPoints, Point point, Dice.DiceValue defendDiceValue, boolean seeThrough) {
         super(point, seeThrough);
         this.name = name;
         this.attackDice = attackDice;
@@ -137,6 +140,13 @@ public abstract class Character extends Entity {
                 }
             }
         }
+    }
+
+    public int attack() {
+        return Dice.throwDice(attackDice, Dice.DiceValue.SKULL);
+    }
+    public int defend() {
+        return Dice.throwDice(defendDice, defendDiceValue);
     }
 
     @Override
