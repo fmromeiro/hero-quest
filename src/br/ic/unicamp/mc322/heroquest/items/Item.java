@@ -19,4 +19,6 @@ public abstract class Item {
     public StatusModifier getModifier() {
         return modifier;
     }
+
+    public abstract Item copy();
 }
