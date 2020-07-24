@@ -7,11 +7,13 @@ import java.util.stream.Collectors;
 
 public class Dungeon {
     public final static int WIDTH = 36, HEIGHT = 27;
+
     private final Tile[][] map;
     private final Set<Integer> visitedRooms;
     private final Set<Integer> openRooms;
     private final List<Tile> visitedTiles;
     private int nextRoomId;
+
 
     private static Dungeon instance = null;
 
