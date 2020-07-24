@@ -32,4 +32,8 @@ public class Dice {
     public static List<Integer> rollNumberDice(int qtt, int sides) {
         return dice.ints(qtt, 1, sides + 1).boxed().collect(Collectors.toList());
     }
+
+    public static int rollNumberDiceSum(int qtt, int sides) {
+        return dice.ints(qtt, 1, sides + 1).sum();
+    }
 }
