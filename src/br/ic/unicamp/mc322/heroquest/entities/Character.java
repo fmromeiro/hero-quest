@@ -44,9 +44,6 @@ public class Character implements Entity {
     private Point position;
 
     private final String stringRepresentation;
-    private final boolean isHero;
-
-    private static final Random rng = new Random();
 
     private Inventory inventory;
     private Map<String, Equipment> body;
@@ -55,7 +52,7 @@ public class Character implements Entity {
 
     private final int RIGHT_HAND = 0;
     private final int LEFT_HAND = 1;
-    protected Character(String name, int attackDice, int defendDice, int baseBodyPoints, int mindPoints, String stringRepresentation, boolean isHero, Dice.CombatDiceValue defendDiceValue) {
+    protected Character(String name, int attackDice, int defendDice, int baseBodyPoints, int mindPoints, String stringRepresentation, Dice.CombatDiceValue defendDiceValue) {
         this.name = name;
         this.attackDice = attackDice;
         this.defendDice = defendDice;
@@ -66,13 +63,12 @@ public class Character implements Entity {
         this.statusModifierIndex = 0;
         this.stringRepresentation = stringRepresentation;
         this.defendDiceValue = defendDiceValue;
-        this.isHero = isHero;
         this.inventory = new Inventory();
         this.body = new HashMap<>();
         this.hands = new Equipment[2];
     }
     public static Character getDefaultHero(String name) {
-        return new Character(name, 2, 2, 10, 5, "ME", true, Dice.CombatDiceValue.HERO_SHIELD);
+        return new Character(name, 2, 2, 10, 5, "ME", Dice.CombatDiceValue.HERO_SHIELD);
     }
 
     public static Enemy getMeleeSkeleton(String name) {
@@ -142,7 +138,7 @@ public class Character implements Entity {
                 .sum();
     }
 
-    public boolean isHero() { return this.isHero; }
+    public boolean isHero() { return this.defendDiceValue == Dice.CombatDiceValue.HERO_SHIELD; }
 
     @Override
     public Point getPosition() {
