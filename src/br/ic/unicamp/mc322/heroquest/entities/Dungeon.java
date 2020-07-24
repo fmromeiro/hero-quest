@@ -249,42 +249,4 @@ public class Dungeon {
             }
         return visibilityMatrix;
     }
-<<<<<<< HEAD
-=======
-
-    public Character getHero() {
-        return Arrays.stream(this.map)
-                .flatMap(Arrays::stream)
-                .filter(tile -> tile.getEntity() instanceof Character)
-                .map(tile -> (Character)tile.getEntity())
-                .filter(Character::isHero)
-                .findAny().orElse(null);
-    }
-
-    public void moveEntity(Entity entity, Point whereTo) {
-        Tile possibleEntity = Arrays.stream(this.map)
-                .flatMap(Arrays::stream)
-                .filter(tile -> tile.getEntity() == entity)
-                .findAny().orElse(null);
-        if (possibleEntity == null)
-            return;
-
-        possibleEntity.removeEntity();
-
-        if (map[whereTo.getY()][whereTo.getX()].canSetEntity())
-            map[whereTo.getY()][whereTo.getX()].setEntity(entity);
-
-        if (entity instanceof Character && ((Character) entity).isHero()) {
-            this.visitedRooms.addAll(this.map[whereTo.getY()][whereTo.getX()].getRooms());
-        }
-    }
-
-    public List<Entity> getEntities() {
-        return Arrays.stream(this.map)
-                .flatMap(Arrays::stream)
-                .map(Tile::getEntity)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-    }
->>>>>>> master
 }
