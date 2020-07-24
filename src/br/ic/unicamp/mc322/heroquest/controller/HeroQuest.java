@@ -13,11 +13,10 @@ import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class HeroQuest {
-    private Dungeon dungeon;
     private final Scanner scanner = new Scanner(System.in);
 
-    private static Dungeon createDefaultMap() {
-        Dungeon dungeon = new Dungeon(36, 27);
+    private static void createDefaultMap() {
+        Dungeon dungeon = Dungeon.getInstance();
 
         // Sala 0 - Corredores
         dungeon.addRoom(new Point(0, 0), new Point(35, 26));
@@ -59,27 +58,21 @@ public class HeroQuest {
         dungeon.addRoom(new Point(19, 18), new Point(24, 24));
         dungeon.addRoom(new Point(24, 19), new Point(28, 24));
         dungeon.addRoom(new Point(28, 19), new Point(33, 24));
-
-        return dungeon;
-    }
-
-    public void printMap() {
-        Renderer.printWholeMap(HeroQuest.createDefaultMap());
     }
 
     public void setUp() throws Exception {
         // randomizar inimigos, tesouros, armadilhas etc
-        this.dungeon = createDefaultMap();
-        this.dungeon.addEntity(new Door(new Point(15, 8)), new Point(15, 8));
-        this.dungeon.addEntity(new Hero("Player", 2, 2, 10, 5, new Point(1, 1)), new Point(16, 9));
-        Renderer.printVisibleMap(dungeon);
+        createDefaultMap();
+        Dungeon.getInstance().addEntity(new Door(new Point(15, 8)), new Point(15, 8));
+        Dungeon.getInstance().addEntity(new Hero("Player", 2, 2, 10, 5, new Point(1, 1)), new Point(16, 9));
+        Renderer.printVisibleMap(Dungeon.getInstance());
     }
 
     public void mainLoop() {
         List<Entity> entities = this.dungeon.getEntities().stream().filter(ent -> ent instanceof Character).collect(Collectors.toList());
         for (Entity entity : entities) {
             this.handleTurn(entity);
-            Renderer.printVisibleMap(this.dungeon);
+            Renderer.printVisibleMap(Dungeon.getInstance());
         }
     }
 
@@ -108,10 +101,10 @@ public class HeroQuest {
                     case "down": direction = Point.Direction.DOWN; break;
                     case "left": direction = Point.Direction.LEFT; break;
                 }
-                this.dungeon.moveEntity(hero, Point.sum(hero.getPosition(), direction.getPosition()));
+                Dungeon.getInstance().moveEntity(hero, Point.sum(hero.getPosition(), direction.getPosition()));
             }
             else if (commands[0].equals("open")) {
-                this.dungeon.getEntities().stream()
+                Dungeon.getInstance().getEntities().stream()
                         .filter(ent -> Point.manhattanDistance(hero.getPosition(), ent.getPosition()) == 1)
                         .filter(ent -> ent instanceof Door)
                         .forEach(ent -> ((Door)ent).open());
