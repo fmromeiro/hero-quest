@@ -10,11 +10,10 @@ import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class HeroQuest {
-    private Dungeon dungeon;
     private final Scanner scanner = new Scanner(System.in);
 
-    private static Dungeon createDefaultMap() {
-        Dungeon dungeon = new Dungeon(36, 27);
+    private static void createDefaultMap() {
+        Dungeon dungeon = Dungeon.getInstance();
 
         // Sala 0 - Corredores
         dungeon.addRoom(new Point(0, 0), new Point(35, 26));
@@ -56,32 +55,24 @@ public class HeroQuest {
         dungeon.addRoom(new Point(19, 18), new Point(24, 24));
         dungeon.addRoom(new Point(24, 19), new Point(28, 24));
         dungeon.addRoom(new Point(28, 19), new Point(33, 24));
-
-        return dungeon;
-    }
-
-    public void printMap() {
-        Renderer.printWholeMap(HeroQuest.createDefaultMap());
     }
 
     public void setUp() throws Exception {
         // randomizar inimigos, tesouros, armadilhas etc
-        this.dungeon = createDefaultMap();
-        this.dungeon.addEntity(new Door(), new Point(15, 8));
-        this.dungeon.addEntity(Character.getDefaultHero("Player"), new Point(16, 9));
-//        this.dungeon.addEntity(Character.getMeleeSkeleton("Skeleton"), new Point(16, 25));
-//        this.dungeon.addEntity(Character.getSkeletonMage("Skeleton Mage"), new Point(34, 25));
-//        this.dungeon.addEntity(Character.getGoblin("Goblin"), new Point(32, 25));
-        Renderer.printVisibleMap(dungeon);
-//        Renderer.printWholeMap(dungeon);
+        createDefaultMap();
+        Dungeon.getInstance().addEntity(new Door(), new Point(15, 8));
+        Dungeon.getInstance().addEntity(Character.getDefaultHero("Player"), new Point(16, 9));
+//        Dungeon.getInstance().addEntity(Character.getMeleeSkeleton("Skeleton"), new Point(16, 25));
+//        Dungeon.getInstance().addEntity(Character.getSkeletonMage("Skeleton Mage"), new Point(34, 25));
+//        Dungeon.getInstance().addEntity(Character.getGoblin("Goblin"), new Point(32, 25));
+        Renderer.printVisibleMap(Dungeon.getInstance());
     }
 
     public void mainLoop() {
-        List<Entity> entities = this.dungeon.getEntities().stream().filter(ent -> ent instanceof Character).collect(Collectors.toUnmodifiableList());
+        List<Entity> entities = Dungeon.getInstance().getEntities().stream().filter(ent -> ent instanceof Character).collect(Collectors.toList());
         for (Entity entity : entities) {
             this.handleTurn(entity);
-//            Renderer.printWholeMap(dungeon);
-            Renderer.printVisibleMap(dungeon);
+            Renderer.printVisibleMap(Dungeon.getInstance());
         }
     }
 
@@ -111,10 +102,10 @@ public class HeroQuest {
                     case "down": direction = Point.Direction.DOWN; break;
                     case "left": direction = Point.Direction.LEFT; break;
                 }
-                this.dungeon.moveEntity(hero, Point.sum(hero.getPosition(), direction.getPosition()));
+                Dungeon.getInstance().moveEntity(hero, Point.sum(hero.getPosition(), direction.getPosition()));
             }
             else if (commands[0].equals("open")) {
-                this.dungeon.getEntities().stream()
+                Dungeon.getInstance().getEntities().stream()
                         .filter(ent -> Point.manhattanDistance(hero.getPosition(), ent.getPosition()) == 1)
                         .filter(ent -> ent instanceof Door)
                         .forEach(ent -> ((Door)ent).open());
@@ -123,8 +114,8 @@ public class HeroQuest {
     }
 
     public void handleEnemyMove(Enemy enemy) {
-        List<Point> path = enemy.getMovement(this.dungeon.getEntities());
+        List<Point> path = enemy.getMovement(Dungeon.getInstance().getEntities());
         if (path != null && path.size() > 1)
-            this.dungeon.moveEntity(enemy, path.get(path.size() - 2));
+            Dungeon.getInstance().moveEntity(enemy, path.get(path.size() - 2));
     }
 }

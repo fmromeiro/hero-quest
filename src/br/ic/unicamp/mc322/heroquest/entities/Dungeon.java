@@ -6,17 +6,23 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Dungeon {
-    private final int width, height;
+    public final static int WIDTH = 36, HEIGHT = 27;
     private final Tile[][] map;
     private final Set<Integer> visitedRooms;
     private int nextRoomId;
 
-    public Dungeon(int width, int height) {
-        this.width = width;
-        this.height = height;
-        this.map = new Tile[height][width];
-        for (int i = 0; i < height*width; i++)
-            this.map[i/width][i%width] = new Tile(i%width, i/width);
+    private static Dungeon instance = null;
+
+    public static Dungeon getInstance() {
+        if (instance == null)
+            instance = new Dungeon();
+        return instance;
+    }
+
+    private Dungeon() {
+        this.map = new Tile[HEIGHT][WIDTH];
+        for (int i = 0; i < HEIGHT*WIDTH; i++)
+            this.map[i/WIDTH][i%WIDTH] = new Tile(i%WIDTH, i/WIDTH);
         this.visitedRooms = new HashSet<>();
         this.nextRoomId = 0;
     }
@@ -30,26 +36,26 @@ public class Dungeon {
     }
 
     public void setBordersToRoom(int roomId) {
-        for (int y = 1; y < height - 1; y++)
-            for (int x = 1; x < width - 1; x++)
+        for (int y = 1; y < HEIGHT - 1; y++)
+            for (int x = 1; x < WIDTH - 1; x++)
                 if (map[y][x].isInRoom(roomId))
                     if (!allAdjacentBelongToSameRoom(y, x, roomId))
                         map[y][x].setEntity(new Wall());
                     else
                         map[y][x].setEntity(null);
 
-        for (int y = 0; y < height; y++) {
+        for (int y = 0; y < HEIGHT; y++) {
             if (map[y][0].isInRoom(roomId))
                 map[y][0].setEntity(new Wall());
-            if (map[y][width - 1].isInRoom(roomId))
-                map[y][width - 1].setEntity(new Wall());
+            if (map[y][WIDTH - 1].isInRoom(roomId))
+                map[y][WIDTH - 1].setEntity(new Wall());
         }
 
-        for (int x = 0; x < width; x++) {
+        for (int x = 0; x < WIDTH; x++) {
             if (map[0][x].isInRoom(roomId))
                 map[0][x].setEntity(new Wall());
-            if (map[height - 1][x].isInRoom(roomId))
-                map[height - 1][x].setEntity(new Wall());
+            if (map[HEIGHT - 1][x].isInRoom(roomId))
+                map[HEIGHT - 1][x].setEntity(new Wall());
         }
     }
 
@@ -91,7 +97,7 @@ public class Dungeon {
         return result;
     }
 
-    public void addEntity(Entity entity, Point position) throws Exception {
+    public void addEntity(Entity entity, Point position) {
         this.map[position.getY()][position.getX()].setEntity(entity);
 
         if (entity instanceof Character && ((Character)entity).isHero()) {
@@ -100,15 +106,15 @@ public class Dungeon {
     }
 
     public boolean[][] getVisibilityFrom(Point position) {
-        boolean[][] visibilityMatrix = new boolean[height][width];
+        boolean[][] visibilityMatrix = new boolean[HEIGHT][WIDTH];
         LinkedList<Point[]> points = new LinkedList<>();
-        for (int i = 0; i < width; i++) {
+        for (int i = 0; i < WIDTH; i++) {
             points.add(Point.bresenhamLine(position, new Point(i, 0)));
-            points.add(Point.bresenhamLine(position, new Point(i, height - 1)));
+            points.add(Point.bresenhamLine(position, new Point(i, HEIGHT - 1)));
         }
-        for (int i = 0; i < height; i++) {
+        for (int i = 0; i < HEIGHT; i++) {
             points.add(Point.bresenhamLine(position, new Point(0, i)));
-            points.add(Point.bresenhamLine(position, new Point(width - 1, i)));
+            points.add(Point.bresenhamLine(position, new Point(WIDTH - 1, i)));
         }
         for (Point[] line : points) {
             boolean visible = true;
@@ -132,7 +138,7 @@ public class Dungeon {
         int midWidth = fovCenter.getX();
 
         // 1° quadrante
-        for (int y = midHeight; y < height; y++)
+        for (int y = midHeight; y < HEIGHT; y++)
             for (int x = 0; x <= midWidth; x++)
                 if ((!visibilityMatrix[y][x])
                         && (visibilityMatrix[y - 1][x]
@@ -143,19 +149,19 @@ public class Dungeon {
                     visibilityMatrix[y][x] = true;
 
         // 2° quadrante
-        for (int y = midHeight; y < height; y++)
-            for (int x = midWidth; x < width; x++)
-                if (!visibilityMatrix[y][x]
+        for (int y = midHeight; y < HEIGHT; y++)
+            for (int x = midWidth; x < WIDTH; x++)
+                if ((!visibilityMatrix[y][x])
                         && (visibilityMatrix[y - 1][x]
                             && this.map[y - 1][x].getEntity() == null
                             || visibilityMatrix[y][x - 1]
                             && this.map[y][x - 1].getEntity() == null)
                         && this.map[y][x].getEntity() instanceof StaticEntity)
-                            visibilityMatrix[y][x] = true;
+                    visibilityMatrix[y][x] = true;
 
         // 3º quadrante
         for (int y = 0; y <= midHeight; y++)
-            for (int x = midWidth; x < width; x++)
+            for (int x = midWidth; x < WIDTH; x++)
                 if ((!visibilityMatrix[y][x])
                         && (visibilityMatrix[y + 1][x]
                             && this.map[y + 1][x].getEntity() == null
@@ -178,13 +184,13 @@ public class Dungeon {
     }
 
     public boolean[][] getHeroVisibility() {
-        boolean[][] visibilityMatrix = new boolean[height][width];
+        boolean[][] visibilityMatrix = new boolean[HEIGHT][WIDTH];
         Character hero = getHero();
         if (hero == null)
             return visibilityMatrix;
         visibilityMatrix = getVisibilityFrom(hero.getPosition());
-        for (int y = 0; y < height; y++)
-            for (int x = 0; x < width; x++) {
+        for (int y = 0; y < HEIGHT; y++)
+            for (int x = 0; x < WIDTH; x++) {
                 HashSet<Integer> intersection = new HashSet<>(map[y][x].getRooms());
                 intersection.retainAll(this.visitedRooms);
                 visibilityMatrix[y][x] &= !intersection.isEmpty();
@@ -226,6 +232,6 @@ public class Dungeon {
                 .flatMap(Arrays::stream)
                 .map(Tile::getEntity)
                 .filter(Objects::nonNull)
-                .collect(Collectors.toUnmodifiableList());
+                .collect(Collectors.toList());
     }
 }
