@@ -237,6 +237,6 @@ public class Dungeon {
                 .flatMap(Arrays::stream)
                 .map(Tile::getEntity)
                 .filter(Objects::nonNull)
-                .collect(Collectors.toUnmodifiableList());
+                .collect(Collectors.toList());
     }
 }
