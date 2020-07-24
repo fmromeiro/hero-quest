@@ -38,6 +38,12 @@ Note que todas as salas se mantiveram iguais, salvo a sala no canto superior esq
 
 Para implementar a linha de visão, usamos o [Algoritmo de Bresenham][bresenham-line-algorithm] para detectar o que é visível para o jogador, nos baseando na implementação disponível no [RogueBasin][roguebasin-bresenham-python]. Também usamos a melhoria explicada [nesse site][bresenham-weird-borders], que trata alguns casos em que o algoritmo de Bresenham se comporta de forma estranha próximo a paredes. 
 
+### Inimigos
+
+Durante a implementação dos inimigos, percebemos que eles tinham muitos atributos em comum com os heróis, então fizemos ambos herdarem de uma classe concreta `Character`. Porém, como cada inimigo tinha uma inteligência artificial própria, ficamos em dúvida sobre duas possibilidades de como implementar os diferentes inimigos: uma possibilidade era criar uma classe para cada inimigo, enquanto outra era criar um getter para cada inimigo, baseando-nos no design pattern `Factory`, e usar Interfaces funcionais para definir os comportamentos dos inimigos, como no `Strategy`.
+
+Criando uma classe para cada inimigo, eles podem ser mais versáteis, definindo comportamentos próprios para funções de `Character`, ao custo de que seria difícil reutilizar o código. Usando Interfaces Funcionais, por outro lado, os inimigos são representados somente por instâncias, porém suas inteligências são intercambiáveis, facilitando o reuso de código por composição. Pesando esses prós e contras, optamos pela segunda implementação.
+
 [hero-quest-map]: https://i.imgur.com/Glt9wux.png
 [implemented-map]: https://i.imgur.com/cKFxcQA.png
 [bresenham-line-algorithm]: https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm

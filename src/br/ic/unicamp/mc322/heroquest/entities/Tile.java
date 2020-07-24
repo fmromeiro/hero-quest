@@ -44,7 +44,7 @@ public class Tile {
             this.secondaryEntity = this.currentEntity;
         this.currentEntity = entity;
         if (entity != null)
-            entity.moveTo(this.position);
+            entity.setPosition(this.position);
     }
 
     protected boolean isInRoom(int roomId) {
