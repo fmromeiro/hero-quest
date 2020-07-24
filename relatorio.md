@@ -7,6 +7,7 @@ Nesse relatório justificamos decisões de implementação tomadas em nosso prog
 - [Implementação](#implementação)
     - [Dungeon](#dungeon)
     - [Salas](#salas)
+    - [Spells](#spells)
 
 ## Implementação
 
@@ -37,6 +38,12 @@ Assim, em nossa nova versão o mapa original de _Hero's Quest_ teria o seguinte 
 Note que todas as salas se mantiveram iguais, salvo a sala no canto superior esquerdo do bloco inferior esquerdo.
 
 Para implementar a linha de visão, usamos o [Algoritmo de Bresenham][bresenham-line-algorithm] para detectar o que é visível para o jogador, nos baseando na implementação disponível no [RogueBasin][roguebasin-bresenham-python]. Também usamos a melhoria explicada [nesse site][bresenham-weird-borders], que trata alguns casos em que o algoritmo de Bresenham se comporta de forma estranha próximo a paredes. 
+
+### Spells
+
+A primeira implementação de `Spell` era bem parecida com a de `Enemy`, pois havia um `BiConsumer<Point, Point> castSpell` que implementava a lógica da magia. Porém, a vantagem de usar essa implementação em `Enemy` era que vários inimigos compartilhavam a mesma lógica, então com o reuso por composição diminuíamos os códigos repetidos. Diferentes Spells, porém, não compartilham implementação e, portanto, achamos melhor implementá-las usando herança.
+
+Outro motivo para usarmos herança é que, nas raras ocasiões em que Spells compartilham código, a funcionalidade base continua a mesma, só alterando parâmetros, como uma Fireball 2 que cause mais dano, por exemplo. Nesse cenário, seria mais fácil compartilhar funcionalidades utilizando herança do que composição. 
 
 [hero-quest-map]: https://i.imgur.com/Glt9wux.png
 [implemented-map]: https://i.imgur.com/cKFxcQA.png
