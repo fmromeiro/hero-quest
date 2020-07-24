@@ -5,10 +5,13 @@ import br.ic.unicamp.mc322.heroquest.auxiliars.Point;
 import br.ic.unicamp.mc322.heroquest.items.Consumable;
 import br.ic.unicamp.mc322.heroquest.items.Equipment;
 import br.ic.unicamp.mc322.heroquest.items.Item;
+import br.ic.unicamp.mc322.heroquest.items.Weapon;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.Map;
+import java.util.List;
 
 public class Character implements Entity {
 
@@ -47,6 +50,11 @@ public class Character implements Entity {
 
     private Inventory inventory;
     private Map<String, Equipment> body;
+    private Equipment[] hands;
+    private int selectedWeapon;
+
+    private final int RIGHT_HAND = 0;
+    private final int LEFT_HAND = 1;
     protected Character(String name, int attackDice, int defendDice, int baseBodyPoints, int mindPoints, String stringRepresentation, boolean isHero, Dice.DiceValue defendDiceValue) {
         this.name = name;
         this.attackDice = attackDice;
@@ -57,9 +65,11 @@ public class Character implements Entity {
         this.statusModifiers = new HashMap<>();
         this.statusModifierIndex = 0;
         this.stringRepresentation = stringRepresentation;
+        this.defendDiceValue = defendDiceValue;
         this.isHero = isHero;
         this.inventory = new Inventory();
         this.body = new HashMap<>();
+        this.hands = new Equipment[2];
     }
     public static Character getDefaultHero(String name) {
         return new Character(name, 2, 2, 10, 5, "ME", true, Dice.DiceValue.HERO_SHIELD);
@@ -89,12 +99,11 @@ public class Character implements Entity {
     public boolean isAlive() { return this.currentBodyPoints > 0; }
 
     public int getAttribute(Attribute attribute) {
-        int modifier = this.getModifiersFor(attribute);
         switch (attribute) {
-            case ATTACKDICE: return this.attackDice + modifier;
-            case DEFENDDICE: return this.defendDice + modifier;
-            case BASEBODYPOINTS: return this.baseBodyPoints + modifier;
-            case MINDPOINTS: return this.mindPoints + modifier;
+            case ATTACKDICE: return this.attackDice + this.getModifiersFor(attribute, false);
+            case DEFENDDICE: return this.defendDice + this.getModifiersFor(attribute, true);
+            case BASEBODYPOINTS: return this.baseBodyPoints + this.getModifiersFor(attribute, true);
+            case MINDPOINTS: return this.mindPoints + this.getModifiersFor(attribute, true);
             default: return 0;
         }
     }
@@ -113,13 +122,21 @@ public class Character implements Entity {
         return rng.ints(1, 7).limit(2).sum();
     }
 
-    private int getModifiersFor(Attribute attribute) {
+    private int getModifiersFor(Attribute attribute, boolean handItemsModifiers) {
         return this.statusModifiers
                 .values().stream()
                 .filter(x -> x.getAttribute() == attribute)
                 .mapToInt(StatusModifier::getModifier)
                 .sum() +
                 this.body.values().stream()
+                .filter(x -> x.getModifier().getAttribute() == attribute)
+                .mapToInt(x -> x.getModifier().getModifier())
+                .sum() +
+                (handItemsModifiers ? getHandItemsModifierFor(attribute) : 0);
+    }
+
+    private int getHandItemsModifierFor(Attribute attribute) {
+        return Arrays.stream(this.hands)
                 .filter(x -> x.getModifier().getAttribute() == attribute)
                 .mapToInt(x -> x.getModifier().getModifier())
                 .sum();
@@ -153,23 +170,31 @@ public class Character implements Entity {
     public void equip(Equipment equipment) {
         String key = equipment.getCategory().getCategoryName();
         if(key.equals("ONE_HAND"))
-            if(body.get("RIGHT_HAND") == null)
-                body.put("RIGHT_HAND", equipment);
+            if(hands[RIGHT_HAND] == null)
+                hands[RIGHT_HAND] = equipment;
             else {
-                inventory.addItem(body.remove("LEFT_HAND"));
-                body.put("LEFT_HAND", equipment);
+                inventory.addItem(hands[LEFT_HAND]);
+                hands[LEFT_HAND] = equipment;
             }
         else
         if(key.equals("TWO_HAND")) {
-            inventory.addItem(body.remove("RIGHT_HAND"));
-            body.put("RIGHT_HAND", equipment);
-            inventory.addItem(body.remove("LEFT_HAND"));
-            body.put("LEFT_HAND", equipment);
+            inventory.addItem(hands[RIGHT_HAND]);
+            hands[RIGHT_HAND] = equipment;
+            inventory.addItem(hands[LEFT_HAND]);
+            hands[LEFT_HAND] = equipment;
         }
         else {
             inventory.addItem(body.remove(key));
             body.put(key, equipment);
         }
+    }
+
+    public int getAttackDamage() {
+        return attackDice + getModifiersFor(Attribute.ATTACKDICE, false);
+    }
+
+    public int getDefendDice() {
+        return defendDice + getModifiersFor(Attribute.DEFENDDICE, true);
     }
 
     public void equip(int index, char hand) {
@@ -178,21 +203,55 @@ public class Character implements Entity {
             Equipment equipment = (Equipment) inventory.getItem(index);
             if (equipment.getCategory() == Equipment.Category.ONEHAND) {
                 if (hand == 'r') {
-                    inventory.addItem(body.remove("RIGHT_HAND"));
-                    body.put("RIGHT_HAND", equipment);
+                    inventory.addItem(hands[RIGHT_HAND]);
+                    hands[RIGHT_HAND] = equipment;
                 } else if (hand == 'l') {
-                    inventory.addItem(body.remove("LEFT_HAND"));
-                    body.put("LEFT_HAND", equipment);
+                    inventory.addItem(hands[LEFT_HAND]);
+                    hands[LEFT_HAND] = equipment;
                 }
             }
         }
     }
 
-    public int attack() {
-        return Dice.throwDice(attackDice, Dice.DiceValue.SKULL);
+    public void chooseWeapon(int hand) throws Exception {
+        this.selectedWeapon = hand;
     }
+
+
+
+    public void attack(Character target) throws Exception {
+        List<Point> line = Arrays.asList(Point.bresenhamLine(this.getPosition(), target.getPosition()));
+        Tile[][] map = Dungeon.getInstance().getMap();
+        int distance = line.size();
+        if (distance > 2 && line.subList(1, line.size()).stream().anyMatch(point -> {
+                    Entity current = map[point.getY()][point.getX()].getEntity();
+                    return current != null && !current.canSeeThrough();
+                }))
+            throw new Exception("Can't see target");
+
+        int weaponDamage = hands[selectedWeapon] != null && hands[selectedWeapon] instanceof Weapon ? hands[selectedWeapon].getModifier().getModifier() : 0;
+        int weaponRange = hands[selectedWeapon] != null && hands[selectedWeapon] instanceof Weapon ? ((Weapon)hands[selectedWeapon]).getRange() : 1;
+
+        if(weaponRange < distance)
+            throw new Exception("Out of range target");
+
+        int attackDamage = Dice.throwDice(this.getAttackDamage() + weaponDamage, Dice.DiceValue.SKULL);
+        for(Map.Entry<String, Equipment> entry : body.entrySet()) {
+            Equipment e = entry.getValue();
+            if (e.getModifier().getAttribute() == Attribute.ATTACKDICE && e.isSingleUse())
+                body.remove(entry.getKey());
+        }
+        target.takeDamage(attackDamage - target.defend());
+    }
+
     public int defend() {
-        return Dice.throwDice(defendDice, defendDiceValue);
+        int defenseValue = Dice.throwDice(this.getDefendDice(), defendDiceValue);
+        for(Map.Entry<String, Equipment> entry : body.entrySet()) {
+            Equipment e = entry.getValue();
+            if (e.getModifier().getAttribute() == Attribute.DEFENDDICE && e.isSingleUse())
+                body.remove(entry.getKey());
+        }
+        return defenseValue;
     }
 
     @Override
