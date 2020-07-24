@@ -1,10 +1,7 @@
 package br.ic.unicamp.mc322.heroquest.controller;
 
 import br.ic.unicamp.mc322.heroquest.auxiliars.Point;
-import br.ic.unicamp.mc322.heroquest.entities.Door;
-import br.ic.unicamp.mc322.heroquest.entities.Dungeon;
-import br.ic.unicamp.mc322.heroquest.entities.Entity;
-import br.ic.unicamp.mc322.heroquest.entities.Hero;
+import br.ic.unicamp.mc322.heroquest.entities.*;
 import br.ic.unicamp.mc322.heroquest.entities.Character;
 
 import javax.swing.text.Position;
@@ -63,15 +60,22 @@ public class HeroQuest {
     public void setUp() throws Exception {
         // randomizar inimigos, tesouros, armadilhas etc
         createDefaultMap();
-        Dungeon.getInstance().addEntity(new Door(new Point(15, 8)), new Point(15, 8));
-        Dungeon.getInstance().addEntity(new Hero("Player", 2, 2, 10, 5, new Point(1, 1)), new Point(16, 9));
+        Dungeon.getInstance().addEntity(new Door(), new Point(15, 8));
+        Dungeon.getInstance().addEntity(Character.getDefaultHero("Player"), new Point(16, 9));
+//        Dungeon.getInstance().addEntity(Character.getMeleeSkeleton("Skeleton"), new Point(16, 25));
+//        Dungeon.getInstance().addEntity(Character.getSkeletonMage("Skeleton Mage"), new Point(34, 25));
+//        Dungeon.getInstance().addEntity(Character.getGoblin("Goblin"), new Point(32, 25));
         Renderer.printVisibleMap(Dungeon.getInstance());
     }
 
     public void mainLoop() {
+<<<<<<< HEAD
         List<Entity> entities = Dungeon.getInstance().getEntities().stream()
                 .filter(ent -> ent instanceof Character)
                 .collect(Collectors.toList());
+=======
+        List<Entity> entities = Dungeon.getInstance().getEntities().stream().filter(ent -> ent instanceof Character).collect(Collectors.toList());
+>>>>>>> master
         for (Entity entity : entities) {
             this.handleTurn(entity);
             Renderer.printVisibleMap(Dungeon.getInstance());
@@ -85,12 +89,13 @@ public class HeroQuest {
     }
 
     public void handleTurn(Entity entity) {
-        if (entity instanceof Hero) {
-            handleMoveInput((Hero)entity);
-        }
+        if (((Character) entity).isHero())
+            handleMoveInput((Character)entity);
+        else if (entity instanceof Enemy)
+            handleEnemyMove((Enemy)entity);
     }
 
-    public void handleMoveInput(Hero hero) {
+    public void handleMoveInput(Character hero) {
         System.out.println("Player's turn");
         String input = scanner.nextLine().toLowerCase();
         String[] commands = input.split("\\s+");
@@ -112,5 +117,11 @@ public class HeroQuest {
                         .forEach(ent -> ((Door)ent).open());
 
             }
+    }
+
+    public void handleEnemyMove(Enemy enemy) {
+        List<Point> path = enemy.getMovement(Dungeon.getInstance().getEntities());
+        if (path != null && path.size() > 1)
+            Dungeon.getInstance().moveEntity(enemy, path.get(path.size() - 2));
     }
 }

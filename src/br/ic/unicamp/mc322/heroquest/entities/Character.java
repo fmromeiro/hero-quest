@@ -7,9 +7,10 @@ import br.ic.unicamp.mc322.heroquest.items.Equipment;
 import br.ic.unicamp.mc322.heroquest.items.Item;
 
 import java.util.HashMap;
+import java.util.Random;
 import java.util.Map;
 
-public abstract class Character extends Entity {
+public class Character implements Entity {
 
     public enum Attribute {
         ATTACKDICE("Attack Dice"),
@@ -35,12 +36,17 @@ public abstract class Character extends Entity {
     private int mindPoints;
     private int currentBodyPoints;
 
-    private Dice.DiceValue defendDiceValue;
+    private Point position;
+
+    private final String stringRepresentation;
+    private final boolean isHero;
+
+    private static final Random rng = new Random();
 
     private Inventory inventory;
     private Map<String, Equipment> body;
-    public Character(String name, int attackDice, int defendDice, int baseBodyPoints, int mindPoints, Point point, Dice.DiceValue defendDiceValue, boolean seeThrough) {
-        super(point, seeThrough);
+
+    protected Character(String name, int attackDice, int defendDice, int baseBodyPoints, int mindPoints, String stringRepresentation, boolean isHero) {
         this.name = name;
         this.attackDice = attackDice;
         this.defendDice = defendDice;
@@ -49,10 +55,29 @@ public abstract class Character extends Entity {
         this.currentBodyPoints = baseBodyPoints;
         this.statusModifiers = new HashMap<>();
         this.statusModifierIndex = 0;
+        this.stringRepresentation = stringRepresentation;
+        this.isHero = isHero;
+
         this.inventory = new Inventory();
         this.body = new HashMap<>();
     }
+    public static Character getDefaultHero(String name) {
+        return new Character(name, 2, 2, 10, 5, "ME", true);
+    }
 
+    public static Enemy getMeleeSkeleton(String name) {
+        Enemy skeleton = new Enemy(name, 2, 2, 1, 0, "SK", 6, EnemyFunctions.moveRandomly, null);
+        return skeleton;
+    }
+
+    public static Enemy getSkeletonMage(String name) {
+        Enemy skeletonMage = new Enemy(name, 2, 2, 1, 0, "SM", 6, EnemyFunctions.moveRandomly, null);
+        return skeletonMage;
+    }
+    public static Enemy getGoblin(String name) {
+        Enemy goblin = new Enemy(name, 2, 1, 1, 1, "GB", 10, EnemyFunctions.followHero, null);
+        return goblin;
+    }
     public void takeDamage(int damage) {
         this.currentBodyPoints = Math.max(this.currentBodyPoints - damage, 0);
     }
@@ -84,6 +109,10 @@ public abstract class Character extends Entity {
         statusModifiers.remove(index);
     }
 
+    public int getSteps() {
+        return rng.ints(1, 7).limit(2).sum();
+    }
+
     private int getModifiersFor(Attribute attribute) {
         return this.statusModifiers
                 .values().stream()
@@ -94,6 +123,23 @@ public abstract class Character extends Entity {
                 .filter(x -> x.getModifier().getAttribute() == attribute)
                 .mapToInt(x -> x.getModifier().getModifier())
                 .sum();
+    }
+
+    public boolean isHero() { return this.isHero; }
+
+    @Override
+    public Point getPosition() {
+        return this.position;
+    }
+
+    @Override
+    public void setPosition(Point position) {
+        this.position = position;
+    }
+
+    @Override
+    public boolean canSeeThrough() {
+        return this.isHero();
     }
 
     public void selectItem(int index) {
@@ -152,5 +198,10 @@ public abstract class Character extends Entity {
     @Override
     public boolean canBeOverlapped() {
         return false;
+    }
+
+    @Override
+    public String getStringRepresentation() {
+        return this.stringRepresentation;
     }
 }

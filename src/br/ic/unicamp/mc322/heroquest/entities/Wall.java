@@ -2,11 +2,18 @@ package br.ic.unicamp.mc322.heroquest.entities;
 
 import br.ic.unicamp.mc322.heroquest.auxiliars.Point;
 
-public class Wall extends Entity{
+public class Wall implements StaticEntity {
     private boolean seen;
+    private Point position;
 
-    public Wall(Point position) {
-        super(position, false);
+    @Override
+    public Point getPosition() {
+        return this.position;
+    }
+
+    @Override
+    public void setPosition(Point position) {
+        this.position = this.position == null ? position : null;
     }
 
     @Override
@@ -18,9 +25,6 @@ public class Wall extends Entity{
     public boolean canBeOverlapped() {
         return false;
     }
-
-    @Override
-    public void moveTo(Point point) {}
 
     @Override
     public String getStringRepresentation() {
