@@ -4,10 +4,21 @@ Nesse relatório justificamos decisões de implementação tomadas em nosso prog
 
 ## Índice
 
-- [Implementação](#implementao)
+- [Implementação](#implementação)
+    - [Dungeon](#dungeon)
     - [Salas](#salas)
 
 ## Implementação
+
+### Dungeon
+
+Inicialmente, havíamos implementado `Dungeon`, a classe que mantém a informação de salas, formato do mapa e entidades, utilizando uma classe normal. Porém, nessa implementação encontramos dificuldades no desenvolvimento pois várias classes dependiam do mapa:
+
+ - Várias classes utilizavam o cálculo de visibilidade que existia na `Dungeon`;
+ - Várias spells precisavam de informações do mapa, como *Teleport* e *Fireball*;
+ - Cálculo de movimento dos inimigos;
+
+Com isso em mente, consideramos melhor utilizar um Singleton que poderia ser acessado de qualquer parte do programa.
 
 ### Salas
 
@@ -25,8 +36,7 @@ Assim, em nossa nova versão o mapa original de _Hero's Quest_ teria o seguinte 
 
 Note que todas as salas se mantiveram iguais, salvo a sala no canto superior esquerdo do bloco inferior esquerdo.
 
-
-Para implementar a linha de visão, usamos o [Algoritmo de Bresenham](https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm) para detectar o que é visível para o jogador, nos baseando na implementação disponível no [RogueBasin](roguebasin-bresenham-python). Também usamos a melhoria explicada [nesse site](bresenham-weird-borders), que trata alguns casos em que o algoritmo de Bresenham se comporta de forma estranha próximo a paredes. 
+Para implementar a linha de visão, usamos o [Algoritmo de Bresenham][bresenham-line-algorithm] para detectar o que é visível para o jogador, nos baseando na implementação disponível no [RogueBasin][roguebasin-bresenham-python]. Também usamos a melhoria explicada [nesse site][bresenham-weird-borders], que trata alguns casos em que o algoritmo de Bresenham se comporta de forma estranha próximo a paredes. 
 
 [hero-quest-map]: https://i.imgur.com/Glt9wux.png
 [implemented-map]: https://i.imgur.com/cKFxcQA.png
