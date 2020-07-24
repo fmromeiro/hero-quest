@@ -45,6 +45,11 @@ Para implementar a linha de visão, usamos o [Algoritmo de Bresenham][bresenham-
 Durante a implementação dos inimigos, percebemos que eles tinham muitos atributos em comum com os heróis, então fizemos ambos herdarem de uma classe concreta `Character`. Porém, como cada inimigo tinha uma inteligência artificial própria, ficamos em dúvida sobre duas possibilidades de como implementar os diferentes inimigos: uma possibilidade era criar uma classe para cada inimigo, enquanto outra era criar um getter para cada inimigo, baseando-nos no design pattern `Factory`, e usar Interfaces funcionais para definir os comportamentos dos inimigos, como no `Strategy`.
 
 Criando uma classe para cada inimigo, eles podem ser mais versáteis, definindo comportamentos próprios para funções de `Character`, ao custo de que seria difícil reutilizar o código. Usando Interfaces Funcionais, por outro lado, os inimigos são representados somente por instâncias, porém suas inteligências são intercambiáveis, facilitando o reuso de código por composição. Pesando esses prós e contras, optamos pela segunda implementação.
+### Spells
+
+A primeira implementação de `Spell` era bem parecida com a de `Enemy`, pois havia um `BiConsumer<Point, Point> castSpell` que implementava a lógica da magia. Porém, a vantagem de usar essa implementação em `Enemy` era que vários inimigos compartilhavam a mesma lógica, então com o reuso por composição diminuíamos os códigos repetidos. Diferentes Spells, porém, não compartilham implementação e, portanto, achamos melhor implementá-las usando herança.
+
+Outro motivo para usarmos herança é que, nas raras ocasiões em que Spells compartilham código, a funcionalidade base continua a mesma, só alterando parâmetros, como uma Fireball 2 que cause mais dano, por exemplo. Nesse cenário, seria mais fácil compartilhar funcionalidades utilizando herança do que composição. 
 
 ### Spells
 
