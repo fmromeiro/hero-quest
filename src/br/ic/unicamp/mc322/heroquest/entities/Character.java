@@ -39,7 +39,7 @@ public class Character implements Entity {
     private int mindPoints;
     private int currentBodyPoints;
 
-    private Dice.DiceValue defendDiceValue;
+    private Dice.CombatDiceValue defendDiceValue;
 
     private Point position;
 
@@ -55,7 +55,7 @@ public class Character implements Entity {
 
     private final int RIGHT_HAND = 0;
     private final int LEFT_HAND = 1;
-    protected Character(String name, int attackDice, int defendDice, int baseBodyPoints, int mindPoints, String stringRepresentation, boolean isHero, Dice.DiceValue defendDiceValue) {
+    protected Character(String name, int attackDice, int defendDice, int baseBodyPoints, int mindPoints, String stringRepresentation, boolean isHero, Dice.CombatDiceValue defendDiceValue) {
         this.name = name;
         this.attackDice = attackDice;
         this.defendDice = defendDice;
@@ -72,7 +72,7 @@ public class Character implements Entity {
         this.hands = new Equipment[2];
     }
     public static Character getDefaultHero(String name) {
-        return new Character(name, 2, 2, 10, 5, "ME", true, Dice.DiceValue.HERO_SHIELD);
+        return new Character(name, 2, 2, 10, 5, "ME", true, Dice.CombatDiceValue.HERO_SHIELD);
     }
 
     public static Enemy getMeleeSkeleton(String name) {
@@ -119,7 +119,7 @@ public class Character implements Entity {
     }
 
     public int getSteps() {
-        return rng.ints(1, 7).limit(2).sum();
+        return Dice.throwMovementDice(2);
     }
 
     private int getModifiersFor(Attribute attribute, boolean handItemsModifiers) {
@@ -235,7 +235,7 @@ public class Character implements Entity {
         if(weaponRange < distance)
             throw new Exception("Out of range target");
 
-        int attackDamage = Dice.throwDice(this.getAttackDamage() + weaponDamage, Dice.DiceValue.SKULL);
+        int attackDamage = Dice.throwCombatDice(this.getAttackDamage() + weaponDamage, Dice.CombatDiceValue.SKULL);
         for(Map.Entry<String, Equipment> entry : body.entrySet()) {
             Equipment e = entry.getValue();
             if (e.getModifier().getAttribute() == Attribute.ATTACKDICE && e.isSingleUse())
@@ -245,7 +245,7 @@ public class Character implements Entity {
     }
 
     public int defend() {
-        int defenseValue = Dice.throwDice(this.getDefendDice(), defendDiceValue);
+        int defenseValue = Dice.throwCombatDice(this.getDefendDice(), defendDiceValue);
         for(Map.Entry<String, Equipment> entry : body.entrySet()) {
             Equipment e = entry.getValue();
             if (e.getModifier().getAttribute() == Attribute.DEFENDDICE && e.isSingleUse())
