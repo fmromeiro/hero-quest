@@ -1,5 +1,6 @@
 package br.ic.unicamp.mc322.heroquest.entities;
 
+import br.ic.unicamp.mc322.heroquest.auxiliars.Dice;
 import br.ic.unicamp.mc322.heroquest.auxiliars.Point;
 import br.ic.unicamp.mc322.heroquest.spells.Spell;
 
@@ -8,9 +9,11 @@ import java.util.List;
 
 public class SpellBook {
     private final List<Spell> spellBook;
+    private final Character caster;
 
-    public SpellBook() {
+    public SpellBook(Character caster) {
         this.spellBook = new ArrayList<>();
+        this.caster = caster;
     }
 
     public void addItem(Spell item) {
@@ -27,9 +30,10 @@ public class SpellBook {
         return spellBook.get(index);
     }
 
-    public boolean castSpell(int index, Character source, Point target, Tile[][] map) throws Exception {
+    public boolean castSpell(int index, Point target) {
         if(itemAt(index).hasCharge()) {
-            itemAt(index).castSpell(source.getPosition(), target, map);
+            if (Dice.rollNumberDiceSum(1, 6) < caster.getAttribute(Character.Attribute.MINDPOINTS))
+                itemAt(index).castSpell(caster.getPosition(), target);
             itemAt(index).useCharge();
             return true;
         } else return false;
