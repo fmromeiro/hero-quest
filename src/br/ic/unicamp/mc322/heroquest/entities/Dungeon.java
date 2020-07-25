@@ -103,13 +103,14 @@ public class Dungeon {
         return result;
     }
 
-    public Hero getHero() {
+    public Character getHero() {
         Tile possibleHero = Arrays.stream(this.map)
                 .flatMap(Arrays::stream)
-                .filter(tile -> tile.getEntity() instanceof Hero)
+                .filter(tile -> tile.getEntity() instanceof Character)
+                .filter(tile -> ((Character)tile.getEntity()).isHero())
                 .findAny().orElse(null);
         if (possibleHero != null)
-            return (Hero)possibleHero.getEntity();
+            return (Character) possibleHero.getEntity();
         return null;
     }
 
@@ -148,7 +149,7 @@ public class Dungeon {
         if (map[whereTo.getY()][whereTo.getX()].canSetEntity())
             map[whereTo.getY()][whereTo.getX()].setEntity(entity);
 
-        if (entity instanceof Hero) {
+        if (entity instanceof Character && ((Character) entity).isHero()) {
             this.visitedRooms.addAll(this.map[whereTo.getY()][whereTo.getX()].getRooms());
         }
     }

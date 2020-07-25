@@ -191,8 +191,9 @@ public class Character implements Entity {
     public int attack() {
         return Dice.rollCombatDice(attackDice, Dice.DiceValue.SKULL);
     }
+
     public int defend() {
-        return Dice.rollCombatDice(defendDice, defendDiceValue);
+        return Dice.rollCombatDice(defendDice, isHero() ? Dice.DiceValue.HERO_SHIELD : Dice.DiceValue.MONSTER_SHIELD);
     }
 
     @Override
