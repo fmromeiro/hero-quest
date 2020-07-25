@@ -223,9 +223,11 @@ public class Character implements Entity {
                     return current != null && !current.canSeeThrough();
                 }))
             throw new Exception("Can't see target");
+
         int distance = Point.manhattanDistance(this.getPosition(), target.getPosition());
-        int weaponDamage = hands[selectedWeapon] != null && hands[selectedWeapon] instanceof Weapon ? hands[selectedWeapon].getModifier().getModifier() : 0;
-        int weaponRange = hands[selectedWeapon] != null && hands[selectedWeapon] instanceof Weapon ? ((Weapon)hands[selectedWeapon]).getRange() : 1;
+        boolean isWeapon = hands[selectedWeapon] != null && hands[selectedWeapon] instanceof Weapon;
+        int weaponDamage = isWeapon ? hands[selectedWeapon].getModifier().getModifier() : 0;
+        int weaponRange = isWeapon ? ((Weapon)hands[selectedWeapon]).getRange() : 1;
 
         if(weaponRange < distance)
             throw new Exception("Out of range target");
@@ -236,6 +238,9 @@ public class Character implements Entity {
             if (e.getModifier().getAttribute() == Attribute.ATTACKDICE && e.isSingleUse())
                 body.remove(entry.getKey());
         }
+        if(isWeapon && hands[selectedWeapon].isSingleUse())
+            hands[selectedWeapon] = null;
+
         target.takeDamage(attackDamage - target.defend());
     }
 
@@ -246,6 +251,9 @@ public class Character implements Entity {
             if (e.getModifier().getAttribute() == Attribute.DEFENDDICE && e.isSingleUse())
                 body.remove(entry.getKey());
         }
+        for(int i = 0; i < hands.length; i++)
+            if(hands[i].getModifier().getAttribute() == Attribute.DEFENDDICE)
+                hands[i] = null;
         return defenseValue;
     }
 
