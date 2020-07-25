@@ -7,8 +7,8 @@ import java.util.function.Consumer;
 
 public class Consumable extends Item {
     Consumer<Character> effect;
-    public Consumable(String name, StatusModifier modifier, int range, Consumer<Character> effect) {
-        super(name, modifier, range);
+    public Consumable(String name, StatusModifier modifier, Consumer<Character> effect) {
+        super(name, modifier);
         this.effect = effect;
     }
     public void consume(Character c) {
@@ -17,6 +17,6 @@ public class Consumable extends Item {
 
     @Override
     public Item copy() {
-        return new Consumable(this.name, this.getModifier(), this.getRange(), this.effect);
+        return new Consumable(this.name, this.getModifier(), this.effect);
     }
 }
