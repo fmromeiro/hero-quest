@@ -11,6 +11,7 @@ import br.ic.unicamp.mc322.heroquest.items.Consumable;
 import br.ic.unicamp.mc322.heroquest.items.Equipment;
 import br.ic.unicamp.mc322.heroquest.items.Item;
 import br.ic.unicamp.mc322.heroquest.items.Weapon;
+import br.ic.unicamp.mc322.heroquest.spells.Spell;
 
 public class Character implements Entity {
 
@@ -51,9 +52,10 @@ public class Character implements Entity {
     private Map<String, Equipment> body;
     private Equipment[] hands;
     private int selectedWeapon;
+    private final SpellBook spellBook;
 
 
-    protected Character(String name, int attackDice, int defendDice, int baseBodyPoints, int mindPoints, String stringRepresentation, Dice.CombatDiceValue defendDiceValue) {
+    protected Character(String name, int attackDice, int defendDice, int baseBodyPoints, int mindPoints, String stringRepresentation, Dice.CombatDiceValue defendDiceValue, boolean isCaster) {
         this.name = name;
         this.attackDice = attackDice;
         this.defendDice = defendDice;
@@ -67,6 +69,7 @@ public class Character implements Entity {
         this.inventory = new Inventory();
         this.body = new HashMap<>();
         this.hands = new Equipment[2];
+        this.spellBook = isCaster ? new SpellBook(this) : null;
     }
 
 
@@ -99,11 +102,11 @@ public class Character implements Entity {
 
     // Character builders
     public static Character getDefaultHero(String name) {
-        return new Character(name, 2, 2, 10, 5, "ME", Dice.CombatDiceValue.HERO_SHIELD);
+        return new Character(name, 2, 2, 10, 5, "ME", Dice.CombatDiceValue.HERO_SHIELD, false);
     }
 
     public static Enemy getMeleeSkeleton(String name) {
-        Enemy skeleton = new Enemy(name, 2, 2, 1, 0, "SK", 6, EnemyFunctions.moveRandomly, null);
+        Enemy skeleton = new Enemy(name, 2, 2, 1, 0, "SK", 6, EnemyFunctions.moveRandomly, null, false);
         Weapon weapon;
         switch ((int)Math.floor(Math.random()*4)) {
             default:
@@ -118,12 +121,14 @@ public class Character implements Entity {
     }
 
     public static Enemy getSkeletonMage(String name) {
-        Enemy skeletonMage = new Enemy(name, 2, 2, 1, 0, "SM", 6, EnemyFunctions.moveRandomly, null);
+        Enemy skeletonMage = new Enemy(name, 2, 2, 1, 0, "SM", 6, EnemyFunctions.moveRandomly, null, true);
+        skeletonMage.loadSpell(Spell.getMagicMissile(10));
         return skeletonMage;
     }
 
     public static Enemy getGoblin(String name) {
-        Enemy goblin = new Enemy(name, 2, 1, 1, 1, "GB", 10, EnemyFunctions.followHero, null);
+        Enemy goblin = new Enemy(name, 2, 1, 1, 1, "GB", 10, EnemyFunctions.followHero, null, false);
+        for (int i = 0; i < 5; i++) goblin.addToInventory(Weapon.getDagger());
         return goblin;
     }
 
@@ -250,6 +255,10 @@ public class Character implements Entity {
         inventory.addItem(item);
     }
 
+    // Spell acessors
+    public void loadSpell(Spell spell) {
+        this.spellBook.addItem(spell);
+    }
 
     // Actions
     public void attack(Character target) throws Exception {

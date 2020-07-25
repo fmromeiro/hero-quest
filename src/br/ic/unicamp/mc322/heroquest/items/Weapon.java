@@ -27,4 +27,5 @@ public class Weapon extends Equipment{
     public static Weapon getLongBow() {
         return new Weapon("Long Bow", 2, 4, Category.TWOHAND, false);
     }
+    public static Weapon getDagger() { return new Weapon("Dagger", 1, Integer.MAX_VALUE, Category.ONEHAND, true); }
 }

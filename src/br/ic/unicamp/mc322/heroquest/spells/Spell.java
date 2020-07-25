@@ -21,19 +21,19 @@ public abstract class Spell {
         this.quantity = quantity;
     }
 
-    public Spell getSimpleHeal(int quantity) {
+    public static Spell getSimpleHeal(int quantity) {
         return new SimpleHeal(quantity);
     }
 
-    public Spell getFireball(int quantity) {
+    public static Spell getFireball(int quantity) {
         return new Fireball(quantity);
     }
 
-    public Spell getMagicMissile(int quantity) {
+    public static Spell getMagicMissile(int quantity) {
         return new MagicMissile(quantity);
     }
 
-    public Spell getTeleport(int quantity) {
+    public static Spell getTeleport(int quantity) {
         return new Teleport(quantity);
 
     }
