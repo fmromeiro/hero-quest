@@ -4,13 +4,11 @@ import br.ic.unicamp.mc322.heroquest.auxiliars.Point;
 
 import java.util.*;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public class EnemyFunctions {
-    public static BiFunction<Enemy, List<Entity>, List<Point>> moveRandomly = (Enemy enemy, List<Entity> entities) -> {
-        Character hero = ((Character)entities.stream()
-                .filter(ent -> ent instanceof Character)
-                .filter(ent -> ((Character) ent).isHero())
-                .findAny().orElse(null));
+    public static Function<Enemy, List<Point>> moveRandomly = (Enemy enemy) -> {
+        Character hero = Dungeon.getInstance().getHero();
         if (hero == null)
             return null;
         List<Point> path = new ArrayList<>();
@@ -23,58 +21,32 @@ public class EnemyFunctions {
             int attempt = 0;
             while (attempt <= 3) {
                 Point destination = Point.sum(current, possibleSteps.get(attempt));
-                if (entities.stream().noneMatch(entity -> entity.getPosition().equals(destination))) {
+                Entity atDestination = Dungeon.getInstance().entityAt(destination);
+                if (Dungeon.getInstance().isActive(destination)
+                        && atDestination != null && atDestination.canBeOverlapped()) {
                     path.add(current);
                     current = destination;
                     break;
                 }
                 attempt++;
             }
+            if (attempt == 4)
+                break;
         }
         path.add(current);
         return path;
     };
 
-    public static BiFunction<Enemy, List<Entity>, List<Point>> followHero = (Enemy enemy, List<Entity> entities) -> {
-        Character hero = ((Character)entities.stream()
-                .filter(ent -> ent instanceof Character)
-                .filter(ent -> ((Character) ent).isHero())
-                .findAny().orElse(null));
+    public static Function<Enemy, List<Point>> followHero = (Enemy enemy) -> {
+        Character hero = Dungeon.getInstance().getHero();
         if (hero == null)
             return null;
-        List<Point> path = aStar(enemy.getPosition(), hero.getPosition(), entities);
+        List<Point> path = aStar(enemy.getPosition(), hero.getPosition());
         int steps = enemy.getSteps();
         if (path != null && path.size() > steps)
             path = path.subList(0, steps);
         return path;
     };
-
-    private static List<Point> breadthFirstSearch(Point startingPosition, Point goal, List<Entity> obstacles) {
-        Queue<List<Point>> paths = new LinkedList<List<Point>>();
-        Point[] possibleSteps = { new Point(0, -1), new Point(1, 0), new Point(0, 1), new Point(-1, 0) };
-        Set<Point> visited = new HashSet<>();
-        paths.add(Arrays.asList(startingPosition));
-        visited.add(startingPosition);
-        while (!paths.isEmpty()) {
-            List<Point> currentPath = paths.remove();
-            Point currentPoint = currentPath.get(currentPath.size() - 1);
-            for (Point direction : possibleSteps) {
-                Point possibleStep = Point.sum(currentPoint, direction);
-                if (possibleStep.equals(goal)) {
-                    currentPath.add(possibleStep);
-                    return currentPath;
-                }
-                if (visited.contains(possibleStep)
-                        || obstacles.stream().anyMatch(ent -> ent.getPosition().equals(possibleStep)))
-                    continue;;
-                List<Point> nextPath = new LinkedList<>(currentPath);
-                nextPath.add(possibleStep);
-                visited.add(possibleStep);
-                paths.add(nextPath);
-            }
-        }
-        return null;
-    }
 
     private static List<Point> reconstructPath(Map<Point, Point> cameFrom, Point current) {
         List<Point> path = new LinkedList<>();
@@ -86,7 +58,7 @@ public class EnemyFunctions {
         return path;
     }
 
-    private static List<Point> aStar(Point start, Point goal, List<Entity> obstacles) {
+    private static List<Point> aStar(Point start, Point goal) {
         Map<Point, Point> cameFrom = new HashMap<>();
 
         Map<Point, Integer> gScore = new HashMap<>();
@@ -109,7 +81,9 @@ public class EnemyFunctions {
             if (current.equals(goal))
                 return reconstructPath(cameFrom, current);
 
-            if (!current.equals(start) && obstacles.stream().anyMatch(ent -> ent.getPosition().equals(current)))
+            Entity atCurrentPosition = Dungeon.getInstance().entityAt(current);
+            if (!Dungeon.getInstance().isActive(current)
+                    || (!current.equals(start) && atCurrentPosition != null && !atCurrentPosition.canBeOverlapped()))
                 continue;
 
             if (Point.manhattanDistance(current, goal) < bestPathCost) {

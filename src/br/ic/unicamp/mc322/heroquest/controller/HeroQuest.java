@@ -20,10 +20,6 @@ public class HeroQuest {
 
         // Sala 0 - Corredores
         dungeon.addRoom(new Point(0, 0), new Point(35, 26));
-        dungeon.removeFromRoom(0, new Point(3, 3), new Point(32, 23));
-        dungeon.addToRoom(0, new Point(1, 12), new Point(34, 14));
-        dungeon.addToRoom(0, new Point(16, 2), new Point(19, 24));
-        dungeon.addToRoom(0, new Point(12, 8), new Point(23, 18));
 
         // Bloco superior esquerdo - salas de 01 a 05
         dungeon.addRoom(new Point(2, 2), new Point(7, 6));
@@ -41,7 +37,6 @@ public class HeroQuest {
 
         // Sala central - 11
         dungeon.addRoom(new Point(14,  10), new Point(21, 16));
-        dungeon.removeFromRoom(0, new Point(15, 11), new Point(20, 15));
 
         // Bloco inferior esquerdo - salas de 12 a 17
         dungeon.addRoom(new Point(2, 14), new Point(6, 19));
@@ -78,12 +73,13 @@ public class HeroQuest {
     }
 
     public void mainLoop() {
-        List<Entity> entities = Dungeon.getInstance().getEntities().stream()
-                .filter(ent -> ent instanceof Character)
-                .collect(Collectors.toList());
-        for (Entity entity : entities) {
-            this.handleTurn(entity);
-            Renderer.printVisibleMap(Dungeon.getInstance());
+        this.handleHeroTurn(Dungeon.getInstance().getHero());
+        List<Enemy> enemies = Dungeon.getInstance().getEnemies();
+        for (Enemy enemy : enemies) {
+            if (Dungeon.getInstance().isActive(enemy.getPosition())) {
+                this.handleEnemyTurn(enemy);
+                Renderer.printWholeMap();
+            }
         }
     }
 
@@ -93,41 +89,53 @@ public class HeroQuest {
             this.mainLoop();
     }
 
-    public void handleTurn(Entity entity) {
-        if (((Character) entity).isHero())
-            handleMoveInput((Character)entity);
-        else if (entity instanceof Enemy)
-            handleEnemyMove((Enemy)entity);
+    public void handleHeroTurn(Character character) {
+        Renderer.announcePlayerTurn();
+        String input = scanner.nextLine().toLowerCase();
+        String[] commands = input.split("\\s+");
+        if (commands.length > 0)
+            if (commands[0].equals("move")) {
+                Renderer.announceMoveTurn();
+                handleMoveInput(character);
+            }
+    }
+
+    public void handleEnemyTurn(Enemy enemy) {
+        handleEnemyMove((Enemy)enemy);
     }
 
     public void handleMoveInput(Character hero) {
-        System.out.println("Player's turn (type h for help)");
-        String input = scanner.nextLine().toLowerCase();
-//        String[] commands = input.split("\\s+");
-//        if (commands.length == 2)
-            if (input.equals("h")) {
-                System.out.println("Commands:\n > 'w', 'a', 's', 'd' (for movement)\n > 'open door'\n > 'collect'");
-                input = scanner.nextLine().toLowerCase();
-            }
+        int steps = 0;
+        int limitSteps = hero.getSteps();
+        while (steps < limitSteps) {
+            String input = scanner.nextLine().toLowerCase();
+            String[] commands = input.split("\\s+");
+            if (commands.length == 2) {
+                if (commands[0].equals("move")) {
+                    Point.Direction direction = Point.Direction.UP;
+                    switch (commands[1]) {
+                        case "up":
+                            direction = Point.Direction.UP;
+                            break;
+                        case "right":
+                            direction = Point.Direction.RIGHT;
+                            break;
+                        case "down":
+                            direction = Point.Direction.DOWN;
+                            break;
+                        case "left":
+                            direction = Point.Direction.LEFT;
+                            break;
+                    }
+                    Dungeon.getInstance().moveEntity(hero, Point.sum(hero.getPosition(), direction.getPosition()));
+                    steps++;
+                } else if (commands[0].equals("open")) {
+                    Dungeon.getInstance().getEntities().stream()
+                            .filter(ent -> Point.manhattanDistance(hero.getPosition(), ent.getPosition()) == 1)
+                            .filter(ent -> ent instanceof Door)
+                            .forEach(ent -> ((Door) ent).open());
 
-            if (input.equals("w")) {
-                Dungeon.getInstance().moveEntity(hero, Point.sum(hero.getPosition(), Point.Direction.UP.getPosition()));
-            }
-            else if (input.equals("a")) {
-                Dungeon.getInstance().moveEntity(hero, Point.sum(hero.getPosition(), Point.Direction.LEFT.getPosition()));
-            }
-            else if (input.equals("s")) {
-                Dungeon.getInstance().moveEntity(hero, Point.sum(hero.getPosition(), Point.Direction.DOWN.getPosition()));
-            }
-            else if (input.equals("d")) {
-                Dungeon.getInstance().moveEntity(hero, Point.sum(hero.getPosition(), Point.Direction.RIGHT.getPosition()));
-            }
-            else if (input.equals("open door")) {
-                Dungeon.getInstance().getEntities().stream()
-                        .filter(ent -> Point.manhattanDistance(hero.getPosition(), ent.getPosition()) == 1)
-                        .filter(ent -> ent instanceof Door)
-                        .forEach(ent -> ((Door)ent).open());
-
+                }
             }
             else if (input.equals("collect")) {
                 Dungeon.getInstance().getEntities().stream()
@@ -143,10 +151,13 @@ public class HeroQuest {
                 System.out.println("safadinho...");
                 scanner.nextLine();
             }
+            else if (commands[0].equals("stop"))
+                break;
+        }
     }
 
     public void handleEnemyMove(Enemy enemy) {
-        List<Point> path = enemy.getMovement(Dungeon.getInstance().getEntities());
+        List<Point> path = enemy.getMovement();
         if (path != null && path.size() > 1)
             Dungeon.getInstance().moveEntity(enemy, path.get(path.size() - 2));
     }

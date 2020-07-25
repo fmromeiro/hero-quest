@@ -28,7 +28,6 @@ public class Dice {
         }
         return ret;
     }
-
     public static List<Integer> rollNumberDice(int qtt, int sides) {
         return dice.ints(qtt, 1, sides + 1).boxed().collect(Collectors.toList());
     }
@@ -37,7 +36,7 @@ public class Dice {
         return dice.ints(qtt, 1, sides + 1).sum();
     }
     
-    public static int throwMovementDice(int qtt) {
-        return dice.ints(1, 7).limit(qtt).sum();
+    public static int rollMovementDice(int qtt) {
+        return rollNumberDiceSum(qtt, 6);
     }
 }

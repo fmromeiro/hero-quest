@@ -7,10 +7,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Renderer {
-    public static void printWholeMap(Dungeon dungeon) {
+    public static void printWholeMap() {
         StringBuilder mapString = new StringBuilder("   ");
-        Tile[][] tiles = dungeon.getMap();
-        Set<Integer> rooms = dungeon.getRoomIds();
+        Tile[][] tiles = Dungeon.getInstance().getMap();
+        Set<Integer> rooms = Dungeon.getInstance().getRoomIds();
         for (int i = 0; i < tiles[0].length; i++)
             mapString.append(String.format("%02d", i));
         int j = 0;
@@ -45,10 +45,10 @@ public class Renderer {
         System.out.println(mapString);
     }
 
-    public static void printVisibleMap(Dungeon dungeon) {
+    public static void printVisibleMap() {
         StringBuilder mapString = new StringBuilder("   ");
-        Tile[][] tiles = dungeon.getMap();
-        boolean[][] visibilityMatrix = dungeon.getHeroVisibility();
+        Tile[][] tiles = Dungeon.getInstance().getMap();
+        boolean[][] visibilityMatrix = Dungeon.getInstance().getHeroVisibility();
         for (int y = 0; y < tiles.length; y++) {
             mapString.append("\n");
             for (int x = 0; x < tiles[y].length; x++)
@@ -58,5 +58,13 @@ public class Renderer {
         }
 
         System.out.println(mapString);
+    }
+
+    public static void announcePlayerTurn() {
+        System.out.println("Player's turn");
+    }
+
+    public static void announceMoveTurn() {
+        System.out.println("Move action");
     }
 }
