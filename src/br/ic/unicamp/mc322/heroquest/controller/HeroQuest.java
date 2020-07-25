@@ -4,7 +4,6 @@ import br.ic.unicamp.mc322.heroquest.auxiliars.Point;
 import br.ic.unicamp.mc322.heroquest.entities.*;
 import br.ic.unicamp.mc322.heroquest.entities.Character;
 
-import javax.swing.text.Position;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;

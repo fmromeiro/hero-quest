@@ -247,7 +247,7 @@ public class Character implements Entity {
     }
 
     public void addToInventory(Item item) {
-        inventory.addItem(equipment);
+        inventory.addItem(item);
     }
 
 
