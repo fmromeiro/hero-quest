@@ -14,7 +14,8 @@ import br.ic.unicamp.mc322.heroquest.items.Weapon;
 
 public class Character implements Entity {
 
-    public enum Attribute {
+    // Class attributes
+    public static enum Attribute {
         ATTACKDICE("Attack Dice"),
         DEFENDDICE("Defend Dice"),
         BASEBODYPOINTS("Base Body Points"),
@@ -27,21 +28,23 @@ public class Character implements Entity {
         public String getName() { return this.name; }
     }
 
-    private final HashMap<Integer, StatusModifier> statusModifiers;
+    private static final int RIGHT_HAND = 0;
+    private static final int LEFT_HAND = 1;
+
+
+    // Instance attributes
+    private final HashMap<Integer, StatusModifier> statusModifiers; // TODO: aparentemente não vai ter uso - rever e remover
     private int statusModifierIndex;
 
     private final String name;
     private int attackDice;
     private int defendDice;
-
     private int baseBodyPoints;
     private int mindPoints;
     private int currentBodyPoints;
 
     private Dice.CombatDiceValue defendDiceValue;
-
     private Point position;
-
     private final String stringRepresentation;
 
     private Inventory inventory;
@@ -49,8 +52,7 @@ public class Character implements Entity {
     private Equipment[] hands;
     private int selectedWeapon;
 
-    private final int RIGHT_HAND = 0;
-    private final int LEFT_HAND = 1;
+
     protected Character(String name, int attackDice, int defendDice, int baseBodyPoints, int mindPoints, String stringRepresentation, Dice.CombatDiceValue defendDiceValue) {
         this.name = name;
         this.attackDice = attackDice;
@@ -66,12 +68,52 @@ public class Character implements Entity {
         this.body = new HashMap<>();
         this.hands = new Equipment[2];
     }
+
+
+    // Entity methods
+    @Override
+    public Point getPosition() {
+        return this.position;
+    }
+
+    @Override
+    public void setPosition(Point position) {
+        this.position = position;
+    }
+
+    @Override
+    public boolean canSeeThrough() {
+        return this.isHero();
+    }
+
+    @Override
+    public boolean canBeOverlapped() {
+        return false;
+    }
+
+    @Override
+    public String getStringRepresentation() {
+        return this.stringRepresentation;
+    }
+
+
+    // Character builders
     public static Character getDefaultHero(String name) {
         return new Character(name, 2, 2, 10, 5, "ME", Dice.CombatDiceValue.HERO_SHIELD);
     }
 
     public static Enemy getMeleeSkeleton(String name) {
         Enemy skeleton = new Enemy(name, 2, 2, 1, 0, "SK", 6, EnemyFunctions.moveRandomly, null);
+        Weapon weapon;
+        switch ((int)Math.floor(Math.random()*4)) {
+            default:
+            case 0: weapon = Weapon.getShortSword(); break;
+            case 1: weapon = Weapon.getLongSword(); break;
+            case 2: weapon = Weapon.getBrokenDagger(); break;
+            case 3: weapon = Weapon.getLongStaff(); break;
+        }
+        skeleton.addToInventory(weapon);
+        skeleton.equip(weapon);
         return skeleton;
     }
 
@@ -79,10 +121,15 @@ public class Character implements Entity {
         Enemy skeletonMage = new Enemy(name, 2, 2, 1, 0, "SM", 6, EnemyFunctions.moveRandomly, null);
         return skeletonMage;
     }
+
     public static Enemy getGoblin(String name) {
         Enemy goblin = new Enemy(name, 2, 1, 1, 1, "GB", 10, EnemyFunctions.followHero, null);
         return goblin;
     }
+
+
+    // Accessors
+    // Hit Points accessors
     public void takeDamage(int damage) {
         this.currentBodyPoints = Math.max(this.currentBodyPoints - damage, 0);
     }
@@ -93,6 +140,7 @@ public class Character implements Entity {
 
     public boolean isAlive() { return this.currentBodyPoints > 0; }
 
+    // Attributes accessors
     public int getAttribute(Attribute attribute) {
         switch (attribute) {
             case ATTACKDICE: return this.attackDice + this.getModifiersFor(attribute, false);
@@ -113,10 +161,6 @@ public class Character implements Entity {
         statusModifiers.remove(index);
     }
 
-    public int getSteps() {
-        return Dice.throwMovementDice(2);
-    }
-
     private int getModifiersFor(Attribute attribute, boolean handItemsModifiers) {
         return this.statusModifiers
                 .values().stream()
@@ -124,9 +168,9 @@ public class Character implements Entity {
                 .mapToInt(StatusModifier::getModifier)
                 .sum() +
                 this.body.values().stream()
-                .filter(x -> x.getModifier().getAttribute() == attribute)
-                .mapToInt(x -> x.getModifier().getModifier())
-                .sum() +
+                        .filter(x -> x.getModifier().getAttribute() == attribute)
+                        .mapToInt(x -> x.getModifier().getModifier())
+                        .sum() +
                 (handItemsModifiers ? getHandItemsModifierFor(attribute) : 0);
     }
 
@@ -137,22 +181,12 @@ public class Character implements Entity {
                 .sum();
     }
 
+    // Miscellaneous accessors
+    public int getSteps() {
+        return Dice.throwMovementDice(2);
+    }
+
     public boolean isHero() { return this.defendDiceValue == Dice.CombatDiceValue.HERO_SHIELD; }
-
-    @Override
-    public Point getPosition() {
-        return this.position;
-    }
-
-    @Override
-    public void setPosition(Point position) {
-        this.position = position;
-    }
-
-    @Override
-    public boolean canSeeThrough() {
-        return this.isHero();
-    }
 
     public void selectItem(int index) {
         Item item = inventory.getItem(index);
@@ -160,7 +194,7 @@ public class Character implements Entity {
             equip((Equipment) item);
         else if (item instanceof Consumable)
             ((Consumable) item).consume(this);
-        }
+    }
 
     public void equip(Equipment equipment) {
         String key = equipment.getCategory().getCategoryName();
@@ -184,14 +218,6 @@ public class Character implements Entity {
         }
     }
 
-    public int getAttackDamage() {
-        return attackDice + getModifiersFor(Attribute.ATTACKDICE, false);
-    }
-
-    public int getDefendDice() {
-        return defendDice + getModifiersFor(Attribute.DEFENDDICE, true);
-    }
-
     public void equip(int index, char hand) {
         Item item = inventory.itemAt(index);
         if(item instanceof Equipment) {
@@ -208,12 +234,24 @@ public class Character implements Entity {
         }
     }
 
+    public int getAttackDamage() {
+        return attackDice + getModifiersFor(Attribute.ATTACKDICE, false);
+    }
+
+    public int getDefendDice() {
+        return defendDice + getModifiersFor(Attribute.DEFENDDICE, true);
+    }
+
     public void chooseWeapon(int hand) {
         this.selectedWeapon = hand;
     }
 
+    public void addToInventory(Item item) {
+        inventory.addItem(equipment);
+    }
 
 
+    // Actions
     public void attack(Character target) throws Exception {
         List<Point> line = Arrays.asList(Point.bresenhamLine(this.getPosition(), target.getPosition()));
         Tile[][] map = Dungeon.getInstance().getMap();
@@ -254,15 +292,5 @@ public class Character implements Entity {
             if(hands[i].getModifier().getAttribute() == Attribute.DEFENDDICE)
                 hands[i] = null;
         return defenseValue;
-    }
-
-    @Override
-    public boolean canBeOverlapped() {
-        return false;
-    }
-
-    @Override
-    public String getStringRepresentation() {
-        return this.stringRepresentation;
     }
 }
