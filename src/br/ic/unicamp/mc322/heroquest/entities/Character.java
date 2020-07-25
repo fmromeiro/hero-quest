@@ -209,7 +209,7 @@ public class Character implements Entity {
         }
     }
 
-    public void chooseWeapon(int hand) throws Exception {
+    public void chooseWeapon(int hand) {
         this.selectedWeapon = hand;
     }
 
@@ -218,13 +218,12 @@ public class Character implements Entity {
     public void attack(Character target) throws Exception {
         List<Point> line = Arrays.asList(Point.bresenhamLine(this.getPosition(), target.getPosition()));
         Tile[][] map = Dungeon.getInstance().getMap();
-        int distance = line.size();
-        if (distance > 2 && line.subList(1, line.size()).stream().anyMatch(point -> {
+        if (line.size() > 2 && line.subList(1, line.size()).stream().anyMatch(point -> {
                     Entity current = map[point.getY()][point.getX()].getEntity();
                     return current != null && !current.canSeeThrough();
                 }))
             throw new Exception("Can't see target");
-
+        int distance = Point.manhattanDistance(this.getPosition(), target.getPosition());
         int weaponDamage = hands[selectedWeapon] != null && hands[selectedWeapon] instanceof Weapon ? hands[selectedWeapon].getModifier().getModifier() : 0;
         int weaponRange = hands[selectedWeapon] != null && hands[selectedWeapon] instanceof Weapon ? ((Weapon)hands[selectedWeapon]).getRange() : 1;
 
