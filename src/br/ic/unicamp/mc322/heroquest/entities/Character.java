@@ -188,7 +188,7 @@ public class Character implements Entity {
 
     // Miscellaneous accessors
     public int getSteps() {
-        return Dice.throwMovementDice(2);
+        return Dice.rollMovementDice(2);
     }
 
     public boolean isHero() { return this.defendDiceValue == Dice.CombatDiceValue.HERO_SHIELD; }
@@ -262,12 +262,7 @@ public class Character implements Entity {
 
     // Actions
     public void attack(Character target) throws Exception {
-        List<Point> line = Arrays.asList(Point.bresenhamLine(this.getPosition(), target.getPosition()));
-        Tile[][] map = Dungeon.getInstance().getMap();
-        if (line.size() > 2 && line.subList(1, line.size()).stream().anyMatch(point -> {
-                    Entity current = map[point.getY()][point.getX()].getEntity();
-                    return current != null && !current.canSeeThrough();
-                }))
+        if (!Dungeon.getInstance().hasVisibility(this.getPosition(), target.getPosition()))
             throw new Exception("Can't see target");
 
         int distance = Point.manhattanDistance(this.getPosition(), target.getPosition());

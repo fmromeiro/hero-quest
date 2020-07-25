@@ -37,7 +37,7 @@ public class Dice {
         return dice.ints(qtt, 1, sides + 1).sum();
     }
     
-    public static int throwMovementDice(int qtt) {
-        return dice.ints(1, 7).limit(qtt).sum();
+    public static int rollMovementDice(int qtt) {
+        return rollNumberDiceSum(qtt, 6);
     }
 }

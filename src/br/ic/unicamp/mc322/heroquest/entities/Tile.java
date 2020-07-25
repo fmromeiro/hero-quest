@@ -18,12 +18,17 @@ public class Tile {
         this.position = new Point(x, y);
     }
 
-    public void setToRoom(int roomIndex) {
+    protected void setToRoom(int roomIndex) {
         this.rooms.add(roomIndex);
     }
 
-    public void removeFromRoom(int roomIndex) {
+    protected void removeFromRoom(int roomIndex) {
         this.rooms.remove(roomIndex);
+    }
+
+    protected void setOnlyToRoom(int roomIndex) {
+        this.rooms.clear();
+        this.setToRoom(roomIndex);
     }
 
     public Entity getEntity() { return this.currentEntity; }
@@ -36,7 +41,7 @@ public class Tile {
         }
         else
             this.currentEntity = null;
-        return current;
+    return current;
     }
 
     public void setEntity(Entity entity) {

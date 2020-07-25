@@ -32,14 +32,24 @@ public class Dungeon {
 
     // Dungeon building
     public void addRoom(Point topLeft, Point lowerRight) {
-        for (int y = topLeft.getY(); y <= lowerRight.getY(); y++)
-            for (int x = topLeft.getX(); x <= lowerRight.getX(); x++)
-                map[y][x].setToRoom(this.nextRoomId);
+        for (int y = topLeft.getY(); y <= lowerRight.getY(); y++) {
+            map[y][topLeft.getX()].setToRoom(this.nextRoomId);
+            map[y][lowerRight.getX()].setToRoom(this.nextRoomId);
+        }
+
+        for (int x = topLeft.getX(); x <= lowerRight.getX(); x++) {
+            map[topLeft.getY()][x].setToRoom(this.nextRoomId);
+            map[lowerRight.getY()][x].setToRoom(this.nextRoomId);
+        }
+
+        for (int y = topLeft.getY() + 1; y < lowerRight.getY(); y++)
+            for (int x = topLeft.getX() + 1; x < lowerRight.getX(); x++)
+                map[y][x].setOnlyToRoom(this.nextRoomId);
 
         this.setBordersToRoom(this.nextRoomId++);
     }
 
-    public void setBordersToRoom(int roomId) {
+    private void setBordersToRoom(int roomId) {
         for (int y = 1; y < HEIGHT - 1; y++)
             for (int x = 1; x < WIDTH - 1; x++)
                 if (map[y][x].isInRoom(roomId))
@@ -112,6 +122,14 @@ public class Dungeon {
         if (possibleHero != null)
             return (Character) possibleHero.getEntity();
         return null;
+    }
+
+    public List<Enemy> getEnemies() {
+        return Arrays.stream(this.map)
+                .flatMap(Arrays::stream)
+                .filter(tile -> tile.getEntity() instanceof Enemy)
+                .map(tile -> (Enemy) tile.getEntity())
+                .collect(Collectors.toList());
     }
 
     public List<Entity> getEntities() {
@@ -251,5 +269,26 @@ public class Dungeon {
                     ((StaticEntity) this.map[y][x].getEntity()).setAsSeen();
             }
         return visibilityMatrix;
+    }
+
+    public boolean hasVisibility(Point a, Point b) {
+        List<Point> line = Arrays.asList(Point.bresenhamLine(a, b));
+        if (line.size() > 2)
+            return line.subList(1, line.size() - 1).stream()
+                    .anyMatch(point -> entityAt(point) != null && !entityAt(point).canSeeThrough());
+        return true;
+    }
+
+
+    // Active rooms
+    public boolean isActive(Point point) {
+        Tile possibleHero = Arrays.stream(this.map)
+                .flatMap(Arrays::stream)
+                .filter(tile -> tile.getEntity() instanceof Character)
+                .filter(tile -> ((Character)tile.getEntity()).isHero())
+                .findAny().orElse(null);
+        if (possibleHero == null)
+            return false;
+        return !Collections.disjoint(map[point.getY()][point.getX()].getRooms(), possibleHero.getRooms());
     }
 }
