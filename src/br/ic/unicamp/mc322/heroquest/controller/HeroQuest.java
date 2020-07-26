@@ -8,6 +8,7 @@ import br.ic.unicamp.mc322.heroquest.items.Weapon;
 
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class HeroQuest {
     private final Scanner scanner = new Scanner(System.in);
@@ -27,6 +28,10 @@ public class HeroQuest {
 
         // Sala 0 - Corredores
         dungeon.addRoom(new Point(0, 0), new Point(35, 26));
+        dungeon.removeFromRoom(0, new Point(3, 3), new Point(32, 23));
+        dungeon.addToRoom(0, new Point(1, 12), new Point(34, 14));
+        dungeon.addToRoom(0, new Point(16, 2), new Point(19, 24));
+        dungeon.addToRoom(0, new Point(12, 8), new Point(23, 18));
 
         // Bloco superior esquerdo - salas de 01 a 05
         dungeon.addRoom(new Point(2, 2), new Point(7, 6));
@@ -44,6 +49,7 @@ public class HeroQuest {
 
         // Sala central - 11
         dungeon.addRoom(new Point(14,  10), new Point(21, 16));
+        dungeon.removeFromRoom(0, new Point(15, 11), new Point(20, 15));
 
         // Bloco inferior esquerdo - salas de 12 a 17
         dungeon.addRoom(new Point(2, 14), new Point(6, 19));
@@ -75,7 +81,7 @@ public class HeroQuest {
         //Dungeon.getInstance().addEntity(new Door(), new Point(15, 8));
         //createDefaultMap();
         //Dungeon.getInstance().addEntity(new Door(), new Point(15, 8));
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 10; i++) {
             Dungeon.getInstance().addEntity(Treasure.randomTreasure(), Dungeon.getInstance().getRandomFreePoint());
 
         }

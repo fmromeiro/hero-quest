@@ -10,9 +10,11 @@ import java.util.Random;
 public class Treasure extends StaticEntity {
     private Item loot;
     private Point position;
+    private boolean hidden;
 
-    public Treasure (Item item) {
+    public Treasure (Item item, boolean hidden) {
         this.loot = item;
+        this.hidden = hidden;
     }
 
     public Item seeLoot() { return this.loot; }
@@ -41,7 +43,7 @@ public class Treasure extends StaticEntity {
 
     @Override
     public String getStringRepresentation() {
-        return "$$";
+        return this.hidden? ".," : "$$";
     }
 
     public static Treasure randomTreasure () {
@@ -73,6 +75,7 @@ public class Treasure extends StaticEntity {
                 item = Equipment.getShield();
                 break;
         }
-        return new Treasure(item);
+
+        return new Treasure(item, Math.random() < 0.69);
     }
 }
