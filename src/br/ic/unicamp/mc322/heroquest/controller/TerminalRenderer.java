@@ -2,8 +2,12 @@ package br.ic.unicamp.mc322.heroquest.controller;
 
 import br.ic.unicamp.mc322.heroquest.entities.Dungeon;
 import br.ic.unicamp.mc322.heroquest.entities.Tile;
+import br.ic.unicamp.mc322.heroquest.items.Equipment;
+import br.ic.unicamp.mc322.heroquest.items.Item;
+import br.ic.unicamp.mc322.heroquest.items.Weapon;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class TerminalRenderer implements Renderer {
@@ -52,6 +56,81 @@ public class TerminalRenderer implements Renderer {
 
     public void announceMoveTurn() {
         System.out.println("Move action");
+    }
+
+    @Override
+    public void alertMoveActionUsed() {
+        System.out.println("Move action has already been used in this turn");
+    }
+
+    @Override
+    public void alertMainActionUsed() {
+        System.out.println("Main action has already been used in this turn");
+    }
+
+    @Override
+    public void announceAttackTurn() {
+        System.out.println("Starting attack turn!");
+    }
+
+    @Override
+    public void printCurrentWeapon(Equipment currentWeapon) {
+        if (currentWeapon instanceof Weapon) {
+            Weapon weapon = (Weapon)currentWeapon;
+            System.out.println("Current weapon is " + weapon.getName() +
+                    ", adding " + weapon.getModifier() + " combat dice" +
+                    (weapon.getRange() == Integer.MAX_VALUE ? " as far as the eye can see" : (" up to a distance of " + weapon.getRange())));
+        }
+        else
+            System.out.println("You are attacking with your bare hands");
+    }
+
+    @Override
+    public void alertCouldNotInterpretCommand() {
+        System.out.println("Couldn't interpret command, please try again");
+    }
+
+    @Override
+    public void announceAttackTurnEnd() {
+        System.out.println("Attack turn finished!");
+    }
+
+    @Override
+    public void printCurrentEquipment(Map<String, Equipment> equipment) {
+        equipment.entrySet().stream()
+                .sorted((a, b) -> a.getKey().compareTo(b.getKey()))
+                .forEach(entry -> System.out.println(entry.getKey() + ": " + (entry.getValue() != null ? entry.getValue().getName() : "Nothing")));
+    }
+
+    @Override
+    public void printInventory(Map<Integer, Item> inventory) {
+        inventory.entrySet().stream()
+                .sorted((a, b) -> a.getKey().compareTo(b.getKey()))
+                .forEach(entry -> System.out.println(entry.getKey() + ": " + entry.getValue().getName()));
+
+    }
+
+    @Override
+    public void alertMissingParameter(String command) {
+        System.out.println("Missing parameters for command " + command);
+    }
+
+    @Override
+    public void printAvailableActions(String... actions) {
+        System.out.println("Available actions are:");
+        for (String action : actions) {
+            System.out.println("\t" + action);
+        }
+    }
+
+    @Override
+    public void alertInvalidItem(int id) {
+        System.out.println("Item with id " + id + " was not found or isn't valid equipment");
+    }
+
+    @Override
+    public void printAvailableSteps(int steps) {
+        System.out.println("You have " + steps + " remaining steps");
     }
 
 }

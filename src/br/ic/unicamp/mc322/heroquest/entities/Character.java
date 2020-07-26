@@ -101,14 +101,14 @@ public class Character implements Entity {
 
 
     // Character builders
-    public static Character getDefaultHero(String name) {
-        return new Character(name, 2, 2, 10, 5, "ME", Dice.CombatDiceValue.HERO_SHIELD, false);
+    public static Character getDefaultHero(char id) {
+        return new Character("Hero " + id, 2, 2, 10, 5, "H" + id, Dice.CombatDiceValue.HERO_SHIELD, false);
     }
 
-    public static Enemy getMeleeSkeleton(String name) {
-        Enemy skeleton = new Enemy(name, 2, 2, 1, 0, "SK", 6, EnemyFunctions.moveRandomly, EnemyFunctions.favourCurrentWeaponAndThenDamage, false);
+    public static Enemy getMeleeSkeleton(char id) {
+        Enemy skeleton = new Enemy("Skeleton " + id, 2, 2, 1, 0, "S" + id, 6, EnemyFunctions.moveRandomly, EnemyFunctions.favourCurrentWeaponAndThenDamage, false);
         Weapon weapon;
-        switch ((int)Math.floor(Math.random()*4)) {
+        switch ((int)(Math.random()*4)) {
             default:
             case 0: weapon = Weapon.getShortSword(); break;
             case 1: weapon = Weapon.getLongSword(); break;
@@ -119,14 +119,14 @@ public class Character implements Entity {
         return skeleton;
     }
 
-    public static Enemy getSkeletonMage(String name) {
-        Enemy skeletonMage = new Enemy(name, 2, 2, 1, 0, "SM", 6, EnemyFunctions.moveRandomly, EnemyFunctions.favourSpellThenWeaponDamage, true);
+    public static Enemy getSkeletonMage(char id) {
+        Enemy skeletonMage = new Enemy("Skeleton Mage " + id, 2, 2, 1, 0, "M" + id, 6, EnemyFunctions.moveRandomly, EnemyFunctions.favourSpellThenWeaponDamage, true);
         skeletonMage.loadSpell(Spell.getMagicMissile(10));
         return skeletonMage;
     }
 
-    public static Enemy getGoblin(String name) {
-        Enemy goblin = new Enemy(name, 2, 1, 1, 1, "GB", 10, EnemyFunctions.followHero, EnemyFunctions.favourCurrentWeaponAndThenDamage, false);
+    public static Enemy getGoblin(char id) {
+        Enemy goblin = new Enemy("Goblin " + id, 2, 1, 1, 1, "G" + id, 10, EnemyFunctions.followHero, EnemyFunctions.favourCurrentWeaponAndThenDamage, false);
         for (int i = 0; i < 5; i++) goblin.addToInventory(Weapon.getDagger());
         return goblin;
     }
@@ -261,13 +261,21 @@ public class Character implements Entity {
     }
 
     public Map<String, Equipment> getCurrentlyEquipped() {
-        return Arrays.stream(Equipment.Category.values())
-                .collect(Collectors.toMap(
-                        Equipment.Category::getCategoryName,
-                        category -> body.getOrDefault(category.getCategoryName(), null)
-                ));
+        HashMap<String, Equipment> result = new HashMap<>();
+        for (Equipment.Category category : Equipment.Category.values()) {
+            if (category == Equipment.Category.ONEHAND || category == Equipment.Category.TWOHAND) {
+                result.put("RIGHT HAND", hands[RIGHT_HAND]);
+                result.put("LEFT HAND", hands[LEFT_HAND]);
+            }
+            else
+                result.put(category.getCategoryName(), body.getOrDefault(category.getCategoryName(), null));
+        }
+        return result;
     }
 
+    public Item dropItem(int id) {
+        return inventory.drop(id);
+    }
 
     // Spell acessors
     public void loadSpell(Spell spell) {

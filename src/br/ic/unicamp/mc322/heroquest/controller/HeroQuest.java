@@ -3,6 +3,8 @@ package br.ic.unicamp.mc322.heroquest.controller;
 import br.ic.unicamp.mc322.heroquest.auxiliars.Point;
 import br.ic.unicamp.mc322.heroquest.entities.Character;
 import br.ic.unicamp.mc322.heroquest.entities.*;
+import br.ic.unicamp.mc322.heroquest.items.Equipment;
+import br.ic.unicamp.mc322.heroquest.items.Weapon;
 
 import java.util.List;
 import java.util.Scanner;
@@ -10,6 +12,7 @@ import java.util.Scanner;
 public class HeroQuest {
     private final Scanner scanner = new Scanner(System.in);
     private final Renderer renderer;
+    private char entityId = 47;
 
     public HeroQuest(Renderer renderer) {
         this.renderer = renderer;
@@ -97,8 +100,8 @@ public class HeroQuest {
         renderer.announcePlayerTurn();
         boolean moveAction = false, mainAction = false, end = false;
         while (!end && (!moveAction || !mainAction)) {
-            String input = scanner.nextLine().toLowerCase();
-            String[] commands = input.split("\\s+");
+            renderer.printAvailableActions("move", "attack");
+            String[] commands = scanner.nextLine().toLowerCase().split("\\s+");
             if (commands.length > 0) {
                 if (commands[0].equals("move")) {
                     if (moveAction) {
@@ -128,39 +131,76 @@ public class HeroQuest {
         renderer.printCurrentWeapon(character.getCurrentWeapon());
         boolean attacked = false;
         while (!attacked) {
+            renderer.printAvailableActions("switch", "equipment", "attack [id]", "skip");
             String[] commands = scanner.nextLine().toLowerCase().split("\\s+");
             if (commands.length > 0) {
-                if (commands[0].equals("switch") || commands[0].equals("equipment")) handleEquipment();
-                else if (commands[0].equals("attack")) {
-                    if (commands.length > 1) {
-                        Entity target = Dungeon.getInstance().getEntityByStringRepresentation(commands[1]).stream()
-                                .findFirst().orElse(null);
-                        if (target instanceof Character) {
-                            try {
-                                character.attack((Character) target);
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                switch (commands[0]) {
+                    case "switch":
+                    case "equipment":
+                        handleEquipment(character);
+                        break;
+                    case "attack":
+                        if (commands.length > 1) {
+                            Entity target = Dungeon.getInstance().getEntityByStringRepresentation(commands[1]).stream()
+                                    .findFirst().orElse(null);
+                            if (target instanceof Character) {
+                                try {
+                                    character.attack((Character) target);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                             }
-                        }
-                    }
-                    else
-                        renderer.alertMissingTarget();
+                        } else
+                            renderer.alertMissingParameter(commands[0]);
+                        break;
+                    case "skip":
+                        renderer.announceAttackTurnEnd();
+                        attacked = true;
+                        break;
+                    default:
+                        renderer.alertCouldNotInterpretCommand();
+                        break;
                 }
-                else if (commands[0].equals("skip")){
-                    renderer.announceAttackTurnEnd();
-                    attacked = true;
-                }
-
-                else
-                    renderer.alertCouldNotInterpretCommand();
             }
             else
                 renderer.alertCouldNotInterpretCommand();
         }
     }
 
-    private void handleEquipment() {
-
+    private void handleEquipment(Character character) {
+        boolean end = false;
+        while (!end) {
+            renderer.printCurrentEquipment(character.getCurrentlyEquipped());
+            renderer.printInventory(character.getInventory());
+            renderer.printAvailableActions("equip [id]", "righthand", "lefthand", "finish");
+            String[] commands = scanner.nextLine().toLowerCase().split("\\s+");
+            if (commands.length > 0) {
+                switch (commands[0]) {
+                    case "equip":
+                        if (commands.length > 1) {
+                            int id = Integer.parseInt(commands[1]);
+                            if (character.getInventory().getOrDefault(id, null) instanceof Equipment) {
+                                Equipment equip = (Equipment) character.dropItem(id);
+                                character.equip(equip);
+                            }
+                            else
+                                renderer.alertInvalidItem(id);
+                        }
+                        else
+                            renderer.alertMissingParameter(commands[0]);
+                        break;
+                    case "righthand": character.chooseWeapon(Character.RIGHT_HAND); break;
+                    case "lefthand": character.chooseWeapon(Character.LEFT_HAND); break;
+                    case "finish":
+                        end = true;
+                        break;
+                    default:
+                        renderer.alertCouldNotInterpretCommand();
+                }
+            }
+            else
+                renderer.alertCouldNotInterpretCommand();
+        }
     }
 
     private void handleEnemyTurn(Enemy enemy) {
@@ -171,11 +211,14 @@ public class HeroQuest {
         int steps = 0;
         int limitSteps = hero.getSteps();
         while (steps < limitSteps) {
+            renderer.printAvailableActions("move [up/right/down/left]", "open door", "stop");
+            renderer.printAvailableSteps(limitSteps - steps);
+            renderer.printWholeMap();
             String input = scanner.nextLine().toLowerCase();
             String[] commands = input.split("\\s+");
             if (commands.length == 2) {
                 if (commands[0].equals("move")) {
-                    Point.Direction direction = Point.Direction.UP;
+                    Point.Direction direction = null;
                     switch (commands[1]) {
                         case "up":
                             direction = Point.Direction.UP;
@@ -190,6 +233,10 @@ public class HeroQuest {
                             direction = Point.Direction.LEFT;
                             break;
                     }
+                    if (direction == null) {
+                        renderer.alertCouldNotInterpretCommand();
+                        continue;
+                    }
                     Dungeon.getInstance().moveEntity(hero, Point.sum(hero.getPosition(), direction.getPosition()));
                     steps++;
                 } else if (commands[0].equals("open")) {
@@ -200,22 +247,23 @@ public class HeroQuest {
 
                 }
             }
-            else if (input.equals("collect")) {
-                Dungeon.getInstance().getEntities().stream()
-                        .filter(ent -> Point.octileDistance(hero.getPosition(), ent.getPosition()) == 1)
-                        .filter(ent -> ent instanceof Treasure)
-                        .forEach(ent ->  {
-                            hero.collect((Treasure)ent);
-                            Dungeon.getInstance().removeEntity(ent.getPosition());
-                        });
-            }
-            else if (input.equals("guguhacker")) {
-                Renderer.printWholeMapv2(Dungeon.getInstance());
-                System.out.println("safadinho...");
-                scanner.nextLine();
-            }
-            else if (commands[0].equals("stop"))
-                break;
+            else if (commands.length == 1)
+                if (commands[0].equals("stop"))
+                    break;
+                else if (commands[0].equals("collect")) {
+                    Dungeon.getInstance().getEntities().stream()
+                            .filter(ent -> Point.octileDistance(hero.getPosition(), ent.getPosition()) == 1)
+                            .filter(ent -> ent instanceof Treasure)
+                            .forEach(ent ->  {
+                                hero.collect((Treasure)ent);
+                                Dungeon.getInstance().removeEntity(ent.getPosition());
+                            });
+                }
+                else if (input.equals("guguhacker")) {
+                    Renderer.printWholeMapv2(Dungeon.getInstance());
+                    System.out.println("safadinho...");
+                    scanner.nextLine();
+                }
         }
     }
 

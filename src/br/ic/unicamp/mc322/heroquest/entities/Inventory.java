@@ -31,6 +31,14 @@ public class Inventory {
         return inventory;
     }
 
+    public boolean contains(Item item) {
+        return itemInventory.contains(item);
+    }
+
+    public Item drop(int id) {
+        return itemInventory.remove(id);
+    }
+
     public Item itemAt(int index) {
         return itemInventory.get(index).copy();
     }
