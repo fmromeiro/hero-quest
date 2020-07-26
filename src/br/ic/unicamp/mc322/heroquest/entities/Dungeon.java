@@ -132,6 +132,14 @@ public class Dungeon {
                 .collect(Collectors.toList());
     }
 
+    public List<Entity> getSecondaryEntities() {
+        return Arrays.stream(this.map)
+                .flatMap(Arrays::stream)
+                .map(Tile::getSecondaryEntity)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
     public Entity entityAt(Point point) {
         return map[point.getY()][point.getX()].getEntity();
     }
@@ -168,6 +176,10 @@ public class Dungeon {
     // Visibility
     public void removeEntity(Point position) {
         this.map[position.getY()][position.getX()].removeEntity();
+    }
+
+    public void removeSecondaryEntity(Point position) {
+        this.map[position.getY()][position.getX()].removeSecondaryEntity();
     }
 
     public boolean[][] getVisibilityFrom(Point position) {

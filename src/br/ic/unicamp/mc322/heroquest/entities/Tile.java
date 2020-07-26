@@ -32,6 +32,8 @@ public class Tile {
 
     public Entity getEntity() { return this.currentEntity; }
 
+    public Entity getSecondaryEntity() { return this.secondaryEntity; }
+
     public Point getPosition() { return this.position; }
 
     public Entity removeEntity() {
@@ -43,6 +45,12 @@ public class Tile {
         else
             this.currentEntity = null;
         return current;
+    }
+
+    public Entity removeSecondaryEntity() {
+        Entity secondary = this.secondaryEntity;
+        this.secondaryEntity = null;
+        return secondary;
     }
 
     public void setEntity(Entity entity) {

@@ -66,7 +66,7 @@ public class HeroQuest {
         //Dungeon.getInstance().addEntity(new Door(), new Point(15, 8));
         //createDefaultMap();
         //Dungeon.getInstance().addEntity(new Door(), new Point(15, 8));
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 10; i++) {
             Dungeon.getInstance().addEntity(Treasure.randomTreasure(), Dungeon.getInstance().getRandomFreePoint());
 
         }
@@ -131,11 +131,18 @@ public class HeroQuest {
             }
             else if (input.equals("collect")) {
                 Dungeon.getInstance().getEntities().stream()
-                        .filter(ent -> Point.octileDistance(hero.getPosition(), ent.getPosition()) == 1)
+                        .filter(ent -> Point.octileDistance(hero.getPosition(), ent.getPosition()) <= 1)
                         .filter(ent -> ent instanceof Treasure)
                         .forEach(ent ->  {
                             hero.collect((Treasure)ent);
                             Dungeon.getInstance().removeEntity(ent.getPosition());
+                        });
+                Dungeon.getInstance().getSecondaryEntities().stream()
+                        .filter(ent -> Point.octileDistance(hero.getPosition(), ent.getPosition()) <= 1)
+                        .filter(ent -> ent instanceof Treasure)
+                        .forEach(ent ->  {
+                            hero.collect((Treasure)ent);
+                            Dungeon.getInstance().removeSecondaryEntity(ent.getPosition());
                         });
             }
             else if (input.equals("guguhacker")) {
