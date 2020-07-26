@@ -1,13 +1,17 @@
 package br.ic.unicamp.mc322.heroquest.entities;
 
 import br.ic.unicamp.mc322.heroquest.auxiliars.Point;
+import br.ic.unicamp.mc322.heroquest.items.Item;
+import br.ic.unicamp.mc322.heroquest.items.Weapon;
+import br.ic.unicamp.mc322.heroquest.spells.Spell;
 
 import java.util.*;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class EnemyFunctions {
-    public static Function<Enemy, List<Point>> moveRandomly = (Enemy enemy) -> {
+    public static final Function<Enemy, List<Point>> moveRandomly = (Enemy enemy) -> {
         Character hero = Dungeon.getInstance().getHero();
         if (hero == null)
             return null;
@@ -37,7 +41,7 @@ public class EnemyFunctions {
         return path;
     };
 
-    public static Function<Enemy, List<Point>> followHero = (Enemy enemy) -> {
+    public static final Function<Enemy, List<Point>> followHero = (Enemy enemy) -> {
         Character hero = Dungeon.getInstance().getHero();
         if (hero == null)
             return null;
@@ -108,4 +112,37 @@ public class EnemyFunctions {
         }
         return null;
     }
+
+    public static final Consumer<Enemy> favourCurrentWeaponAndThenDamage = (Enemy enemy) -> {
+        if (!(enemy.getCurrentWeapon() instanceof Weapon)) {
+            enemy.getInventory().entrySet().stream()
+                    .filter(entry -> entry.getValue() instanceof Weapon)
+                    .max((a, b) -> a.getValue().getModifier().getModifier() - b.getValue().getModifier().getModifier())
+                    .ifPresent(bestWeapon -> enemy.equip(bestWeapon.getKey(), 'r'));
+            enemy.chooseWeapon(Character.RIGHT_HAND);
+        }
+
+        try {
+            enemy.attack(Dungeon.getInstance().getHero());
+        }
+        catch (Exception ignored) {
+
+        }
+    };
+
+    public static final Consumer<Enemy> favourSpellThenWeaponDamage = (Enemy enemy) -> {
+        Spell spell = enemy.getSpellBook().values().stream()
+                .filter(_spell -> !_spell.getName().equals("Teleport"))
+                .findAny().orElse(null);
+
+        if (spell != null)
+            try {
+                enemy.castSpell(spell, Dungeon.getInstance().getHero().getPosition());
+            } catch (Exception ignored) {
+
+            }
+        else {
+            favourCurrentWeaponAndThenDamage.accept(enemy);
+        }
+    };
 }
