@@ -1,0 +1,474 @@
+<Dungeon>
+    <Rooms>
+        <!--~~~~~~~~~~~~Sala 0 (Corredores)~~~~~~~~~~~~-->
+        <Room>
+            <TopLeft> 
+                <X>0</X>
+                <Y>0</Y>
+            </TopLeft>
+
+            <BottomRight>
+                <X>35</X>
+                <Y>26</Y>
+            </BottomRight>
+        </Room>
+        <RemoveRoom id = "0">
+            <id> 0 </id>
+            <TopLeft> 
+                <X>3</X>
+                <Y>3</Y>
+            </TopLeft>
+
+            <BottomRight>
+                <X>32</X>
+                <Y>23</Y>
+            </BottomRight>
+        </RemoveRoom>>
+        
+        <RoomAdd>
+            <id> 0 </id>
+            <TopLeft> 
+                <X> 1 </X>
+                <Y> 12 </Y>
+            </TopLeft>
+            
+            <BottomRight>
+                <X>34</X>
+                <Y>14</Y>
+            </BottomRight>
+        </RoomAdd>
+        
+        <RoomAdd>
+            <id> 0 </id>
+            <TopLeft> 
+                <X>16</X>
+                <Y>2</Y>
+            </TopLeft>
+            
+            <BottomRight>
+                <X>19</X>
+                <Y>24</Y>
+            </BottomRight>
+        </RoomAdd>
+        
+        <RoomAdd>
+            <id> 0 </id>
+            <TopLeft> 
+                <X>12</X>
+                <Y>8</Y>
+            </TopLeft>
+            
+            <BottomRight>
+                <X>23</X>
+                <Y>18</Y>
+            </BottomRight>
+        </RoomAdd>
+
+        <!--~~~~~~~~~~~~Bloco superior Esquerdo (Salas 01-05)~~~~~~~~~~~~-->
+        <Room>
+            <TopLeft> 
+                <X>2</X>
+                <Y>2</Y>
+            </TopLeft>
+            
+            <BottomRight>
+                <X>7</X>
+                <Y>6</Y>
+            </BottomRight>
+        </Room>
+
+        <Room>
+            <TopLeft> 
+                <X>7</X>
+                <Y>2</Y>
+            </TopLeft>
+            
+            <BottomRight>
+                <X>12</X>
+                <Y>6</Y>
+            </BottomRight>
+        </Room>
+
+        <Room>
+            <TopLeft> 
+                <X>12</X>
+                <Y>2</Y>
+            </TopLeft>
+            
+            <BottomRight>
+                <X>16</X>
+                <Y>8</Y>
+            </BottomRight>
+        </Room>
+
+        <Room>
+            <TopLeft> 
+                <X>2</X>
+                <Y>6</Y>
+            </TopLeft>
+            
+            <BottomRight>
+                <X>7</X>
+                <Y>12</Y>
+            </BottomRight>
+        </Room>
+
+        <Room>
+            <TopLeft> 
+                <X>7</X>
+                <Y>6</Y>
+            </TopLeft>
+            
+            <BottomRight>
+                <X>12</X>
+                <Y>12</Y>
+            </BottomRight>
+        </Room>
+        <!--~~~~~~~~~~~~Bloco superior direito (Salas 06-10)~~~~~~~~~~~~-->
+        <Room>
+            <TopLeft> 
+                <X>19</X>
+                <Y>2</Y>
+            </TopLeft>
+            
+            <BottomRight>
+                <X>23</X>
+                <Y>8</Y>
+            </BottomRight>
+        </Room>
+
+        <Room>
+            <TopLeft> 
+                <X>23</X>
+                <Y>2</Y>
+            </TopLeft>
+            
+            <BottomRight>
+                <X>28</X>
+                <Y>7</Y>
+            </BottomRight>
+        </Room>
+
+        <Room>
+            <TopLeft> 
+                <X>28</X>
+                <Y>2</Y>
+            </TopLeft>
+            
+            <BottomRight>
+                <X>33</X>
+                <Y>7</Y>
+            </BottomRight>
+        </Room>
+
+        <Room>
+            <TopLeft> 
+                <X>23</X>
+                <Y>7</Y>
+            </TopLeft>
+            
+            <BottomRight>
+                <X>28</X>
+                <Y>12</Y>
+            </BottomRight>
+        </Room>
+
+        <Room>
+            <TopLeft> 
+                <X>28</X>
+                <Y>7</Y>
+            </TopLeft>
+            
+            <BottomRight>
+                <X>33</X>
+                <Y>12</Y>
+            </BottomRight>
+        </Room>
+        
+        <!--~~~~~~~~~~~~Sala Central (11)~~~~~~~~~~~~-->
+        <Room>
+            <TopLeft> 
+                <X>14</X>
+                <Y>10</Y>
+            </TopLeft>
+            
+            <BottomRight>
+                <X>21</X>
+                <Y>16</Y>
+            </BottomRight>
+        </Room>
+
+        <RemoveRoom>
+            <id>0</id>
+            <TopLeft> 
+                <X>15</X>
+                <Y>11</Y>
+            </TopLeft>
+            
+            <BottomRight>
+                <X>20</X>
+                <Y>15</Y>
+            </BottomRight>
+        </RemoveRoom>
+
+        <!--~~~~~~~~~~~~Bloco inferior esquerdo (12-17)~~~~~~~~~~~~-->
+        <Room>
+            <TopLeft> 
+                <X>2</X>
+                <Y>14</Y>
+            </TopLeft>
+            
+            <BottomRight>
+                <X>6</X>
+                <Y>19</Y>
+            </BottomRight>
+        </Room>
+        
+        <Room>
+            <TopLeft> 
+                <X>6</X>
+                <Y>14</Y>
+            </TopLeft>
+            
+            <BottomRight>
+                <X>9</X>
+                <Y>18</Y>
+            </BottomRight>
+        </Room>
+
+        <Room>
+            <TopLeft> 
+                <X>9</X>
+                <Y>14</Y>
+            </TopLeft>
+            
+            <BottomRight>
+                <X>12</X>
+                <Y>18</Y>
+            </BottomRight>
+        </Room>
+
+        <Room>
+            <TopLeft> 
+                <X>2</X>
+                <Y>19</Y>
+            </TopLeft>
+            
+            <BottomRight>
+                <X>7</X>
+                <Y>24</Y>
+            </BottomRight>
+        </Room>
+
+        <Room>
+            <TopLeft> 
+                <X>7</X>
+                <Y>18</Y>
+            </TopLeft>
+            
+            <BottomRight>
+                <X>12</X>
+                <Y>24</Y>
+            </BottomRight>
+        </Room>
+
+        <Room>
+            <TopLeft> 
+                <X>12</X>
+                <Y>18</Y>
+            </TopLeft>
+            
+            <BottomRight>
+                <X>16</X>
+                <Y>24</Y>
+            </BottomRight>
+        </Room>
+
+        <!--~~~~~~~~~~~~Bloco inferior esquerdo (12-17)~~~~~~~~~~~~-->
+        <Room>
+            <TopLeft> 
+                <X>2</X>
+                <Y>14</Y>
+            </TopLeft>
+            
+            <BottomRight>
+                <X>6</X>
+                <Y>19</Y>
+            </BottomRight>
+        </Room>
+        
+        <Room>
+            <TopLeft> 
+                <X>6</X>
+                <Y>14</Y>
+            </TopLeft>
+            
+            <BottomRight>
+                <X>9</X>
+                <Y>18</Y>
+            </BottomRight>
+        </Room>
+
+        <Room>
+            <TopLeft> 
+                <X>9</X>
+                <Y>14</Y>
+            </TopLeft>
+            
+            <BottomRight>
+                <X>12</X>
+                <Y>18</Y>
+            </BottomRight>
+        </Room>
+
+        <Room>
+            <TopLeft> 
+                <X>2</X>
+                <Y>19</Y>
+            </TopLeft>
+            
+            <BottomRight>
+                <X>7</X>
+                <Y>24</Y>
+            </BottomRight>
+        </Room>
+
+        <Room>
+            <TopLeft> 
+                <X>7</X>
+                <Y>18</Y>
+            </TopLeft>
+            
+            <BottomRight>
+                <X>12</X>
+                <Y>24</Y>
+            </BottomRight>
+        </Room>
+
+        <Room>
+            <TopLeft> 
+                <X>12</X>
+                <Y>18</Y>
+            </TopLeft>
+            
+            <BottomRight>
+                <X>16</X>
+                <Y>24</Y>
+            </BottomRight>
+        </Room>
+
+        <!--~~~~~~~~~~~~Bloco inferior esquerdo (12-17)~~~~~~~~~~~~-->
+        <Room>
+            <TopLeft> 
+                <X>23</X>
+                <Y>14</Y>
+            </TopLeft>
+            
+            <BottomRight>
+                <X>28</X>
+                <Y>19</Y>
+            </BottomRight>
+        </Room>
+
+        <RemoveRoom>
+            <id> 18 </id>
+            <TopLeft> 
+                <X>23</X>
+                <Y>19</Y>
+            </TopLeft>
+
+            <BottomRight>
+                <X>23</X>
+                <Y>19</Y>
+            </BottomRight>
+        </RemoveRoom>>
+
+        <Room>
+            <TopLeft> 
+                <X>28</X>
+                <Y>14</Y>
+            </TopLeft>
+            
+            <BottomRight>
+                <X>33</X>
+                <Y>19</Y>
+            </BottomRight>
+        </Room>
+
+        <Room>
+            <TopLeft> 
+                <X>19</X>
+                <Y>18</Y>
+            </TopLeft>
+            
+            <BottomRight>
+                <X>24</X>
+                <Y>24</Y>
+            </BottomRight>
+        </Room>
+
+        <Room>
+            <TopLeft> 
+                <X>24</X>
+                <Y>19</Y>
+            </TopLeft>
+            
+            <BottomRight>
+                <X>28</X>
+                <Y>24</Y>
+            </BottomRight>
+        </Room>
+
+        <Room>
+            <TopLeft> 
+                <X>28</X>
+                <Y>19</Y>
+            </TopLeft>
+            
+            <BottomRight>
+                <X>33</X>
+                <Y>24</Y>
+            </BottomRight>
+        </Room>
+    </Rooms>
+    <Entities>
+        <Hero>
+            <Type> Default </Type>
+            <Position>
+                <X>16</X>
+                <Y>9</Y>
+            </Position>
+        </Hero>
+        <Door>
+            <Position>
+                <X>15</X>
+                <Y>8</Y>
+            </Position>
+        </Door>
+        <Treasure>
+            <Type> Random </Type>
+            <Position>
+                <X>17</X>
+                <Y>9</Y>
+            </Position>
+        </Treasure>
+        <Goblin>
+            <Position>
+                <X>32</X>
+                <Y>25</Y>
+            </Position>
+        </Goblin>
+        <Skeleton>
+            <Position>
+                <X>16</X>
+                <Y>25</Y>
+            </Position>
+        </Skeleton>
+        <MageSkeleton>
+            <Position>
+                <X>34</X>
+                <Y>25</Y>
+            </Position>
+        </MageSkeleton>
+    </Entities>
+</Dungeon>

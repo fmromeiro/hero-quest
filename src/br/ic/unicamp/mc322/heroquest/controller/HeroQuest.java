@@ -1,5 +1,6 @@
 package br.ic.unicamp.mc322.heroquest.controller;
 
+import br.ic.unicamp.mc322.heroquest.auxiliars.MapXMLBuilder;
 import br.ic.unicamp.mc322.heroquest.auxiliars.Point;
 import br.ic.unicamp.mc322.heroquest.entities.Character;
 import br.ic.unicamp.mc322.heroquest.entities.*;
@@ -62,6 +63,12 @@ public class HeroQuest {
         dungeon.addRoom(new Point(28, 19), new Point(33, 24));
     }
 
+    public void createMapFromXML(String dungeonFile) throws Exception {
+        MapXMLBuilder builder = new MapXMLBuilder(dungeonFile);
+        builder.buildMap();
+        builder.addEntities();
+    }
+
     public void runGame() throws Exception {
         this.setUp();
         boolean running = true;
@@ -70,19 +77,24 @@ public class HeroQuest {
     }
 
     private void setUp() throws Exception {
-        // randomizar inimigos, tesouros, armadilhas etc
-        createRandomMap();
-        //Dungeon.getInstance().addEntity(new Door(), new Point(15, 8));
-        //createDefaultMap();
-        //Dungeon.getInstance().addEntity(new Door(), new Point(15, 8));
-        for (int i = 0; i < 5; i++) {
-            Dungeon.getInstance().addEntity(Treasure.randomTreasure(), Dungeon.getInstance().getRandomFreePoint());
+        String dungeonFile = askForXML();
+        if(dungeonFile.isEmpty()) {
+            // randomizar inimigos, tesouros, armadilhas etc
+            createRandomMap();
+            //Dungeon.getInstance().addEntity(new Door(), new Point(15, 8));
+            //createDefaultMap();
+            //Dungeon.getInstance().addEntity(new Door(), new Point(15, 8));
+            for (int i = 0; i < 5; i++) {
+                Dungeon.getInstance().addEntity(Treasure.randomTreasure(), Dungeon.getInstance().getRandomFreePoint());
 
+            }
+            Dungeon.getInstance().addEntity(Character.getDefaultHero(entityId++), Dungeon.getInstance().getRandomFreePoint());
+            //Dungeon.getInstance().addEntity(Character.getMeleeSkeleton("Skeleton"), new Point(16, 25));
+            //Dungeon.getInstance().addEntity(Character.getSkeletonMage("Skeleton Mage"), new Point(34, 25));
+            //Dungeon.getInstance().addEntity(Character.getGoblin("Goblin"), new Point(32, 25));
         }
-        Dungeon.getInstance().addEntity(Character.getDefaultHero(entityId++), Dungeon.getInstance().getRandomFreePoint());
-        //Dungeon.getInstance().addEntity(Character.getMeleeSkeleton("Skeleton"), new Point(16, 25));
-        //Dungeon.getInstance().addEntity(Character.getSkeletonMage("Skeleton Mage"), new Point(34, 25));
-        //Dungeon.getInstance().addEntity(Character.getGoblin("Goblin"), new Point(32, 25));
+        else
+            createMapFromXML(dungeonFile);
         renderer.printVisibleMap();
     }
 
@@ -290,5 +302,10 @@ public class HeroQuest {
         List<Point> path = enemy.move();
         if (path != null && path.size() > 1)
             Dungeon.getInstance().moveEntity(enemy, path.get(path.size() - 2));
+    }
+
+    public String askForXML() {
+        System.out.println("Digite o nome de um arquivo XML para carregar um mapa (Ex: resources/Dungeon.xml) caso contrário o mapa será gerado aleatóriamente");
+        return scanner.nextLine();
     }
 }
