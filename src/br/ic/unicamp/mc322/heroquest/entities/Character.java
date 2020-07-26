@@ -301,4 +301,8 @@ public class Character implements Entity {
                 hands[i] = null;
         return defenseValue;
     }
+
+    public void collect(Treasure loot) {
+        inventory.addItem(loot.getLoot());
+    }
 }

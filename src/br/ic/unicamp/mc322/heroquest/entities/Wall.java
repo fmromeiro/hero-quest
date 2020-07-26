@@ -2,8 +2,7 @@ package br.ic.unicamp.mc322.heroquest.entities;
 
 import br.ic.unicamp.mc322.heroquest.auxiliars.Point;
 
-public class Wall implements StaticEntity {
-    private boolean seen;
+public class Wall extends StaticEntity {
     private Point position;
 
     @Override
@@ -30,8 +29,4 @@ public class Wall implements StaticEntity {
     public String getStringRepresentation() {
         return "▓▓";
     }
-
-    public void setAsSeen() { this.seen = true; }
-
-    public boolean isSeen() { return this.seen; }
 }

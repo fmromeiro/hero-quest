@@ -43,15 +43,15 @@ public class Equipment extends Item {
         return new Equipment(this.name, this.getModifier(), this.category, this.singleUse);
     }
 
-    public Equipment getHelmet() {
+    public static Equipment getHelmet() {
         return new Equipment("Simple Helmet", new StatusModifier(Character.Attribute.DEFENDDICE, 1), Category.HEADGEAR, false);
     }
 
-    public Equipment getPlateMail() {
+    public static Equipment getPlateMail() {
         return new Equipment("Plate Mail", new StatusModifier(Character.Attribute.DEFENDDICE, 3), Category.ARMOR, false);
     }
 
-    public Equipment getShield() {
+    public static Equipment getShield() {
         return new Equipment("Simple Shield", new StatusModifier(Character.Attribute.DEFENDDICE, 1), Category.ONEHAND, false);
     }
 }

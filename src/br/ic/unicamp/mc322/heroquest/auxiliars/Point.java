@@ -123,4 +123,10 @@ public class Point {
     public static int manhattanDistance(Point a, Point b) {
         return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
     }
+
+    public static int octileDistance(Point a, Point b) {
+        int dx = Math.abs(a.x - b.x);
+        int dy = Math.abs(a.y - b.y);
+        return (int) ((dx + dy) + (Math.sqrt(2) - 2) * (Math.min(dx, dy)));
+    }
 }
