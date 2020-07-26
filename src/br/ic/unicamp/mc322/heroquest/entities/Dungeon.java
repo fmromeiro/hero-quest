@@ -208,8 +208,6 @@ public class Dungeon {
                 Entity current = this.map[point.getY()][point.getX()].getEntity();
                 if (current instanceof StaticEntity && ((StaticEntity)current).isSeen())
                     visibilityMatrix[point.getY()][point.getX()] = true;
-                else if (current instanceof Door && ((Door)current).isSeen())
-                    visibilityMatrix[point.getY()][point.getX()] = true;
                 if (visible && current != null && !current.canSeeThrough())
                     visible = false;
             }
