@@ -29,8 +29,8 @@ public class Character implements Entity {
         public String getName() { return this.name; }
     }
 
-    private static final int RIGHT_HAND = 0;
-    private static final int LEFT_HAND = 1;
+    public static final int RIGHT_HAND = 0;
+    public static final int LEFT_HAND = 1;
 
 
     // Instance attributes
@@ -106,7 +106,7 @@ public class Character implements Entity {
     }
 
     public static Enemy getMeleeSkeleton(String name) {
-        Enemy skeleton = new Enemy(name, 2, 2, 1, 0, "SK", 6, EnemyFunctions.moveRandomly, null, false);
+        Enemy skeleton = new Enemy(name, 2, 2, 1, 0, "SK", 6, EnemyFunctions.moveRandomly, EnemyFunctions.favourCurrentWeaponAndThenDamage, false);
         Weapon weapon;
         switch ((int)Math.floor(Math.random()*4)) {
             default:
@@ -120,13 +120,13 @@ public class Character implements Entity {
     }
 
     public static Enemy getSkeletonMage(String name) {
-        Enemy skeletonMage = new Enemy(name, 2, 2, 1, 0, "SM", 6, EnemyFunctions.moveRandomly, null, true);
+        Enemy skeletonMage = new Enemy(name, 2, 2, 1, 0, "SM", 6, EnemyFunctions.moveRandomly, EnemyFunctions.favourSpellThenWeaponDamage, true);
         skeletonMage.loadSpell(Spell.getMagicMissile(10));
         return skeletonMage;
     }
 
     public static Enemy getGoblin(String name) {
-        Enemy goblin = new Enemy(name, 2, 1, 1, 1, "GB", 10, EnemyFunctions.followHero, null, false);
+        Enemy goblin = new Enemy(name, 2, 1, 1, 1, "GB", 10, EnemyFunctions.followHero, EnemyFunctions.favourCurrentWeaponAndThenDamage, false);
         for (int i = 0; i < 5; i++) goblin.addToInventory(Weapon.getDagger());
         return goblin;
     }
@@ -185,12 +185,13 @@ public class Character implements Entity {
                 .sum();
     }
 
-    // Miscellaneous accessors
     public int getSteps() {
         return Dice.rollMovementDice(2);
     }
 
     public boolean isHero() { return this.defendDiceValue == Dice.CombatDiceValue.HERO_SHIELD; }
+
+    // Equipment accessors
 
     public void selectItem(int index) {
         Item item = inventory.getItem(index);
@@ -254,10 +255,20 @@ public class Character implements Entity {
         inventory.addItem(item);
     }
 
+    public Equipment getCurrentWeapon() { return hands[selectedWeapon]; }
+
+    public Map<Integer, Item> getInventory() {
+        return this.inventory.getItems();
+    }
+
+
     // Spell acessors
     public void loadSpell(Spell spell) {
         this.spellBook.addItem(spell);
     }
+
+    public Map<Integer, Spell> getSpellBook() { return this.spellBook.getSpells(); }
+
 
     // Actions
     public void attack(Character target) throws Exception {
@@ -265,7 +276,7 @@ public class Character implements Entity {
             throw new Exception("Can't see target");
 
         int distance = Point.manhattanDistance(this.getPosition(), target.getPosition());
-        boolean isWeapon = hands[selectedWeapon] != null && hands[selectedWeapon] instanceof Weapon;
+        boolean isWeapon = hands[selectedWeapon] instanceof Weapon;
         int weaponDamage = isWeapon ? hands[selectedWeapon].getModifier().getModifier() : 0;
         int weaponRange = isWeapon ? ((Weapon)hands[selectedWeapon]).getRange() : 1;
 
@@ -299,5 +310,9 @@ public class Character implements Entity {
 
     public void collect(Treasure loot) {
         inventory.addItem(loot.getLoot());
+    }
+    
+    public void castSpell(Spell spell, Point target) throws Exception {
+        this.spellBook.castSpell(spell, target);
     }
 }
