@@ -11,6 +11,10 @@ import java.util.stream.Collectors;
 public class HeroQuest {
     private final Scanner scanner = new Scanner(System.in);
 
+    private static void createRandomMap() {
+        Dungeon dungeon = Dungeon.getInstance();
+        dungeon.addRandomRooms();
+    }
     private static void createDefaultMap() {
         Dungeon dungeon = Dungeon.getInstance();
 
@@ -58,7 +62,9 @@ public class HeroQuest {
 
     public void setUp() throws Exception {
         // randomizar inimigos, tesouros, armadilhas etc
-        createDefaultMap();
+        createRandomMap();
+        //Dungeon.getInstance().addEntity(new Door(), new Point(15, 8));
+        //createDefaultMap();
         Dungeon.getInstance().addEntity(new Door(), new Point(15, 8));
         Dungeon.getInstance().addEntity(Treasure.randomTreasure(), new Point(17, 6));
         Dungeon.getInstance().addEntity(Character.getDefaultHero("Player"), new Point(16, 9));

@@ -26,6 +26,10 @@ public class Tile {
         this.rooms.remove(roomIndex);
     }
 
+    public void removeFromEveryRoom() {
+        this.rooms.clear();
+    }
+
     public Entity getEntity() { return this.currentEntity; }
 
     public Point getPosition() { return this.position; }
