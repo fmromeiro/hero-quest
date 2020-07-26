@@ -16,8 +16,8 @@ public class Enemy extends Character {
                     int baseBodyPoints, int mindPoints,
                     String stringRepresentation, int movementSquares,
                     BiFunction<Enemy, List<Entity>,  List<Point>> moverFunction,
-                    BiConsumer<Enemy, List<Entity>> attackerFunction) {
-        super(name, attackDice, defendDice, baseBodyPoints, mindPoints, stringRepresentation, Dice.CombatDiceValue.MONSTER_SHIELD);
+                    BiConsumer<Enemy, List<Entity>> attackerFunction, boolean isCaster) {
+        super(name, attackDice, defendDice, baseBodyPoints, mindPoints, stringRepresentation, Dice.CombatDiceValue.MONSTER_SHIELD, isCaster);
         this.movementSquares = movementSquares;
         this.moverFunction = moverFunction;
         this.attackerFunction = attackerFunction;

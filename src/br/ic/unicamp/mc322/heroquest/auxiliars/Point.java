@@ -1,5 +1,7 @@
 package br.ic.unicamp.mc322.heroquest.auxiliars;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 public class Point {
@@ -16,7 +18,11 @@ public class Point {
         public Point getPosition() { return new Point(position); }
     }
 
-    private int x, y;
+    public static final List<Point> crossAdjacents = Arrays.asList(new Point(0, -1), new Point(1, 0), new Point(0, 1), new Point(-1, 0));
+    public static final List<Point> squareAdjacents = Arrays.asList(new Point(-1, -1), new Point(0, -1), new Point(1, -1),
+            new Point(-1, 0), new Point(1, 0), new Point(-1, 1), new Point(0, 1), new Point(1, 1));
+
+    private final int x, y;
 
     public Point(int x, int y) {
         this.x = x;

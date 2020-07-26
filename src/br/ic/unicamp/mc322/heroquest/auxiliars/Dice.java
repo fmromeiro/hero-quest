@@ -1,6 +1,9 @@
 package br.ic.unicamp.mc322.heroquest.auxiliars;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class Dice {
     public static final Random dice = new Random();
@@ -9,7 +12,8 @@ public class Dice {
         HERO_SHIELD,
         MONSTER_SHIELD,
     }
-    public static int throwCombatDice(int qtt, CombatDiceValue desired) {
+
+    public static int rollCombatDice(int qtt, CombatDiceValue desired) {
         int ret = 0;
         for(int i = 0; i < qtt; i++) {
             int d = dice.nextInt(6);
@@ -25,6 +29,14 @@ public class Dice {
         return ret;
     }
 
+    public static List<Integer> rollNumberDice(int qtt, int sides) {
+        return dice.ints(qtt, 1, sides + 1).boxed().collect(Collectors.toList());
+    }
+
+    public static int rollNumberDiceSum(int qtt, int sides) {
+        return dice.ints(qtt, 1, sides + 1).sum();
+    }
+    
     public static int throwMovementDice(int qtt) {
         return dice.ints(1, 7).limit(qtt).sum();
     }

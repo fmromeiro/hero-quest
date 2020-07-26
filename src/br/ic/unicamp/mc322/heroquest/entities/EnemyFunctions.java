@@ -15,7 +15,7 @@ public class EnemyFunctions {
             return null;
         List<Point> path = new ArrayList<>();
         Point current = enemy.getPosition();
-        List<Point> possibleSteps = Arrays.asList(new Point(0, -1), new Point(1, 0), new Point(0, 1), new Point(-1, 0));
+        List<Point> possibleSteps = new LinkedList<>(Point.crossAdjacents);
         for(int stepsRemaining = enemy.getSteps(); stepsRemaining > 0; stepsRemaining--) {
             Collections.shuffle(possibleSteps);
             if (Point.manhattanDistance(current, hero.getPosition()) == 1)
@@ -99,7 +99,7 @@ public class EnemyFunctions {
                 Comparator.comparingInt(a -> fScore.getOrDefault(a, Integer.MAX_VALUE)));
         openSet.add(start);
 
-        Point[] possibleSteps = { new Point(0, -1), new Point(1, 0), new Point(0, 1), new Point(-1, 0) };
+        Point[] possibleSteps = Point.crossAdjacents.toArray(new Point[0]);
 
         int bestPathCost = Integer.MAX_VALUE;
         List<Point> bestPath = null;
