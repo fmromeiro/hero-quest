@@ -18,7 +18,7 @@ class Fireball extends Spell {
     public void castSpell(Point source, Point target) {
 
         Entity targetEntity = Dungeon.getInstance().entityAt(target);
-        List<Point> adjacentPositions = Arrays.asList(new Point(0, -1), new Point(1, 0), new Point(0, 1), new Point(-1, 0));
+        List<Point> adjacentPositions = Point.crossAdjacents;
         if (targetEntity instanceof Character)
             ((Character)targetEntity).takeDamage(6);
         adjacentPositions.stream()
