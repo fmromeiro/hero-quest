@@ -7,13 +7,15 @@ import java.util.stream.Collectors;
 
 public class Dungeon {
     public final static int WIDTH = 36, HEIGHT = 27;
-
     private final Tile[][] map;
     private final Set<Integer> visitedRooms;
+    private final Set<Integer> openRooms;
+    private final List<Tile> visitedTiles;
     private int nextRoomId;
 
-
     private static Dungeon instance = null;
+
+    public final int MAX_ROOM = 50;
 
     public static Dungeon getInstance() {
         if (instance == null)
@@ -26,7 +28,9 @@ public class Dungeon {
         for (int i = 0; i < HEIGHT*WIDTH; i++)
             this.map[i/WIDTH][i%WIDTH] = new Tile(i%WIDTH, i/WIDTH);
         this.visitedRooms = new HashSet<>();
+        this.openRooms = new HashSet<>();
         this.nextRoomId = 0;
+        this.visitedTiles = new ArrayList<>();
     }
 
 
@@ -92,6 +96,12 @@ public class Dungeon {
 
 
     // Accessors
+    public void clearRooms() {
+        for(Tile[] tiles : map)
+            for(Tile tile : tiles)
+                tile.removeFromEveryRoom();
+    }
+
     public Tile[][] getMap() {
          return this.map;
     }
@@ -256,7 +266,7 @@ public class Dungeon {
             }
         return visibilityMatrix;
     }
-  
+
     public Point getRandomFreePoint() {
         ArrayList<Tile> tileList = new ArrayList<>();
         for (Tile[] row : map) {
@@ -268,4 +278,133 @@ public class Dungeon {
         Random rng = new Random();
         return tileList.get(rng.nextInt(tileList.size())).getPosition();
     }
+
+
+
+    public void addRandomRooms() {
+        Random rng = new Random();for (Tile[] tiles : map)
+            addRoom(new Point(0,0 ), new Point(WIDTH - 1, HEIGHT - 1));
+
+        for(int i = 0; i < MAX_ROOM; i++) {
+            int width = 2 * (rng.nextInt(3) + 1) + 2;  // gives 4, 6 or 8
+            int height = 2 * (rng.nextInt(3) + 1) + 3; // gives 5, 7 or 9
+            Point topLeft = new Point(rng.nextInt(WIDTH - 2 - width ) + 1, rng.nextInt(HEIGHT - 2 - height ) + 1);
+            Point bottomRight = new Point(topLeft.getX() + width, topLeft.getY() + height);
+            addRoom(topLeft, bottomRight);
+        }
+        reorganizeRooms();
+        openPath(0);
+        fillIsolatedRooms();
+    }
+
+    private void reorganizeRooms() {
+        this.clearRooms();
+        this.visitedRooms.clear();
+        this.openRooms.clear();
+
+        int i = 0;
+        for(Tile[] tiles : map)
+            for(Tile tile : tiles)
+                if(tile.getEntity() == null && !visitedTiles.contains(tile)) {
+                    List<Tile> visited = new ArrayList<>();
+                    enumerateRoom(visited, tile, i);
+                    visitedTiles.addAll(visited);
+                    i++;
+                }
+    }
+
+    private void enumerateRoom(List<Tile> visited, Tile current, int roomId) {
+        current.setToRoom(roomId);
+        visited.add(current);
+
+        if (current.getEntity() instanceof Wall)
+            return;
+        if(current.getEntity() instanceof Door)
+            return;
+
+        int cX = current.getPosition().getX();
+        int cY = current.getPosition().getY();
+
+        if(!visited.contains(map[cY - 1][cX])) enumerateRoom(visited, map[cY - 1][cX], roomId);
+        if(!visited.contains(map[cY][cX + 1])) enumerateRoom(visited, map[cY][cX + 1], roomId);
+        if(!visited.contains(map[cY + 1][cX])) enumerateRoom(visited, map[cY + 1][cX], roomId);
+        if(!visited.contains(map[cY][cX - 1])) enumerateRoom(visited, map[cY][cX - 1], roomId);
+    }
+
+    private void openPath(Integer room) {
+        openRooms.add(room);
+        List<Tile> connectedTiles = Arrays.stream(this.map)
+                .flatMap(Arrays::stream)
+                .filter(tile -> tile.isInRoom(room))
+                .filter(tile -> !isCorner(tile))
+                .filter(tile -> tile.getRooms().size() > 1).collect(Collectors.toList());
+        Collections.shuffle(connectedTiles);
+        for(Tile t : connectedTiles) {
+            boolean wasVisited = false;
+            for (Integer visited : openRooms)
+                if(t.isInRoom(visited) && !visited.equals(room))
+                    wasVisited = true;
+            if(!wasVisited) {
+                t.setEntity(new Door());
+                for(Integer roomToVisit : t.getRooms())
+                    if(!roomToVisit.equals(room))
+                        openPath(roomToVisit);
+            }
+
+        }
+    }
+
+    private boolean isCorner(Tile t) {
+        if(!(t.getEntity() instanceof Wall))
+            return false;
+
+        int tX = t.getPosition().getX();
+        int tY = t.getPosition().getY();
+
+        if(tX == 0 || tX == WIDTH - 1 || tY == 0 || tY == HEIGHT - 1)
+            return true;
+
+        return (map[tY + 1][tX].getEntity() instanceof Wall || map[tY - 1][tX].getEntity() instanceof Wall) && ((map[tY][tX + 1].getEntity() instanceof Wall || map[tY][tX - 1].getEntity() instanceof Wall));
+    }
+
+    private void fillIsolatedRooms() {
+        for(Tile[] tiles : map)
+            for(Tile tile : tiles)
+                if(tile.getEntity() == null && !visitedTiles.contains(tile)) {
+                    List<Tile> visited = new ArrayList<>();
+                    if(!hasWayOut(visited, tile))
+                        for(Tile isolatedTile : visited)
+                            isolatedTile.setEntity(new Wall());
+
+                    visitedTiles.addAll(visited);
+                }
+    }
+
+    private boolean hasWayOut(List<Tile> visited, Tile current) {
+        if (current.getEntity() instanceof Wall)
+            return false;
+        if (current.getEntity() instanceof Door)
+            return true;
+
+        visited.add(current);
+
+        int cX = current.getPosition().getX();
+        int cY = current.getPosition().getY();
+        boolean hasWayOut = false;
+
+        if(!visited.contains(map[cY - 1][cX]))
+            hasWayOut = hasWayOut(visited, map[cY - 1][cX]);
+
+        if(!visited.contains(map[cY][cX + 1]))
+            hasWayOut = hasWayOut || hasWayOut(visited, map[cY][cX + 1]);
+
+        if(!visited.contains(map[cY + 1][cX]))
+            hasWayOut = hasWayOut || hasWayOut(visited, map[cY + 1][cX]);
+
+        if(!visited.contains(map[cY][cX - 1]))
+            hasWayOut = hasWayOut || hasWayOut(visited, map[cY][cX - 1]);
+
+        return hasWayOut;
+    }
+
 }
