@@ -133,4 +133,15 @@ public class TerminalRenderer implements Renderer {
         System.out.println("You have " + steps + " remaining steps");
     }
 
+    @Override
+    public void printHeroVictory() {
+        System.out.println("All enemies were defeated! The hero wins!");
+    }
+
+    @Override
+    public void printHeroDefeat() {
+        System.out.println("The hero was defeated... Better luck next time.");
+
+    }
+
 }

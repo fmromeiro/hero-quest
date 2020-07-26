@@ -64,8 +64,9 @@ public class HeroQuest {
 
     public void runGame() throws Exception {
         this.setUp();
-        while (true)
-            this.mainLoop();
+        boolean running = true;
+        while (running)
+            running = this.mainLoop();
     }
 
     private void setUp() throws Exception {
@@ -85,15 +86,28 @@ public class HeroQuest {
         Renderer.printVisibleMap(Dungeon.getInstance());
     }
 
-    private void mainLoop() {
+    private boolean mainLoop() {
         this.handleHeroTurn(Dungeon.getInstance().getHero());
+        if (Dungeon.getInstance().getEnemies().size() <= 0) {
+            renderer.printHeroVictory();
+            return false;
+        }
         List<Enemy> enemies = Dungeon.getInstance().getEnemies();
         for (Enemy enemy : enemies) {
+            if (!Dungeon.getInstance().getHero().isAlive()) {
+                renderer.printHeroDefeat();
+                return false;
+            }
             if (Dungeon.getInstance().isActive(enemy.getPosition())) {
                 this.handleEnemyTurn(enemy);
                 renderer.printWholeMap();
             }
         }
+        if (!Dungeon.getInstance().getHero().isAlive()) {
+            renderer.printHeroDefeat();
+            return false;
+        }
+        return true;
     }
 
     private void handleHeroTurn(Character character) {
@@ -146,6 +160,10 @@ public class HeroQuest {
                             if (target instanceof Character) {
                                 try {
                                     character.attack((Character) target);
+                                    if (!((Character) target).isAlive()) {
+                                        Dungeon.getInstance().removeEntity(target.getPosition());
+                                    }
+                                    attacked = true;
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -204,7 +222,8 @@ public class HeroQuest {
     }
 
     private void handleEnemyTurn(Enemy enemy) {
-        handleEnemyMove((Enemy)enemy);
+        handleEnemyMove(enemy);
+        enemy.attack();
     }
 
     private void handleMoveInput(Character hero) {

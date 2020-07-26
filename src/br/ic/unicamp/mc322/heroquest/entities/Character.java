@@ -180,7 +180,7 @@ public class Character implements Entity {
 
     private int getHandItemsModifierFor(Attribute attribute) {
         return Arrays.stream(this.hands)
-                .filter(x -> x.getModifier().getAttribute() == attribute)
+                .filter(x -> x != null && x.getModifier().getAttribute() == attribute)
                 .mapToInt(x -> x.getModifier().getModifier())
                 .sum();
     }
@@ -318,7 +318,7 @@ public class Character implements Entity {
                 body.remove(entry.getKey());
         }
         for(int i = 0; i < hands.length; i++)
-            if(hands[i].getModifier().getAttribute() == Attribute.DEFENDDICE)
+            if(hands[i] != null && hands[i].getModifier().getAttribute() == Attribute.DEFENDDICE && hands[i].isSingleUse())
                 hands[i] = null;
         return defenseValue;
     }

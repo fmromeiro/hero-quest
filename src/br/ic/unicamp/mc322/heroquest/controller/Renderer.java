@@ -37,4 +37,8 @@ public interface Renderer {
     void alertInvalidItem(int id);
 
     void printAvailableSteps(int steps);
+
+    void printHeroVictory();
+
+    void printHeroDefeat();
 }
