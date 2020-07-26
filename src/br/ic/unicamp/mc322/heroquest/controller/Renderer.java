@@ -30,6 +30,20 @@ public class Renderer {
         }
         System.out.println(mapString);
     }
+    public static void printWholeMapv2(Dungeon dungeon) {
+        StringBuilder mapString = new StringBuilder("   ");
+        Tile[][] tiles = dungeon.getMap();
+        for (int i = 0; i < tiles[0].length; i++)
+            mapString.append(String.format("%02d", i));
+        int j = 0;
+        for (Tile[] row : tiles) {
+            mapString.append(String.format("\n%02d ", j++));
+            for (Tile tile : row) {
+                mapString.append(tile.getStringRepresentation());
+            }
+        }
+        System.out.println(mapString);
+    }
 
     public static void printVisibleMap(Dungeon dungeon) {
         StringBuilder mapString = new StringBuilder("   ");

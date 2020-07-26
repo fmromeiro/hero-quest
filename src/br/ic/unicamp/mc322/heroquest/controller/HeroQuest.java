@@ -65,12 +65,15 @@ public class HeroQuest {
         createRandomMap();
         //Dungeon.getInstance().addEntity(new Door(), new Point(15, 8));
         //createDefaultMap();
-        Dungeon.getInstance().addEntity(new Door(), new Point(15, 8));
-        Dungeon.getInstance().addEntity(Treasure.randomTreasure(), new Point(17, 6));
-        Dungeon.getInstance().addEntity(Character.getDefaultHero("Player"), new Point(16, 9));
-//        Dungeon.getInstance().addEntity(Character.getMeleeSkeleton("Skeleton"), new Point(16, 25));
-//        Dungeon.getInstance().addEntity(Character.getSkeletonMage("Skeleton Mage"), new Point(34, 25));
-//        Dungeon.getInstance().addEntity(Character.getGoblin("Goblin"), new Point(32, 25));
+        //Dungeon.getInstance().addEntity(new Door(), new Point(15, 8));
+        for (int i = 0; i < 5; i++) {
+            Dungeon.getInstance().addEntity(Treasure.randomTreasure(), Dungeon.getInstance().getRandomFreePoint());
+
+        }
+        Dungeon.getInstance().addEntity(Character.getDefaultHero("Player"), Dungeon.getInstance().getRandomFreePoint());
+        //Dungeon.getInstance().addEntity(Character.getMeleeSkeleton("Skeleton"), new Point(16, 25));
+        //Dungeon.getInstance().addEntity(Character.getSkeletonMage("Skeleton Mage"), new Point(34, 25));
+        //Dungeon.getInstance().addEntity(Character.getGoblin("Goblin"), new Point(32, 25));
         Renderer.printVisibleMap(Dungeon.getInstance());
     }
 
@@ -98,28 +101,39 @@ public class HeroQuest {
     }
 
     public void handleMoveInput(Character hero) {
-        System.out.println("Player's turn");
+        System.out.println("Player's turn (type h for help)");
         String input = scanner.nextLine().toLowerCase();
-        String[] commands = input.split("\\s+");
-        if (commands.length == 2)
-            if (commands[0].equals("move")) {
+//        String[] commands = input.split("\\s+");
+//        if (commands.length == 2)
+            if (input.equals("h")) {
+                System.out.println("Commands:\n > 'w', 'a', 's', 'd' (for movement)\n > 'open door'\n > 'collect'");
+                input = scanner.nextLine().toLowerCase();
+            }
+
+            if (input.equals("w")) {
                 Point.Direction direction = Point.Direction.UP;
-                switch (commands[1]) {
-                    case "up": direction = Point.Direction.UP; break;
-                    case "right": direction = Point.Direction.RIGHT; break;
-                    case "down": direction = Point.Direction.DOWN; break;
-                    case "left": direction = Point.Direction.LEFT; break;
-                }
                 Dungeon.getInstance().moveEntity(hero, Point.sum(hero.getPosition(), direction.getPosition()));
             }
-            else if (commands[0].equals("open")) {
+            else if (input.equals("a")) {
+                Point.Direction direction = Point.Direction.LEFT;
+                Dungeon.getInstance().moveEntity(hero, Point.sum(hero.getPosition(), direction.getPosition()));
+            }
+            else if (input.equals("s")) {
+                Point.Direction direction = Point.Direction.DOWN;
+                Dungeon.getInstance().moveEntity(hero, Point.sum(hero.getPosition(), direction.getPosition()));
+            }
+            else if (input.equals("d")) {
+                Point.Direction direction = Point.Direction.RIGHT;
+                Dungeon.getInstance().moveEntity(hero, Point.sum(hero.getPosition(), direction.getPosition()));
+            }
+            else if (input.equals("open door")) {
                 Dungeon.getInstance().getEntities().stream()
                         .filter(ent -> Point.manhattanDistance(hero.getPosition(), ent.getPosition()) == 1)
                         .filter(ent -> ent instanceof Door)
                         .forEach(ent -> ((Door)ent).open());
 
             }
-            else if (commands[0].equals("collect")) {
+            else if (input.equals("collect")) {
                 Dungeon.getInstance().getEntities().stream()
                         .filter(ent -> Point.octileDistance(hero.getPosition(), ent.getPosition()) == 1)
                         .filter(ent -> ent instanceof Treasure)
@@ -127,6 +141,11 @@ public class HeroQuest {
                             hero.collect((Treasure)ent);
                             Dungeon.getInstance().removeEntity(ent.getPosition());
                         });
+            }
+            else if (input.equals("guguhacker")) {
+                Renderer.printWholeMapv2(Dungeon.getInstance());
+                System.out.println("safadinho...");
+                scanner.nextLine();
             }
     }
 
