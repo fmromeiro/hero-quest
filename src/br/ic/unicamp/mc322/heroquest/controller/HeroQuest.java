@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class HeroQuest {
     private final Scanner scanner = new Scanner(System.in);
     private final Renderer renderer;
-    private char entityId = 47;
+    private char entityId = '0';
 
     public HeroQuest(Renderer renderer) {
         this.renderer = renderer;
@@ -45,7 +45,7 @@ public class HeroQuest {
         if(dungeonFile.isEmpty()) {
             // randomizar mapa, inimigos, tesouros, armadilhas etc
             createRandomMap();
-            Dungeon.getInstance().addEntity(Character.getDefaultHero(entityId++), Dungeon.getInstance().getRandomFreePoint());
+            Dungeon.getInstance().addEntity(Character.getElf(), Dungeon.getInstance().getRandomFreePoint());
         }
         else {
             createMapFromXML(dungeonFile);
@@ -53,7 +53,6 @@ public class HeroQuest {
         for (int i = 0; i < 10; i++) {
             Dungeon.getInstance().addEntity(Treasure.randomTreasure(), Dungeon.getInstance().getRandomFreePoint());
         }
-        renderer.printVisibleMap();
     }
 
     private boolean mainLoop() {
@@ -130,7 +129,8 @@ public class HeroQuest {
         while (!actionDone) {
             renderer.printVisibleMap();
             renderer.printAvailableActions("switch", "equipment", "attack [id]", "collect", "cast [spell name] [# tiles to the right] [# tiles up]", "skip");
-            String[] commands = scanner.nextLine().toLowerCase().split("\\s+");
+            String command = scanner.nextLine().toLowerCase();
+            String[] commands = command.split("\\s+");
             if (commands.length > 0) {
                 switch (commands[0]) {
                     case "switch":
