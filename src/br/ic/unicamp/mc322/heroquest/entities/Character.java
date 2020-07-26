@@ -115,7 +115,6 @@ public class Character implements Entity {
             case 2: weapon = Weapon.getBrokenDagger(); break;
             case 3: weapon = Weapon.getLongStaff(); break;
         }
-        skeleton.addToInventory(weapon);
         skeleton.equip(weapon);
         return skeleton;
     }
