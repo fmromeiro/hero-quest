@@ -111,20 +111,16 @@ public class HeroQuest {
             }
 
             if (input.equals("w")) {
-                Point.Direction direction = Point.Direction.UP;
-                Dungeon.getInstance().moveEntity(hero, Point.sum(hero.getPosition(), direction.getPosition()));
+                Dungeon.getInstance().moveEntity(hero, Point.sum(hero.getPosition(), Point.Direction.UP.getPosition()));
             }
             else if (input.equals("a")) {
-                Point.Direction direction = Point.Direction.LEFT;
-                Dungeon.getInstance().moveEntity(hero, Point.sum(hero.getPosition(), direction.getPosition()));
+                Dungeon.getInstance().moveEntity(hero, Point.sum(hero.getPosition(), Point.Direction.LEFT.getPosition()));
             }
             else if (input.equals("s")) {
-                Point.Direction direction = Point.Direction.DOWN;
-                Dungeon.getInstance().moveEntity(hero, Point.sum(hero.getPosition(), direction.getPosition()));
+                Dungeon.getInstance().moveEntity(hero, Point.sum(hero.getPosition(), Point.Direction.DOWN.getPosition()));
             }
             else if (input.equals("d")) {
-                Point.Direction direction = Point.Direction.RIGHT;
-                Dungeon.getInstance().moveEntity(hero, Point.sum(hero.getPosition(), direction.getPosition()));
+                Dungeon.getInstance().moveEntity(hero, Point.sum(hero.getPosition(), Point.Direction.RIGHT.getPosition()));
             }
             else if (input.equals("open door")) {
                 Dungeon.getInstance().getEntities().stream()
