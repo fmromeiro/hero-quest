@@ -1,70 +1,23 @@
 package br.ic.unicamp.mc322.heroquest.controller;
 
-import br.ic.unicamp.mc322.heroquest.entities.Dungeon;
-import br.ic.unicamp.mc322.heroquest.entities.Tile;
+import br.ic.unicamp.mc322.heroquest.items.Equipment;
 
-import java.util.HashSet;
-import java.util.Set;
+public interface Renderer {
+    void printWholeMap();
 
-public class Renderer {
-    public static void printWholeMap() {
-        StringBuilder mapString = new StringBuilder("   ");
-        Tile[][] tiles = Dungeon.getInstance().getMap();
-        Set<Integer> rooms = Dungeon.getInstance().getRoomIds();
-        for (int i = 0; i < tiles[0].length; i++)
-            mapString.append(String.format("%02d", i));
-        int j = 0;
-        for (Tile[] row : tiles) {
-            mapString.append(String.format("\n%02d ", j++));
-            for (Tile tile : row) {
-                Set<Integer> intersection = new HashSet<>(tile.getRooms());
-                intersection.retainAll(rooms);
-                if (intersection.isEmpty())
-                    mapString.append(tile.getStringRepresentation());
-                else {
-                    int room = intersection.iterator().next();
-                    rooms.remove(room);
-                    mapString.append(String.format("%02d", room));
-                }
-            }
-        }
-        System.out.println(mapString);
-    }
-    public static void printWholeMapv2(Dungeon dungeon) {
-        StringBuilder mapString = new StringBuilder("   ");
-        Tile[][] tiles = dungeon.getMap();
-        for (int i = 0; i < tiles[0].length; i++)
-            mapString.append(String.format("%02d", i));
-        int j = 0;
-        for (Tile[] row : tiles) {
-            mapString.append(String.format("\n%02d ", j++));
-            for (Tile tile : row) {
-                mapString.append(tile.getStringRepresentation());
-            }
-        }
-        System.out.println(mapString);
-    }
+    void printVisibleMap();
 
-    public static void printVisibleMap() {
-        StringBuilder mapString = new StringBuilder("   ");
-        Tile[][] tiles = Dungeon.getInstance().getMap();
-        boolean[][] visibilityMatrix = Dungeon.getInstance().getHeroVisibility();
-        for (int y = 0; y < tiles.length; y++) {
-            mapString.append("\n");
-            for (int x = 0; x < tiles[y].length; x++)
-                mapString.append(visibilityMatrix[y][x]
-                        ? tiles[y][x].getStringRepresentation()
-                        : "▒▒");
-        }
+    void announcePlayerTurn();
 
-        System.out.println(mapString);
-    }
+    void announceMoveTurn();
 
-    public static void announcePlayerTurn() {
-        System.out.println("Player's turn");
-    }
+    void alertMoveActionUsed();
 
-    public static void announceMoveTurn() {
-        System.out.println("Move action");
-    }
+    void alertMainActionUsed();
+
+    void announceAttackTurn();
+
+    void printCurrentWeapon(Equipment currentWeapon);
+
+    void alertCouldNotInterpretCommand();
 }
