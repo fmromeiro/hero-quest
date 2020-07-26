@@ -1,15 +1,19 @@
 package br.ic.unicamp.mc322.heroquest.controller;
 
 import br.ic.unicamp.mc322.heroquest.auxiliars.Point;
-import br.ic.unicamp.mc322.heroquest.entities.*;
 import br.ic.unicamp.mc322.heroquest.entities.Character;
+import br.ic.unicamp.mc322.heroquest.entities.*;
 
 import java.util.List;
 import java.util.Scanner;
-import java.util.stream.Collectors;
 
 public class HeroQuest {
     private final Scanner scanner = new Scanner(System.in);
+    private final Renderer renderer;
+
+    public HeroQuest(Renderer renderer) {
+        this.renderer = renderer;
+    }
 
     private static void createRandomMap() {
         Dungeon dungeon = Dungeon.getInstance();
@@ -55,7 +59,13 @@ public class HeroQuest {
         dungeon.addRoom(new Point(28, 19), new Point(33, 24));
     }
 
-    public void setUp() throws Exception {
+    public void runGame() throws Exception {
+        this.setUp();
+        while (true)
+            this.mainLoop();
+    }
+
+    private void setUp() throws Exception {
         // randomizar inimigos, tesouros, armadilhas etc
         createRandomMap();
         //Dungeon.getInstance().addEntity(new Door(), new Point(15, 8));
@@ -72,39 +82,92 @@ public class HeroQuest {
         Renderer.printVisibleMap(Dungeon.getInstance());
     }
 
-    public void mainLoop() {
+    private void mainLoop() {
         this.handleHeroTurn(Dungeon.getInstance().getHero());
         List<Enemy> enemies = Dungeon.getInstance().getEnemies();
         for (Enemy enemy : enemies) {
             if (Dungeon.getInstance().isActive(enemy.getPosition())) {
                 this.handleEnemyTurn(enemy);
-                Renderer.printWholeMap();
+                renderer.printWholeMap();
             }
         }
     }
 
-    public void runGame() throws Exception {
-        this.setUp();
-        while (true)
-            this.mainLoop();
-    }
-
-    public void handleHeroTurn(Character character) {
-        Renderer.announcePlayerTurn();
-        String input = scanner.nextLine().toLowerCase();
-        String[] commands = input.split("\\s+");
-        if (commands.length > 0)
-            if (commands[0].equals("move")) {
-                Renderer.announceMoveTurn();
-                handleMoveInput(character);
+    private void handleHeroTurn(Character character) {
+        renderer.announcePlayerTurn();
+        boolean moveAction = false, mainAction = false, end = false;
+        while (!end && (!moveAction || !mainAction)) {
+            String input = scanner.nextLine().toLowerCase();
+            String[] commands = input.split("\\s+");
+            if (commands.length > 0) {
+                if (commands[0].equals("move")) {
+                    if (moveAction) {
+                        renderer.alertMoveActionUsed();
+                        continue;
+                    }
+                    renderer.announceMoveTurn();
+                    moveAction = true;
+                    handleMoveInput(character);
+                } else if (commands[0].equals("attack")) {
+                    if (mainAction) {
+                        renderer.alertMainActionUsed();
+                        continue;
+                    }
+                    renderer.announceAttackTurn();
+                    mainAction = true;
+                    handleAttackInput(character);
+                }
             }
+            else {
+                renderer.alertCouldNotInterpretCommand();
+            }
+        }
     }
 
-    public void handleEnemyTurn(Enemy enemy) {
+    private void handleAttackInput(Character character) {
+        renderer.printCurrentWeapon(character.getCurrentWeapon());
+        boolean attacked = false;
+        while (!attacked) {
+            String[] commands = scanner.nextLine().toLowerCase().split("\\s+");
+            if (commands.length > 0) {
+                if (commands[0].equals("switch") || commands[0].equals("equipment")) handleEquipment();
+                else if (commands[0].equals("attack")) {
+                    if (commands.length > 1) {
+                        Entity target = Dungeon.getInstance().getEntityByStringRepresentation(commands[1]).stream()
+                                .findFirst().orElse(null);
+                        if (target instanceof Character) {
+                            try {
+                                character.attack((Character) target);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    else
+                        renderer.alertMissingTarget();
+                }
+                else if (commands[0].equals("skip")){
+                    renderer.announceAttackTurnEnd();
+                    attacked = true;
+                }
+
+                else
+                    renderer.alertCouldNotInterpretCommand();
+            }
+            else
+                renderer.alertCouldNotInterpretCommand();
+        }
+    }
+
+    private void handleEquipment() {
+
+    }
+
+    private void handleEnemyTurn(Enemy enemy) {
         handleEnemyMove((Enemy)enemy);
     }
 
-    public void handleMoveInput(Character hero) {
+    private void handleMoveInput(Character hero) {
         int steps = 0;
         int limitSteps = hero.getSteps();
         while (steps < limitSteps) {
@@ -156,8 +219,8 @@ public class HeroQuest {
         }
     }
 
-    public void handleEnemyMove(Enemy enemy) {
-        List<Point> path = enemy.getMovement();
+    private void handleEnemyMove(Enemy enemy) {
+        List<Point> path = enemy.move();
         if (path != null && path.size() > 1)
             Dungeon.getInstance().moveEntity(enemy, path.get(path.size() - 2));
     }

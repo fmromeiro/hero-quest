@@ -445,4 +445,8 @@ public class Dungeon {
             return false;
         return !Collections.disjoint(map[point.getY()][point.getX()].getRooms(), possibleHero.getRooms());
     }
+
+    public List<Entity> getEntityByStringRepresentation(String repr) {
+        return getEntities().stream().filter(entity -> entity.getStringRepresentation().equals(repr)).collect(Collectors.toList());
+    }
 }

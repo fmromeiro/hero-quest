@@ -20,4 +20,8 @@ public interface Renderer {
     void printCurrentWeapon(Equipment currentWeapon);
 
     void alertCouldNotInterpretCommand();
+
+    void announceAttackTurnEnd();
+
+    void alertMissingTarget();
 }

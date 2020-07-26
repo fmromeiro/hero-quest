@@ -191,8 +191,15 @@ public class Character implements Entity {
 
     public boolean isHero() { return this.defendDiceValue == Dice.CombatDiceValue.HERO_SHIELD; }
 
-    // Equipment accessors
+    public int getAttackDamage() {
+        return attackDice + getModifiersFor(Attribute.ATTACKDICE, false);
+    }
 
+    public int getDefendDice() {
+        return defendDice + getModifiersFor(Attribute.DEFENDDICE, true);
+    }
+
+    // Equipment accessors
     public void selectItem(int index) {
         Item item = inventory.getItem(index);
         if(item instanceof Equipment)
@@ -239,14 +246,6 @@ public class Character implements Entity {
         }
     }
 
-    public int getAttackDamage() {
-        return attackDice + getModifiersFor(Attribute.ATTACKDICE, false);
-    }
-
-    public int getDefendDice() {
-        return defendDice + getModifiersFor(Attribute.DEFENDDICE, true);
-    }
-
     public void chooseWeapon(int hand) {
         this.selectedWeapon = hand;
     }
@@ -259,6 +258,14 @@ public class Character implements Entity {
 
     public Map<Integer, Item> getInventory() {
         return this.inventory.getItems();
+    }
+
+    public Map<String, Equipment> getCurrentlyEquipped() {
+        return Arrays.stream(Equipment.Category.values())
+                .collect(Collectors.toMap(
+                        Equipment.Category::getCategoryName,
+                        category -> body.getOrDefault(category.getCategoryName(), null)
+                ));
     }
 
 
