@@ -28,6 +28,8 @@ public class Tile {
 
     public Entity getEntity() { return this.currentEntity; }
 
+    public Point getPosition() { return this.position; }
+
     public Entity removeEntity() {
         Entity current = this.currentEntity;
         if (this.secondaryEntity != null) {

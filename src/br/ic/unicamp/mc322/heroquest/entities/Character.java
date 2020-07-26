@@ -257,6 +257,10 @@ public class Character implements Entity {
         return defenseValue;
     }
 
+    public void collect(Treasure loot) {
+        inventory.addItem(loot.getLoot());
+    }
+
     @Override
     public boolean canBeOverlapped() {
         return false;
