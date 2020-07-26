@@ -6,8 +6,10 @@ import br.ic.unicamp.mc322.heroquest.entities.Character;
 import br.ic.unicamp.mc322.heroquest.entities.*;
 import br.ic.unicamp.mc322.heroquest.items.Equipment;
 import br.ic.unicamp.mc322.heroquest.items.Weapon;
+import br.ic.unicamp.mc322.heroquest.spells.Spell;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
@@ -123,10 +125,11 @@ public class HeroQuest {
 
     private void handleMainActionInput(Character character) {
         renderer.printCurrentWeapon(character.getCurrentWeapon());
+        renderer.printAvailableSpells(character.getSpellBook());
         boolean actionDone = false;
         while (!actionDone) {
             renderer.printVisibleMap();
-            renderer.printAvailableActions("switch", "equipment", "attack [id]", "collect", "skip");
+            renderer.printAvailableActions("switch", "equipment", "attack [id]", "collect", "cast [spell name] [# tiles to the right] [# tiles up]", "skip");
             String[] commands = scanner.nextLine().toLowerCase().split("\\s+");
             if (commands.length > 0) {
                 switch (commands[0]) {
@@ -168,6 +171,26 @@ public class HeroQuest {
                                     Dungeon.getInstance().removeSecondaryEntity(ent.getPosition());
                                 });
                         actionDone = true;
+                        break;
+                    case "cast":
+                        if (commands.length > 1) {
+                            Map.Entry<Integer, Spell> entry = character.getSpellBook().entrySet().stream()
+                                    .filter(_entry
+                                            -> command.split("\\s+", 1)[1].contains(_entry.getValue().getName().toLowerCase().trim()))
+                                    .findFirst().orElse(null);
+                            if (entry != null) {
+                                try {
+                                    int x = Integer.parseInt(commands[commands.length - 2]);
+                                    int y = Integer.parseInt(commands[commands.length - 1]);
+                                    character.castSpell(entry.getValue(), Point.sum(character.getPosition(), new Point(x, y)));
+                                    end = true;
+                                } catch (Exception ignored){}
+                            }
+                            else
+                                renderer.alertInvalidSpell();
+                        }
+                        else
+                            renderer.alertCouldNotInterpretCommand();
                         break;
                     case "skip":
                         renderer.announceAttackTurnEnd();

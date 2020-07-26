@@ -3,6 +3,7 @@ package br.ic.unicamp.mc322.heroquest.controller;
 import br.ic.unicamp.mc322.heroquest.entities.Dungeon;
 import br.ic.unicamp.mc322.heroquest.items.Equipment;
 import br.ic.unicamp.mc322.heroquest.items.Item;
+import br.ic.unicamp.mc322.heroquest.spells.Spell;
 
 import java.util.Map;
 
@@ -44,4 +45,10 @@ public interface Renderer {
     void printHeroDefeat();
 
     void printWholeMapv2(Dungeon instance);
+
+    void announceSpellTurn();
+
+    void printAvailableSpells(Map<Integer, Spell> spellBook);
+
+    void alertInvalidSpell();
 }

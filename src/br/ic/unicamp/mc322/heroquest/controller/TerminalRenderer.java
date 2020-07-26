@@ -5,6 +5,7 @@ import br.ic.unicamp.mc322.heroquest.entities.Tile;
 import br.ic.unicamp.mc322.heroquest.items.Equipment;
 import br.ic.unicamp.mc322.heroquest.items.Item;
 import br.ic.unicamp.mc322.heroquest.items.Weapon;
+import br.ic.unicamp.mc322.heroquest.spells.Spell;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -158,6 +159,24 @@ public class TerminalRenderer implements Renderer {
             }
         }
         System.out.println(mapString);
+    }
+
+    @Override
+    public void announceSpellTurn() {
+        System.out.println("Starting spell turn!");
+    }
+
+    @Override
+    public void printAvailableSpells(Map<Integer, Spell> spellBook) {
+        System.out.println("Available spells:");
+        spellBook.entrySet().stream()
+                .sorted((a, b) -> a.getKey().compareTo(b.getKey()))
+                .forEach(entry -> System.out.println(entry.getKey() + ": " + entry.getValue().getName()));
+    }
+
+    @Override
+    public void alertInvalidSpell() {
+        System.out.println("No spell with that name available");
     }
 
 }
