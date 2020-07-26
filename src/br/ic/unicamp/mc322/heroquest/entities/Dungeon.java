@@ -105,6 +105,10 @@ public class Dungeon {
         }
     }
 
+    public void removeEntity(Point position) {
+        this.map[position.getY()][position.getX()].removeEntity();
+    }
+
     public boolean[][] getVisibilityFrom(Point position) {
         boolean[][] visibilityMatrix = new boolean[HEIGHT][WIDTH];
         LinkedList<Point[]> points = new LinkedList<>();
@@ -233,5 +237,17 @@ public class Dungeon {
                 .map(Tile::getEntity)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
+    }
+
+    public Point getRandomFreePoint() {
+        ArrayList<Tile> tileList = new ArrayList<>();
+        for (Tile[] row : map) {
+            for (Tile tile : row) {
+                if(tile.getEntity() == null)
+                    tileList.add(tile);
+            }
+        }
+        Random rng = new Random();
+        return tileList.get(rng.nextInt(tileList.size())).getPosition();
     }
 }

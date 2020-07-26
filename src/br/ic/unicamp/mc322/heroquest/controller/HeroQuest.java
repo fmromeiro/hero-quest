@@ -61,6 +61,7 @@ public class HeroQuest {
         // randomizar inimigos, tesouros, armadilhas etc
         createDefaultMap();
         Dungeon.getInstance().addEntity(new Door(), new Point(15, 8));
+        Dungeon.getInstance().addEntity(Treasure.randomTreasure(), new Point(17, 6));
         Dungeon.getInstance().addEntity(Character.getDefaultHero("Player"), new Point(16, 9));
 //        Dungeon.getInstance().addEntity(Character.getMeleeSkeleton("Skeleton"), new Point(16, 25));
 //        Dungeon.getInstance().addEntity(Character.getSkeletonMage("Skeleton Mage"), new Point(34, 25));
@@ -110,6 +111,15 @@ public class HeroQuest {
                         .filter(ent -> ent instanceof Door)
                         .forEach(ent -> ((Door)ent).open());
 
+            }
+            else if (commands[0].equals("collect")) {
+                Dungeon.getInstance().getEntities().stream()
+                        .filter(ent -> Point.octileDistance(hero.getPosition(), ent.getPosition()) == 1)
+                        .filter(ent -> ent instanceof Treasure)
+                        .forEach(ent ->  {
+                            hero.collect((Treasure)ent);
+                            Dungeon.getInstance().removeEntity(ent.getPosition());
+                        });
             }
     }
 

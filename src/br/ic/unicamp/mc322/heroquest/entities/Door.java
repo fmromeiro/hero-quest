@@ -2,9 +2,8 @@ package br.ic.unicamp.mc322.heroquest.entities;
 
 import br.ic.unicamp.mc322.heroquest.auxiliars.Point;
 
-public class Door implements StaticEntity {
+public class Door extends StaticEntity {
     private boolean open;
-    private boolean seen = false;
     private Point position;
 
     public Door() {
@@ -38,15 +37,5 @@ public class Door implements StaticEntity {
 
     public void open() {
         this.open = true;
-    }
-
-    @Override
-    public void setAsSeen() {
-        this.seen = true;
-    }
-
-    @Override
-    public boolean isSeen() {
-        return this.seen;
     }
 }
