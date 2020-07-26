@@ -7,11 +7,13 @@ import java.util.stream.Collectors;
 
 public class Dungeon {
     public final static int WIDTH = 36, HEIGHT = 27;
+
     private final Tile[][] map;
     private final Set<Integer> visitedRooms;
     private final Set<Integer> openRooms;
     private final List<Tile> visitedTiles;
     private int nextRoomId;
+
 
     private static Dungeon instance = null;
 
@@ -36,14 +38,24 @@ public class Dungeon {
 
     // Dungeon building
     public void addRoom(Point topLeft, Point lowerRight) {
-        for (int y = topLeft.getY(); y <= lowerRight.getY(); y++)
-            for (int x = topLeft.getX(); x <= lowerRight.getX(); x++)
-                map[y][x].setToRoom(this.nextRoomId);
+        for (int y = topLeft.getY(); y <= lowerRight.getY(); y++) {
+            map[y][topLeft.getX()].setToRoom(this.nextRoomId);
+            map[y][lowerRight.getX()].setToRoom(this.nextRoomId);
+        }
+
+        for (int x = topLeft.getX(); x <= lowerRight.getX(); x++) {
+            map[topLeft.getY()][x].setToRoom(this.nextRoomId);
+            map[lowerRight.getY()][x].setToRoom(this.nextRoomId);
+        }
+
+        for (int y = topLeft.getY() + 1; y < lowerRight.getY(); y++)
+            for (int x = topLeft.getX() + 1; x < lowerRight.getX(); x++)
+                map[y][x].setOnlyToRoom(this.nextRoomId);
 
         this.setBordersToRoom(this.nextRoomId++);
     }
 
-    public void setBordersToRoom(int roomId) {
+    private void setBordersToRoom(int roomId) {
         for (int y = 1; y < HEIGHT - 1; y++)
             for (int x = 1; x < WIDTH - 1; x++)
                 if (map[y][x].isInRoom(roomId))
@@ -124,6 +136,14 @@ public class Dungeon {
         return null;
     }
 
+    public List<Enemy> getEnemies() {
+        return Arrays.stream(this.map)
+                .flatMap(Arrays::stream)
+                .filter(tile -> tile.getEntity() instanceof Enemy)
+                .map(tile -> (Enemy) tile.getEntity())
+                .collect(Collectors.toList());
+    }
+
     public List<Entity> getEntities() {
         return Arrays.stream(this.map)
                 .flatMap(Arrays::stream)
@@ -187,8 +207,6 @@ public class Dungeon {
                 visibilityMatrix[point.getY()][point.getX()] |= visible;
                 Entity current = this.map[point.getY()][point.getX()].getEntity();
                 if (current instanceof StaticEntity && ((StaticEntity)current).isSeen())
-                    visibilityMatrix[point.getY()][point.getX()] = true;
-                else if (current instanceof Door && ((Door)current).isSeen())
                     visibilityMatrix[point.getY()][point.getX()] = true;
                 if (visible && current != null && !current.canSeeThrough())
                     visible = false;
@@ -407,4 +425,28 @@ public class Dungeon {
         return hasWayOut;
     }
 
+    public boolean hasVisibility(Point a, Point b) {
+        List<Point> line = Arrays.asList(Point.bresenhamLine(a, b));
+        if (line.size() > 2)
+            return line.subList(1, line.size() - 1).stream()
+                    .anyMatch(point -> entityAt(point) != null && !entityAt(point).canSeeThrough());
+        return true;
+    }
+
+
+    // Active rooms
+    public boolean isActive(Point point) {
+        Tile possibleHero = Arrays.stream(this.map)
+                .flatMap(Arrays::stream)
+                .filter(tile -> tile.getEntity() instanceof Character)
+                .filter(tile -> ((Character)tile.getEntity()).isHero())
+                .findAny().orElse(null);
+        if (possibleHero == null)
+            return false;
+        return !Collections.disjoint(map[point.getY()][point.getX()].getRooms(), possibleHero.getRooms());
+    }
+
+    public List<Entity> getEntityByStringRepresentation(String repr) {
+        return getEntities().stream().filter(entity -> entity.getStringRepresentation().compareToIgnoreCase(repr) == 0).collect(Collectors.toList());
+    }
 }

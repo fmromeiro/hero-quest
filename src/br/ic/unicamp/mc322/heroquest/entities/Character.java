@@ -29,8 +29,8 @@ public class Character implements Entity {
         public String getName() { return this.name; }
     }
 
-    private static final int RIGHT_HAND = 0;
-    private static final int LEFT_HAND = 1;
+    public static final int RIGHT_HAND = 0;
+    public static final int LEFT_HAND = 1;
 
 
     // Instance attributes
@@ -101,14 +101,14 @@ public class Character implements Entity {
 
 
     // Character builders
-    public static Character getDefaultHero(String name) {
-        return new Character(name, 2, 2, 10, 5, "ME", Dice.CombatDiceValue.HERO_SHIELD, false);
+    public static Character getDefaultHero(char id) {
+        return new Character("Hero " + id, 2, 2, 10, 5, "H" + id, Dice.CombatDiceValue.HERO_SHIELD, false);
     }
 
-    public static Enemy getMeleeSkeleton(String name) {
-        Enemy skeleton = new Enemy(name, 2, 2, 1, 0, "SK", 6, EnemyFunctions.moveRandomly, null, false);
+    public static Enemy getMeleeSkeleton(char id) {
+        Enemy skeleton = new Enemy("Skeleton " + id, 2, 2, 1, 0, "S" + id, 6, EnemyFunctions.moveRandomly, EnemyFunctions.favourCurrentWeaponAndThenDamage, false);
         Weapon weapon;
-        switch ((int)Math.floor(Math.random()*4)) {
+        switch ((int)(Math.random()*4)) {
             default:
             case 0: weapon = Weapon.getShortSword(); break;
             case 1: weapon = Weapon.getLongSword(); break;
@@ -119,14 +119,14 @@ public class Character implements Entity {
         return skeleton;
     }
 
-    public static Enemy getSkeletonMage(String name) {
-        Enemy skeletonMage = new Enemy(name, 2, 2, 1, 0, "SM", 6, EnemyFunctions.moveRandomly, null, true);
+    public static Enemy getSkeletonMage(char id) {
+        Enemy skeletonMage = new Enemy("Skeleton Mage " + id, 2, 2, 1, 0, "M" + id, 6, EnemyFunctions.moveRandomly, EnemyFunctions.favourSpellThenWeaponDamage, true);
         skeletonMage.loadSpell(Spell.getMagicMissile(10));
         return skeletonMage;
     }
 
-    public static Enemy getGoblin(String name) {
-        Enemy goblin = new Enemy(name, 2, 1, 1, 1, "GB", 10, EnemyFunctions.followHero, null, false);
+    public static Enemy getGoblin(char id) {
+        Enemy goblin = new Enemy("Goblin " + id, 2, 1, 1, 1, "G" + id, 10, EnemyFunctions.followHero, EnemyFunctions.favourCurrentWeaponAndThenDamage, false);
         for (int i = 0; i < 5; i++) goblin.addToInventory(Weapon.getDagger());
         return goblin;
     }
@@ -180,18 +180,26 @@ public class Character implements Entity {
 
     private int getHandItemsModifierFor(Attribute attribute) {
         return Arrays.stream(this.hands)
-                .filter(x -> x.getModifier().getAttribute() == attribute)
+                .filter(x -> x != null && x.getModifier().getAttribute() == attribute)
                 .mapToInt(x -> x.getModifier().getModifier())
                 .sum();
     }
 
-    // Miscellaneous accessors
     public int getSteps() {
-        return Dice.throwMovementDice(2);
+        return Dice.rollMovementDice(2);
     }
 
     public boolean isHero() { return this.defendDiceValue == Dice.CombatDiceValue.HERO_SHIELD; }
 
+    public int getAttackDamage() {
+        return attackDice + getModifiersFor(Attribute.ATTACKDICE, false);
+    }
+
+    public int getDefendDice() {
+        return defendDice + getModifiersFor(Attribute.DEFENDDICE, true);
+    }
+
+    // Equipment accessors
     public void selectItem(int index) {
         Item item = inventory.getItem(index);
         if(item instanceof Equipment)
@@ -238,14 +246,6 @@ public class Character implements Entity {
         }
     }
 
-    public int getAttackDamage() {
-        return attackDice + getModifiersFor(Attribute.ATTACKDICE, false);
-    }
-
-    public int getDefendDice() {
-        return defendDice + getModifiersFor(Attribute.DEFENDDICE, true);
-    }
-
     public void chooseWeapon(int hand) {
         this.selectedWeapon = hand;
     }
@@ -254,23 +254,44 @@ public class Character implements Entity {
         inventory.addItem(item);
     }
 
+    public Equipment getCurrentWeapon() { return hands[selectedWeapon]; }
+
+    public Map<Integer, Item> getInventory() {
+        return this.inventory.getItems();
+    }
+
+    public Map<String, Equipment> getCurrentlyEquipped() {
+        HashMap<String, Equipment> result = new HashMap<>();
+        for (Equipment.Category category : Equipment.Category.values()) {
+            if (category == Equipment.Category.ONEHAND || category == Equipment.Category.TWOHAND) {
+                result.put("RIGHT HAND", hands[RIGHT_HAND]);
+                result.put("LEFT HAND", hands[LEFT_HAND]);
+            }
+            else
+                result.put(category.getCategoryName(), body.getOrDefault(category.getCategoryName(), null));
+        }
+        return result;
+    }
+
+    public Item dropItem(int id) {
+        return inventory.drop(id);
+    }
+
     // Spell acessors
     public void loadSpell(Spell spell) {
         this.spellBook.addItem(spell);
     }
 
+    public Map<Integer, Spell> getSpellBook() { return this.spellBook.getSpells(); }
+
+
     // Actions
     public void attack(Character target) throws Exception {
-        List<Point> line = Arrays.asList(Point.bresenhamLine(this.getPosition(), target.getPosition()));
-        Tile[][] map = Dungeon.getInstance().getMap();
-        if (line.size() > 2 && line.subList(1, line.size()).stream().anyMatch(point -> {
-                    Entity current = map[point.getY()][point.getX()].getEntity();
-                    return current != null && !current.canSeeThrough();
-                }))
+        if (!Dungeon.getInstance().hasVisibility(this.getPosition(), target.getPosition()))
             throw new Exception("Can't see target");
 
         int distance = Point.manhattanDistance(this.getPosition(), target.getPosition());
-        boolean isWeapon = hands[selectedWeapon] != null && hands[selectedWeapon] instanceof Weapon;
+        boolean isWeapon = hands[selectedWeapon] instanceof Weapon;
         int weaponDamage = isWeapon ? hands[selectedWeapon].getModifier().getModifier() : 0;
         int weaponRange = isWeapon ? ((Weapon)hands[selectedWeapon]).getRange() : 1;
 
@@ -297,12 +318,16 @@ public class Character implements Entity {
                 body.remove(entry.getKey());
         }
         for(int i = 0; i < hands.length; i++)
-            if(hands[i].getModifier().getAttribute() == Attribute.DEFENDDICE)
+            if(hands[i] != null && hands[i].getModifier().getAttribute() == Attribute.DEFENDDICE && hands[i].isSingleUse())
                 hands[i] = null;
         return defenseValue;
     }
 
     public void collect(Treasure loot) {
         inventory.addItem(loot.getLoot());
+    }
+    
+    public void castSpell(Spell spell, Point target) throws Exception {
+        this.spellBook.castSpell(spell, target);
     }
 }
