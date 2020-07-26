@@ -449,16 +449,4 @@ public class Dungeon {
     public List<Entity> getEntityByStringRepresentation(String repr) {
         return getEntities().stream().filter(entity -> entity.getStringRepresentation().compareToIgnoreCase(repr) == 0).collect(Collectors.toList());
     }
-  
-    public Point getRandomFreePoint() {
-        ArrayList<Tile> tileList = new ArrayList<>();
-        for (Tile[] row : map) {
-            for (Tile tile : row) {
-                if(tile.getEntity() == null)
-                    tileList.add(tile);
-            }
-        }
-        Random rng = new Random();
-        return tileList.get(rng.nextInt(tileList.size())).getPosition();
-    }
 }

@@ -1,5 +1,6 @@
 package br.ic.unicamp.mc322.heroquest.controller;
 
+import br.ic.unicamp.mc322.heroquest.entities.Dungeon;
 import br.ic.unicamp.mc322.heroquest.items.Equipment;
 import br.ic.unicamp.mc322.heroquest.items.Item;
 
@@ -41,4 +42,6 @@ public interface Renderer {
     void printHeroVictory();
 
     void printHeroDefeat();
+
+    void printWholeMapv2(Dungeon instance);
 }

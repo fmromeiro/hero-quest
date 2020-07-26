@@ -79,11 +79,11 @@ public class HeroQuest {
             Dungeon.getInstance().addEntity(Treasure.randomTreasure(), Dungeon.getInstance().getRandomFreePoint());
 
         }
-        Dungeon.getInstance().addEntity(Character.getDefaultHero("Player"), Dungeon.getInstance().getRandomFreePoint());
+        Dungeon.getInstance().addEntity(Character.getDefaultHero(entityId++), Dungeon.getInstance().getRandomFreePoint());
         //Dungeon.getInstance().addEntity(Character.getMeleeSkeleton("Skeleton"), new Point(16, 25));
         //Dungeon.getInstance().addEntity(Character.getSkeletonMage("Skeleton Mage"), new Point(34, 25));
         //Dungeon.getInstance().addEntity(Character.getGoblin("Goblin"), new Point(32, 25));
-        Renderer.printVisibleMap(Dungeon.getInstance());
+        renderer.printVisibleMap();
     }
 
     private boolean mainLoop() {
@@ -279,7 +279,7 @@ public class HeroQuest {
                             });
                 }
                 else if (input.equals("guguhacker")) {
-                    Renderer.printWholeMapv2(Dungeon.getInstance());
+                    renderer.printWholeMapv2(Dungeon.getInstance());
                     System.out.println("safadinho...");
                     scanner.nextLine();
                 }
