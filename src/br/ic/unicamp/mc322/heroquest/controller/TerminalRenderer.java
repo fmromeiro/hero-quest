@@ -140,6 +140,17 @@ public class TerminalRenderer implements Renderer {
 
     @Override
     public void printHeroDefeat() {
+        System.out.println( "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\n" +
+                            "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\n" +
+                            "     ▓▓▓▓▓▓▓▓▓▓▓           ▓▓▓▓▓▓▓▓▓▓▓\n" +
+                            "     ▓▓▓▓▓▓▓▓                 ▓▓▓▓▓▓▓▓\n" +
+                            "     ▓▓▓▓▓▓▓▓   ▓▓▓     ▓▓▓   ▓▓▓▓▓▓▓▓\n" +
+                            "     ▓▓▓▓▓▓▓▓   ▓▓▓     ▓▓▓   ▓▓▓▓▓▓▓▓\n" +
+                            "     ▓▓▓▓▓▓▓         ▓         ▓▓▓▓▓▓▓\n" +
+                            "     ▓▓▓▓▓▓▓▓▓▓             ▓▓▓▓▓▓▓▓▓▓\n" +
+                            "     ▓▓▓▓▓▓▓▓▓▓▓▓ ▓ ▓ ▓ ▓ ▓▓▓▓▓▓▓▓▓▓▓▓\n" +
+                            "     ▓▓▓▓▓▓▓▓▓▓▓▓ ▓ ▓ ▓ ▓ ▓▓▓▓▓▓▓▓▓▓▓▓\n" +
+                            "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\n");
         System.out.println("The hero was defeated... Better luck next time.");
 
     }

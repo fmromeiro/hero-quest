@@ -13,6 +13,7 @@ import java.io.File;
 public class MapXMLBuilder {
     private final Dungeon dungeon;
     private final Document doc;
+    char id = 47;
     public MapXMLBuilder(String fileName) throws Exception {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         File mapFile = new File(fileName);
@@ -68,6 +69,10 @@ public class MapXMLBuilder {
 
     }
 
+    public char getId() {
+        return id;
+    }
+
     public void addEntities() throws Exception {
         Element dungeonMap = doc.getDocumentElement();
         Element entities = (Element) dungeonMap.getElementsByTagName("Entities").item(0);
@@ -75,7 +80,6 @@ public class MapXMLBuilder {
         if(entities.getElementsByTagName("Hero").getLength() != 1)
             throw new Exception("O mapa necessita ter um único herói");
         Element hero = (Element) entities.getElementsByTagName("Hero").item(0);
-        char id = 47;
         Dungeon.getInstance().addEntity(Character.getDefaultHero(id),
                 new Point(Integer.parseInt(hero.getElementsByTagName("X").item(0).getChildNodes().item(0).getNodeValue().trim()),
                           Integer.parseInt(hero.getElementsByTagName("Y").item(0).getChildNodes().item(0).getNodeValue().trim())));

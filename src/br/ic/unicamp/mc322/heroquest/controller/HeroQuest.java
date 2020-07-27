@@ -29,6 +29,7 @@ public class HeroQuest {
         MapXMLBuilder builder = new MapXMLBuilder(dungeonFile);
         builder.buildMap();
         builder.addEntities();
+        entityId = builder.getId();
     }
 
     public void runGame() throws Exception {
@@ -43,13 +44,13 @@ public class HeroQuest {
         if(dungeonFile.isEmpty()) {
             // randomizar mapa, inimigos, tesouros, armadilhas etc
             createRandomMap();
+            for (int i = 0; i < 10; i++) {
+                Dungeon.getInstance().addEntity(Treasure.randomTreasure(), Dungeon.getInstance().getRandomFreePoint());
+            }
             Dungeon.getInstance().addEntity(Character.getDefaultHero(entityId++), Dungeon.getInstance().getRandomFreePoint());
         }
         else {
             createMapFromXML(dungeonFile);
-        }
-        for (int i = 0; i < 10; i++) {
-            Dungeon.getInstance().addEntity(Treasure.randomTreasure(), Dungeon.getInstance().getRandomFreePoint());
         }
         renderer.printVisibleMap();
     }
@@ -159,6 +160,8 @@ public class HeroQuest {
                                 .forEach(ent -> {
                                     character.collect((Treasure) ent);
                                     Dungeon.getInstance().removeEntity(ent.getPosition());
+                                    if (Math.random() < 1)
+                                        Dungeon.getInstance().addEntity(Character.getGoblin(entityId++), ent.getPosition());
                                 });
                         Dungeon.getInstance().getSecondaryEntities().stream()
                                 .filter(ent -> Point.octileDistance(character.getPosition(), ent.getPosition()) <= 1)
