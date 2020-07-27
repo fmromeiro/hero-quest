@@ -333,7 +333,9 @@ public class Character implements Entity {
         if(isWeapon && hands[selectedWeapon].isSingleUse())
             hands[selectedWeapon] = null;
 
-        target.takeDamage(attackDamage - target.defend());
+        int defense = target.defend();
+        target.takeDamage(attackDamage - defense);
+        Dungeon.getInstance().getSessionRenderer().printAttack(this.name, target.name, attackDamage, defense);
     }
 
     public int defend() {
@@ -356,4 +358,6 @@ public class Character implements Entity {
     public void castSpell(Spell spell, Point target) throws Exception {
         this.spellBook.castSpell(spell, target);
     }
+
+    public String getName() { return this.name; }
 }

@@ -1,6 +1,7 @@
 package br.ic.unicamp.mc322.heroquest.entities;
 
 import br.ic.unicamp.mc322.heroquest.auxiliars.Point;
+import br.ic.unicamp.mc322.heroquest.controller.Renderer;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -14,6 +15,7 @@ public class Dungeon {
     private final List<Tile> visitedTiles;
     private int nextRoomId;
 
+    private Renderer renderer;
 
     private static Dungeon instance = null;
 
@@ -24,6 +26,10 @@ public class Dungeon {
             instance = new Dungeon();
         return instance;
     }
+
+    public Renderer getSessionRenderer() { return this.renderer; }
+
+    public void setRenderer(Renderer renderer) { this.renderer = renderer; }
 
     private Dungeon() {
         this.map = new Tile[HEIGHT][WIDTH];

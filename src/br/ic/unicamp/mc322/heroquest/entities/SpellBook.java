@@ -56,8 +56,13 @@ public class SpellBook {
         if(bookSpell.hasCharge()) {
             if (Dice.rollNumberDiceSum(1, 6) < caster.getAttribute(Character.Attribute.MINDPOINTS))
                 bookSpell.castSpell(caster.getPosition(), target);
+            else
+                Dungeon.getInstance().getSessionRenderer().printSpellFailed(caster.getName(), spell.getName());
             bookSpell.useCharge();
             return true;
-        } else return false;
+        } else {
+            Dungeon.getInstance().getSessionRenderer().printSpellRunOutOfCharges();
+            return false;
+        }
     }
 }

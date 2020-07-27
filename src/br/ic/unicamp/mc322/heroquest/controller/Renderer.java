@@ -1,6 +1,9 @@
 package br.ic.unicamp.mc322.heroquest.controller;
 
+import br.ic.unicamp.mc322.heroquest.auxiliars.Point;
+import br.ic.unicamp.mc322.heroquest.entities.Character;
 import br.ic.unicamp.mc322.heroquest.entities.Dungeon;
+import br.ic.unicamp.mc322.heroquest.entities.Entity;
 import br.ic.unicamp.mc322.heroquest.items.Equipment;
 import br.ic.unicamp.mc322.heroquest.items.Item;
 import br.ic.unicamp.mc322.heroquest.spells.Spell;
@@ -55,4 +58,18 @@ public interface Renderer {
     void alertCouldNotMove();
 
     void printChooseCharacter();
+
+    void printAttack(String name, String name1, int attackDamage, int defense);
+
+    void printFireball(Point target);
+
+    void printSpellFailed(String casterName, String name);
+
+    void printSpellRunOutOfCharges();
+
+    void printMagicMissile(Character targetEntity);
+
+    void printSimpleHeal(Character targetEntity, int heal);
+
+    void printTeleport(Point target);
 }

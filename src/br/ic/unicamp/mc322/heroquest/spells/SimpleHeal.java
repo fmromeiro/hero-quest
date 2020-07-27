@@ -16,7 +16,10 @@ class SimpleHeal extends Spell{
     @Override
     public void castSpell(Point source, Point target) {
         Entity targetEntity = Dungeon.getInstance().entityAt(target);
-        if (targetEntity instanceof Character)
-            ((Character)targetEntity).healDamage(Dice.rollNumberDiceSum(1, 6));
+        if (targetEntity instanceof Character) {
+            int heal = Dice.rollNumberDiceSum(1, 6);
+            ((Character) targetEntity).healDamage(heal);
+            Dungeon.getInstance().getSessionRenderer().printSimpleHeal((Character) targetEntity, heal);
+        }
     }
 }

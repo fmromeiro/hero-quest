@@ -295,7 +295,6 @@ public class HeroQuest {
     private void handleMoveInput(Character hero) {
         int steps = 0;
         int limitSteps = hero.getSteps();
-        label:
         while (steps < limitSteps) {
             renderer.printVisibleMap();
             renderer.printAvailableActions("'w', 'a', 's', 'd'", "open door", "stop");
@@ -329,7 +328,7 @@ public class HeroQuest {
 
                         break;
                     case "stop":
-                        break label;
+                        steps = limitSteps;
                     case "guguhacker":  // cheat to see whole map
                         renderer.printWholeMapv2(Dungeon.getInstance());
                         System.out.println("safadinho...");

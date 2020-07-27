@@ -1,6 +1,9 @@
 package br.ic.unicamp.mc322.heroquest.controller;
 
+import br.ic.unicamp.mc322.heroquest.auxiliars.Point;
+import br.ic.unicamp.mc322.heroquest.entities.Character;
 import br.ic.unicamp.mc322.heroquest.entities.Dungeon;
+import br.ic.unicamp.mc322.heroquest.entities.Entity;
 import br.ic.unicamp.mc322.heroquest.entities.Tile;
 import br.ic.unicamp.mc322.heroquest.items.Equipment;
 import br.ic.unicamp.mc322.heroquest.items.Item;
@@ -200,5 +203,42 @@ public class TerminalRenderer implements Renderer {
     public void printChooseCharacter() {
         System.out.println("Choose your character [barbarian/dwarf/elf/sorcerer]:");
     }
+
+    @Override
+    public void printAttack(String source, String target, int attackDamage, int defense) {
+        int trueDamage = Math.max(attackDamage - defense, 0);
+        System.out.println(String.format("%s caused %d damage to %s, which blocked %d times, reducing damage to %d", source, attackDamage, target, defense, trueDamage));
+    }
+
+    @Override
+    public void printFireball(Point target) {
+        System.out.println("Fireball was shot at (" + target.getX() + ", " + target.getY() + "), causing 6 direct hit damage and 2 splash damage");
+    }
+
+    @Override
+    public void printSpellFailed(String casterName, String name) {
+        System.out.println(casterName + " tried to cast " + name + " but failed");
+    }
+
+    @Override
+    public void printSpellRunOutOfCharges() {
+        System.out.println("Spellcasting failed because the spell had run out of charges");
+    }
+
+    @Override
+    public void printMagicMissile(Character targetEntity) {
+        System.out.println("Magic missile aimed at " + targetEntity.getName() + " caused 6 damage");
+    }
+
+    @Override
+    public void printSimpleHeal(Character targetEntity, int heal) {
+        System.out.println(targetEntity.getName() + " was healed for " + heal + " hit Points");
+    }
+
+    @Override
+    public void printTeleport(Point target) {
+        System.out.println("Teleported to (" + target.getX() + ", " + target.getY() + ") location");
+    }
+
 
 }

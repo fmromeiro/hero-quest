@@ -16,6 +16,7 @@ class MagicMissile extends Spell {
         Entity targetEntity = Dungeon.getInstance().entityAt(target);
         if (targetEntity instanceof Character) {
             ((Character) targetEntity).takeDamage(6);
+            Dungeon.getInstance().getSessionRenderer().printMagicMissile((Character)targetEntity);
             if(!((Character) targetEntity).isAlive())
                 Dungeon.getInstance().removeEntity(target);
         }

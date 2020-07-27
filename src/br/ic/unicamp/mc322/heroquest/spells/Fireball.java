@@ -32,5 +32,6 @@ class Fireball extends Spell {
                     if (!((Character) Dungeon.getInstance().entityAt(point)).isAlive())
                         Dungeon.getInstance().removeEntity(point);
                 });
+        Dungeon.getInstance().getSessionRenderer().printFireball(target);
     }
 }

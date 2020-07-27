@@ -1,6 +1,7 @@
 package br.ic.unicamp.mc322.heroquest.spells;
 
 import br.ic.unicamp.mc322.heroquest.auxiliars.Point;
+import br.ic.unicamp.mc322.heroquest.controller.Renderer;
 import br.ic.unicamp.mc322.heroquest.entities.Dungeon;
 
 class Teleport extends Spell {
@@ -12,5 +13,6 @@ class Teleport extends Spell {
     @Override
     public void castSpell(Point source, Point target) {
         Dungeon.getInstance().moveEntity(Dungeon.getInstance().entityAt(source), target);
+        Dungeon.getInstance().getSessionRenderer().printTeleport(target);
     }
 }
