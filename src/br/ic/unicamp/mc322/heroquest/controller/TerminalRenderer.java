@@ -141,7 +141,8 @@ public class TerminalRenderer implements Renderer {
 
     @Override
     public void printHeroDefeat() {
-        System.out.println( "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\n" +
+        System.out.println( "\n" +
+                            "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\n" +
                             "     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\n" +
                             "     ▓▓▓▓▓▓▓▓▓▓▓           ▓▓▓▓▓▓▓▓▓▓▓\n" +
                             "     ▓▓▓▓▓▓▓▓                 ▓▓▓▓▓▓▓▓\n" +

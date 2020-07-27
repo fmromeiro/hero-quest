@@ -79,6 +79,8 @@ public class Character implements Entity {
         return this.position;
     }
 
+    public boolean isCaster() { return this.spellBook != null; }
+
     @Override
     public void setPosition(Point position) {
         this.position = position;
@@ -96,7 +98,7 @@ public class Character implements Entity {
 
     @Override
     public String getStringRepresentation() {
-        return this.stringRepresentation;
+        return baseBodyPoints <= 0? "XX" : this.stringRepresentation;
     }
 
 
@@ -113,8 +115,8 @@ public class Character implements Entity {
         return dwarf;
     }
 
-    public static Character getElf() {
-        Character elf = new Character("The Elf", 2, 2, 6, 4, "EL", Dice.CombatDiceValue.HERO_SHIELD, true);
+    public static Character getElf() {// 6
+        Character elf = new Character("The Elf", 2, 2, 1 , 4, "EL", Dice.CombatDiceValue.HERO_SHIELD, true);
         elf.addToInventory(Weapon.getShortSword());
         elf.loadSpell(Spell.getSimpleHeal(1));
         return elf;

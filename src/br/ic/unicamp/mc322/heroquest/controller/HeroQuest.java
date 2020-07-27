@@ -9,6 +9,7 @@ import br.ic.unicamp.mc322.heroquest.items.Weapon;
 import br.ic.unicamp.mc322.heroquest.spells.Spell;
 
 import java.util.List;
+import java.util.Random;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.stream.Collectors;
@@ -22,9 +23,28 @@ public class HeroQuest {
         this.renderer = renderer;
     }
 
-    private static void createRandomMap() {
+    private void createRandomMap() {
         Dungeon dungeon = Dungeon.getInstance();
+
         dungeon.addRandomRooms();
+
+        Random rng = new Random();
+        int treasureQtt = rng.nextInt(9) + 7;
+        for (int i = 0; i < treasureQtt; i++) Dungeon.getInstance().addEntity(Treasure.randomTreasure(), Dungeon.getInstance().getRandomFreePoint());
+        int enemyQtt = rng.nextInt(4) + 7;
+        for (int i = 0; i < enemyQtt; i++) {
+            switch (rng.nextInt() % 3) {
+                case 0:
+                    Dungeon.getInstance().addEntity(Character.getGoblin(entityId++), Dungeon.getInstance().getRandomFreePoint());
+                    break;
+                case 1:
+                    Dungeon.getInstance().addEntity(Character.getMeleeSkeleton(entityId++), Dungeon.getInstance().getRandomFreePoint());
+                    break;
+                case 2:
+                    Dungeon.getInstance().addEntity(Character.getSkeletonMage(entityId++), Dungeon.getInstance().getRandomFreePoint());
+                    break;
+            }
+        }
     }
 
     public void createMapFromXML(String dungeonFile) throws Exception {
@@ -64,9 +84,6 @@ public class HeroQuest {
                 }
             }
             Dungeon.getInstance().addEntity(playerCharacter, Dungeon.getInstance().getRandomFreePoint());
-            for (int i = 0; i < 10; i++) {
-                Dungeon.getInstance().addEntity(Treasure.randomTreasure(), Dungeon.getInstance().getRandomFreePoint());
-            }
         }
         else {
             createMapFromXML(dungeonFile);
@@ -143,11 +160,15 @@ public class HeroQuest {
 
     private void handleMainActionInput(Character character) {
         renderer.printCurrentWeapon(character.getCurrentWeapon());
-        renderer.printAvailableSpells(character.getSpellBook());
+        if (character.isCaster()) renderer.printAvailableSpells(character.getSpellBook());
         boolean actionDone = false;
         while (!actionDone) {
             renderer.printVisibleMap();
-            renderer.printAvailableActions("switch", "equipment", "attack [id]", "collect", "cast [spell name] [# tiles to the right] [# tiles up]", "skip");
+            if (character.isCaster()) {
+                renderer.printAvailableActions("switch", "equipment", "attack [id]", "collect", "cast [spell name] [# tiles to the right] [# tiles up]", "skip");
+            } else {
+                renderer.printAvailableActions("switch", "equipment", "attack [id]", "collect", "skip");
+            }
             String command = scanner.nextLine().toLowerCase();
             String[] commands = command.split("\\s+");
             if (commands.length > 0) {
@@ -269,8 +290,6 @@ public class HeroQuest {
         handleEnemyMove(enemy);
         enemy.attack();
         Character hero = Dungeon.getInstance().getHero();
-        if (!hero.isAlive())
-            Dungeon.getInstance().removeEntity(hero.getPosition());
     }
 
     private void handleMoveInput(Character hero) {
