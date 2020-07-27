@@ -14,7 +14,10 @@ class MagicMissile extends Spell {
     @Override
     public void castSpell(Point source, Point target) {
         Entity targetEntity = Dungeon.getInstance().entityAt(target);
-        if (targetEntity instanceof Character)
-            ((Character)targetEntity).takeDamage(6);
+        if (targetEntity instanceof Character) {
+            ((Character) targetEntity).takeDamage(6);
+            if(!((Character) targetEntity).isAlive())
+                Dungeon.getInstance().removeEntity(target);
+        }
     }
 }

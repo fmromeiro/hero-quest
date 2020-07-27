@@ -80,9 +80,23 @@ public class MapXMLBuilder {
         if(entities.getElementsByTagName("Hero").getLength() != 1)
             throw new Exception("O mapa necessita ter um único herói");
         Element hero = (Element) entities.getElementsByTagName("Hero").item(0);
-        Dungeon.getInstance().addEntity(Character.getDefaultHero(id),
-                new Point(Integer.parseInt(hero.getElementsByTagName("X").item(0).getChildNodes().item(0).getNodeValue().trim()),
-                          Integer.parseInt(hero.getElementsByTagName("Y").item(0).getChildNodes().item(0).getNodeValue().trim())));
+        char id = 47;
+        Point heroPosition = new Point(Integer.parseInt(hero.getElementsByTagName("X").item(0).getChildNodes().item(0).getNodeValue().trim()),
+                                        Integer.parseInt(hero.getElementsByTagName("Y").item(0).getChildNodes().item(0).getNodeValue().trim()));
+        switch (hero.getElementsByTagName("Type").item(0).getChildNodes().item(0).getNodeValue().trim()) {
+            case "Barbarian":
+                Dungeon.getInstance().addEntity(Character.getBarbarian(), heroPosition);
+                break;
+            case "Dwarf":
+                Dungeon.getInstance().addEntity(Character.getDwarf(), heroPosition);
+                break;
+            case "Elf":
+                Dungeon.getInstance().addEntity(Character.getElf(), heroPosition);
+                break;
+            case "Sorcerer":
+                Dungeon.getInstance().addEntity(Character.getSorcerer(), heroPosition);
+                break;
+        }
         for(int i = 0; i < entitiesList.getLength(); i++) {
             Node node = entitiesList.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE) {

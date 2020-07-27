@@ -50,12 +50,13 @@ public class SpellBook {
     }
 
     public boolean castSpell(Spell spell, Point target) throws Exception{
-        if (!spellBook.contains(spell))
+        Spell bookSpell;
+        if ((bookSpell = spellBook.stream().filter(_spell -> _spell.getName().equals(spell.getName())).findFirst().orElse(null)) == null)
             throw new Exception("Spell " + spell.getName() + " not found in spell book");
-        if(spell.hasCharge()) {
+        if(bookSpell.hasCharge()) {
             if (Dice.rollNumberDiceSum(1, 6) < caster.getAttribute(Character.Attribute.MINDPOINTS))
-                spell.castSpell(caster.getPosition(), target);
-            spell.useCharge();
+                bookSpell.castSpell(caster.getPosition(), target);
+            bookSpell.useCharge();
             return true;
         } else return false;
     }
