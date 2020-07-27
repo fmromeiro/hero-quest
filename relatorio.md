@@ -51,12 +51,6 @@ A primeira implementação de `Spell` era bem parecida com a de `Enemy`, pois ha
 
 Outro motivo para usarmos herança é que, nas raras ocasiões em que Spells compartilham código, a funcionalidade base continua a mesma, só alterando parâmetros, como uma Fireball 2 que cause mais dano, por exemplo. Nesse cenário, seria mais fácil compartilhar funcionalidades utilizando herança do que composição. 
 
-### Spells
-
-A primeira implementação de `Spell` era bem parecida com a de `Enemy`, pois havia um `BiConsumer<Point, Point> castSpell` que implementava a lógica da magia. Porém, a vantagem de usar essa implementação em `Enemy` era que vários inimigos compartilhavam a mesma lógica, então com o reuso por composição diminuíamos os códigos repetidos. Diferentes Spells, porém, não compartilham implementação e, portanto, achamos melhor implementá-las usando herança.
-
-Outro motivo para usarmos herança é que, nas raras ocasiões em que Spells compartilham código, a funcionalidade base continua a mesma, só alterando parâmetros, como uma Fireball 2 que cause mais dano, por exemplo. Nesse cenário, seria mais fácil compartilhar funcionalidades utilizando herança do que composição. 
-
 [hero-quest-map]: https://i.imgur.com/Glt9wux.png
 [implemented-map]: https://i.imgur.com/cKFxcQA.png
 [bresenham-line-algorithm]: https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
