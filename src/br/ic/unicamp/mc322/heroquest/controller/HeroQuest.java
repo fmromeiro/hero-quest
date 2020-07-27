@@ -122,34 +122,39 @@ public class HeroQuest {
         while (!end && (!moveAction || !mainAction)) {
             if(!moveAction && !mainAction) {
                 renderer.printAvailableActions("move", "main action");
-            }
-            else if(!mainAction) {
-                renderer.printAvailableActions("main action");
-            }
-            else
-                renderer.printAvailableActions("move");
-            String[] commands = scanner.nextLine().toLowerCase().split("\\s+");
-            if (commands.length > 0) {
-                if (commands[0].equals("move")) {
-                    if (moveAction) {
-                        renderer.alertMoveActionUsed();
-                        continue;
+                String[] commands = scanner.nextLine().toLowerCase().split("\\s+");
+                if (commands.length > 0) {
+                    if (commands[0].equals("move")) {
+                        if (moveAction) {
+                            renderer.alertMoveActionUsed();
+                            continue;
+                        }
+                        renderer.announceMoveTurn();
+                        moveAction = true;
+                        handleMoveInput(character);
+                    } else if (commands[0].equals("main")) {
+                        if (mainAction) {
+                            renderer.alertMainActionUsed();
+                            continue;
+                        }
+                        renderer.announceAttackTurn();
+                        mainAction = true;
+                        handleMainActionInput(character);
                     }
-                    renderer.announceMoveTurn();
-                    moveAction = true;
-                    handleMoveInput(character);
-                } else if (commands[0].equals("main")) {
-                    if (mainAction) {
-                        renderer.alertMainActionUsed();
-                        continue;
-                    }
-                    renderer.announceAttackTurn();
-                    mainAction = true;
-                    handleMainActionInput(character);
+                }
+                else {
+                    renderer.alertCouldNotInterpretCommand();
                 }
             }
+            else if(!mainAction) {
+                renderer.announceAttackTurn();
+                mainAction = true;
+                handleMainActionInput(character);
+            }
             else {
-                renderer.alertCouldNotInterpretCommand();
+                renderer.announceMoveTurn();
+                moveAction = true;
+                handleMoveInput(character);
             }
         }
     }
@@ -158,6 +163,7 @@ public class HeroQuest {
         renderer.printCurrentWeapon(character.getCurrentWeapon());
         boolean actionDone = false;
         while (!actionDone) {
+            renderer.printVisibleMap();
             renderer.printAvailableActions("switch", "equipment", "attack [id]", "collect", "skip");
             String[] commands = scanner.nextLine().toLowerCase().split("\\s+");
             if (commands.length > 0) {
@@ -191,6 +197,13 @@ public class HeroQuest {
                                 .forEach(ent -> {
                                     character.collect((Treasure) ent);
                                     Dungeon.getInstance().removeEntity(ent.getPosition());
+                                });
+                        Dungeon.getInstance().getSecondaryEntities().stream()
+                                .filter(ent -> Point.octileDistance(character.getPosition(), ent.getPosition()) <= 1)
+                                .filter(ent -> ent instanceof Treasure)
+                                .forEach(ent ->  {
+                                    character.collect((Treasure)ent);
+                                    Dungeon.getInstance().removeSecondaryEntity(ent.getPosition());
                                 });
                         actionDone = true;
                         break;
