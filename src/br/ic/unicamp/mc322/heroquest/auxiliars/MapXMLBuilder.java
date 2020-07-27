@@ -13,6 +13,7 @@ import java.io.File;
 public class MapXMLBuilder {
     private final Dungeon dungeon;
     private final Document doc;
+    char id = '0';
     public MapXMLBuilder(String fileName) throws Exception {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         File mapFile = new File(fileName);
@@ -66,6 +67,10 @@ public class MapXMLBuilder {
             }
         }
 
+    }
+
+    public char getId() {
+        return id;
     }
 
     public void addEntities() throws Exception {

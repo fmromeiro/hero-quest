@@ -51,6 +51,7 @@ public class HeroQuest {
         MapXMLBuilder builder = new MapXMLBuilder(dungeonFile);
         builder.buildMap();
         builder.addEntities();
+        entityId = builder.getId();
     }
 
     public void runGame() throws Exception {
@@ -84,8 +85,9 @@ public class HeroQuest {
             }
             Dungeon.getInstance().addEntity(playerCharacter, Dungeon.getInstance().getRandomFreePoint());
         }
-        else
+        else {
             createMapFromXML(dungeonFile);
+        }
         renderer.printVisibleMap();
     }
 
@@ -158,11 +160,15 @@ public class HeroQuest {
 
     private void handleMainActionInput(Character character) {
         renderer.printCurrentWeapon(character.getCurrentWeapon());
-        renderer.printAvailableSpells(character.getSpellBook());
+        if (character.isCaster()) renderer.printAvailableSpells(character.getSpellBook());
         boolean actionDone = false;
         while (!actionDone) {
             renderer.printVisibleMap();
-            renderer.printAvailableActions("switch", "equipment", "attack [id]", "collect", "cast [spell name] [# tiles to the right] [# tiles up]", "skip");
+            if (character.isCaster()) {
+                renderer.printAvailableActions("switch", "equipment", "attack [id]", "collect", "cast [spell name] [# tiles to the right] [# tiles up]", "skip");
+            } else {
+                renderer.printAvailableActions("switch", "equipment", "attack [id]", "collect", "skip");
+            }
             String command = scanner.nextLine().toLowerCase();
             String[] commands = command.split("\\s+");
             if (commands.length > 0) {
@@ -196,6 +202,8 @@ public class HeroQuest {
                                 .forEach(ent -> {
                                     character.collect((Treasure) ent);
                                     Dungeon.getInstance().removeEntity(ent.getPosition());
+                                    if (Math.random() < 0.4)
+                                        Dungeon.getInstance().addEntity(Character.getGoblin(entityId++), ent.getPosition());
                                 });
                         Dungeon.getInstance().getSecondaryEntities().stream()
                                 .filter(ent -> Point.octileDistance(character.getPosition(), ent.getPosition()) <= 1)
@@ -282,8 +290,6 @@ public class HeroQuest {
         handleEnemyMove(enemy);
         enemy.attack();
         Character hero = Dungeon.getInstance().getHero();
-        if (!hero.isAlive())
-            Dungeon.getInstance().removeEntity(hero.getPosition());
     }
 
     private void handleMoveInput(Character hero) {

@@ -79,6 +79,8 @@ public class Character implements Entity {
         return this.position;
     }
 
+    public boolean isCaster() { return this.spellBook != null; }
+
     @Override
     public void setPosition(Point position) {
         this.position = position;
@@ -96,7 +98,7 @@ public class Character implements Entity {
 
     @Override
     public String getStringRepresentation() {
-        return this.stringRepresentation;
+        return baseBodyPoints <= 0? "XX" : this.stringRepresentation;
     }
 
 
