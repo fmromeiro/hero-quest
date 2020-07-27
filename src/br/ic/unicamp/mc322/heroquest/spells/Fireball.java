@@ -19,11 +19,18 @@ class Fireball extends Spell {
 
         Entity targetEntity = Dungeon.getInstance().entityAt(target);
         List<Point> adjacentPositions = Point.crossAdjacents;
-        if (targetEntity instanceof Character)
-            ((Character)targetEntity).takeDamage(6);
+        if (targetEntity instanceof Character) {
+            ((Character) targetEntity).takeDamage(6);
+            if (!((Character) targetEntity).isAlive())
+                Dungeon.getInstance().removeEntity(target);
+        }
         adjacentPositions.stream()
                 .map(point -> Point.sum(target, point))
                 .filter(point -> Dungeon.getInstance().entityAt(point) instanceof Character)
-                .forEach(point -> ((Character)Dungeon.getInstance().entityAt(point)).takeDamage(3));
+                .forEach(point -> {
+                    ((Character) Dungeon.getInstance().entityAt(point)).takeDamage(3);
+                    if (!((Character) Dungeon.getInstance().entityAt(point)).isAlive())
+                        Dungeon.getInstance().removeEntity(point);
+                });
     }
 }

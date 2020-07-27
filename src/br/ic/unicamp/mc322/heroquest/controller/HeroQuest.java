@@ -45,7 +45,7 @@ public class HeroQuest {
         if(dungeonFile.isEmpty()) {
             // randomizar mapa, inimigos, tesouros, armadilhas etc
             createRandomMap();
-            Dungeon.getInstance().addEntity(Character.getElf(), Dungeon.getInstance().getRandomFreePoint());
+            Dungeon.getInstance().addEntity(Character.getSorcerer(), Dungeon.getInstance().getRandomFreePoint());
         }
         else {
             createMapFromXML(dungeonFile);
@@ -212,7 +212,7 @@ public class HeroQuest {
         while (!end) {
             renderer.printCurrentEquipment(character.getCurrentlyEquipped());
             renderer.printInventory(character.getInventory());
-            renderer.printAvailableActions("equip [id]", "righthand", "lefthand", "finish");
+            renderer.printAvailableActions("equip [id]", "righthand (use the weapon in the right hand to attack enemy)", "lefthand (use the weapon in the left hand to attack enemy)", "finish");
             String[] commands = scanner.nextLine().toLowerCase().split("\\s+");
             if (commands.length > 0) {
                 switch (commands[0]) {
@@ -246,6 +246,9 @@ public class HeroQuest {
     private void handleEnemyTurn(Enemy enemy) {
         handleEnemyMove(enemy);
         enemy.attack();
+        Character hero = Dungeon.getInstance().getHero();
+        if (!hero.isAlive())
+            Dungeon.getInstance().removeEntity(hero.getPosition());
     }
 
     private void handleMoveInput(Character hero) {

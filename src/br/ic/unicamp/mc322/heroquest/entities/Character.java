@@ -144,7 +144,7 @@ public class Character implements Entity {
     }
 
     public static Enemy getSkeletonMage(char id) {
-        Enemy skeletonMage = new Enemy("Skeleton Mage " + id, 2, 2, 1, 0, "M" + id, 6, EnemyFunctions.moveRandomly, EnemyFunctions.favourSpellThenWeaponDamage, true);
+        Enemy skeletonMage = new Enemy("Skeleton Mage " + id, 2, 2, 1, 3, "M" + id, 6, EnemyFunctions.moveRandomly, EnemyFunctions.favourSpellThenWeaponDamage, true);
         skeletonMage.loadSpell(Spell.getMagicMissile(10));
         return skeletonMage;
     }
