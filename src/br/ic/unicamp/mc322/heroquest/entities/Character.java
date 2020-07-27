@@ -116,7 +116,7 @@ public class Character implements Entity {
     }
 
     public static Character getElf() {
-        Character elf = new Character("The Elf", 2, 2, 6 , 4, "EL", Dice.CombatDiceValue.HERO_SHIELD, true);
+        Character elf = new Character("The Elf", 2, 2, 6, 4, "EL", Dice.CombatDiceValue.HERO_SHIELD, true);
         elf.addToInventory(Weapon.getShortSword());
         elf.loadSpell(Spell.getSimpleHeal(1));
         return elf;
