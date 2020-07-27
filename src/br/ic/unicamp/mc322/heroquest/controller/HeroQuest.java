@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public class HeroQuest {
     private final Scanner scanner = new Scanner(System.in);
     private final Renderer renderer;
-    private char entityId = 47;
+    private char entityId = '0';
 
     public HeroQuest(Renderer renderer) {
         this.renderer = renderer;
