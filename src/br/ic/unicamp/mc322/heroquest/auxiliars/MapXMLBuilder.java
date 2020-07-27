@@ -75,7 +75,8 @@ public class MapXMLBuilder {
         if(entities.getElementsByTagName("Hero").getLength() != 1)
             throw new Exception("O mapa necessita ter um único herói");
         Element hero = (Element) entities.getElementsByTagName("Hero").item(0);
-        Dungeon.getInstance().addEntity(Character.getDefaultHero("Player"),
+        char id = 47;
+        Dungeon.getInstance().addEntity(Character.getDefaultHero(id),
                 new Point(Integer.parseInt(hero.getElementsByTagName("X").item(0).getChildNodes().item(0).getNodeValue().trim()),
                           Integer.parseInt(hero.getElementsByTagName("Y").item(0).getChildNodes().item(0).getNodeValue().trim())));
         for(int i = 0; i < entitiesList.getLength(); i++) {
@@ -88,13 +89,13 @@ public class MapXMLBuilder {
                 Entity newEntity = null;
                 switch (entity.getNodeName()) {
                     case "Goblin":
-                        newEntity = Character.getGoblin("Goblin");
+                        newEntity = Character.getGoblin(id++);
                         break;
                     case "Skeleton":
-                        newEntity = Character.getMeleeSkeleton("Skeleton");
+                        newEntity = Character.getMeleeSkeleton(id++);
                         break;
                     case "MageSkeleton":
-                        newEntity = Character.getSkeletonMage("Mage Skeleton");
+                        newEntity = Character.getSkeletonMage(id++);
                         break;
                     case "Door":
                         newEntity = new Door();
