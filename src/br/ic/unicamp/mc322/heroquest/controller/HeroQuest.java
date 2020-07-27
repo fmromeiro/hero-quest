@@ -43,14 +43,14 @@ public class HeroQuest {
         if(dungeonFile.isEmpty()) {
             // randomizar mapa, inimigos, tesouros, armadilhas etc
             createRandomMap();
-            for (int i = 0; i < 5; i++) {
-                Dungeon.getInstance().addEntity(Treasure.randomTreasure(), Dungeon.getInstance().getRandomFreePoint());
-
-            }
             Dungeon.getInstance().addEntity(Character.getDefaultHero(entityId++), Dungeon.getInstance().getRandomFreePoint());
         }
-        else
+        else {
             createMapFromXML(dungeonFile);
+        }
+        for (int i = 0; i < 10; i++) {
+            Dungeon.getInstance().addEntity(Treasure.randomTreasure(), Dungeon.getInstance().getRandomFreePoint());
+        }
         renderer.printVisibleMap();
     }
 
