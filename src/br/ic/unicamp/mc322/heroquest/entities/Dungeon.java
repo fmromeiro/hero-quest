@@ -164,6 +164,8 @@ public class Dungeon {
         return map[point.getY()][point.getX()].getEntity();
     }
 
+    public boolean canSetEntityTo(Point point) { return map[point.getY()][point.getX()].canSetEntity(); }
+
 
     // Entity modifiers
     public void addEntity(Entity entity, Point position) {
