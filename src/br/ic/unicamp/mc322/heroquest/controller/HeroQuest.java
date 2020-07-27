@@ -33,7 +33,7 @@ public class HeroQuest {
         for (int i = 0; i < treasureQtt; i++) Dungeon.getInstance().addEntity(Treasure.randomTreasure(), Dungeon.getInstance().getRandomFreePoint());
         int enemyQtt = rng.nextInt(4) + 7;
         for (int i = 0; i < enemyQtt; i++) {
-            switch (rng.nextInt() % 3) {
+            switch (rng.nextInt(3)) {
                 case 0:
                     Dungeon.getInstance().addEntity(Character.getGoblin(entityId++), Dungeon.getInstance().getRandomFreePoint());
                     break;
