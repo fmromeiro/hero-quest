@@ -115,8 +115,8 @@ public class Character implements Entity {
         return dwarf;
     }
 
-    public static Character getElf() {// 6
-        Character elf = new Character("The Elf", 2, 2, 1 , 4, "EL", Dice.CombatDiceValue.HERO_SHIELD, true);
+    public static Character getElf() {
+        Character elf = new Character("The Elf", 2, 2, 6 , 4, "EL", Dice.CombatDiceValue.HERO_SHIELD, true);
         elf.addToInventory(Weapon.getShortSword());
         elf.loadSpell(Spell.getSimpleHeal(1));
         return elf;
