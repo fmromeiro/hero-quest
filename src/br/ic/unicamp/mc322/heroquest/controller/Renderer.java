@@ -51,4 +51,6 @@ public interface Renderer {
     void printAvailableSpells(Map<Integer, Spell> spellBook);
 
     void alertInvalidSpell();
+
+    void alertCouldNotMove();
 }

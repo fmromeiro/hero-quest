@@ -183,7 +183,7 @@ public class HeroQuest {
                                     int x = Integer.parseInt(commands[commands.length - 2]);
                                     int y = Integer.parseInt(commands[commands.length - 1]);
                                     character.castSpell(entry.getValue(), Point.sum(character.getPosition(), new Point(x, y)));
-                                    end = true;
+                                    actionDone = true;
                                 } catch (Exception ignored){}
                             }
                             else
@@ -212,7 +212,8 @@ public class HeroQuest {
         while (!end) {
             renderer.printCurrentEquipment(character.getCurrentlyEquipped());
             renderer.printInventory(character.getInventory());
-            renderer.printAvailableActions("equip [id]", "righthand (use the weapon in the right hand to attack enemy)", "lefthand (use the weapon in the left hand to attack enemy)", "finish");
+            renderer.printCurrentWeapon(character.getCurrentWeapon());
+            renderer.printAvailableActions("equip [id]", "righthand (use the weapon in the right hand to attack enemies)", "lefthand (use the weapon in the left hand to attack enemies)", "finish");
             String[] commands = scanner.nextLine().toLowerCase().split("\\s+");
             if (commands.length > 0) {
                 switch (commands[0]) {
@@ -254,38 +255,46 @@ public class HeroQuest {
     private void handleMoveInput(Character hero) {
         int steps = 0;
         int limitSteps = hero.getSteps();
+        label:
         while (steps < limitSteps) {
             renderer.printVisibleMap();
             renderer.printAvailableActions("'w', 'a', 's', 'd'", "open door", "stop");
             renderer.printAvailableSteps(limitSteps - steps);
             String input = scanner.nextLine().toLowerCase();
             String[] commands = input.split("\\s+");
+            Point direction = null;
             if (commands.length > 0) {
-                if (commands[0].equals("w")) {
-                    Dungeon.getInstance().moveEntity(hero, Point.sum(hero.getPosition(), Point.Direction.UP.getPosition()));
-                    steps++;
-                } else if (commands[0].equals("a")) {
-                    Dungeon.getInstance().moveEntity(hero, Point.sum(hero.getPosition(), Point.Direction.LEFT.getPosition()));
-                    steps++;
-                } else if (commands[0].equals("s")) {
-                    Dungeon.getInstance().moveEntity(hero, Point.sum(hero.getPosition(), Point.Direction.DOWN.getPosition()));
-                    steps++;
-                } else if (commands[0].equals("d")) {
-                    Dungeon.getInstance().moveEntity(hero, Point.sum(hero.getPosition(), Point.Direction.RIGHT.getPosition()));
-                    steps++;
-                } else if (commands[0].equals("open")) {
-                    Dungeon.getInstance().getEntities().stream()
-                            .filter(ent -> Point.manhattanDistance(hero.getPosition(), ent.getPosition()) == 1)
-                            .filter(ent -> ent instanceof Door)
-                            .forEach(ent -> ((Door) ent).open());
+                switch (commands[0]) {
+                    case "w":
+                        direction = Point.Direction.UP.getPosition();
+                    case "a":
+                        direction = direction == null ? Point.Direction.LEFT.getPosition() : direction;
+                    case "s":
+                        direction = direction == null ? Point.Direction.DOWN.getPosition() : direction;
+                    case "d":
+                        direction = direction == null ? Point.Direction.RIGHT.getPosition() : direction;
+                        Point movement = Point.sum(hero.getPosition(), direction);
+                        if (Dungeon.getInstance().canSetEntityTo(movement)) {
+                            Dungeon.getInstance().moveEntity(hero, Point.sum(hero.getPosition(), direction));
+                            steps++;
+                        }
+                        else
+                            renderer.alertCouldNotMove();
+                        break;
+                    case "open":
+                        Dungeon.getInstance().getEntities().stream()
+                                .filter(ent -> Point.manhattanDistance(hero.getPosition(), ent.getPosition()) == 1)
+                                .filter(ent -> ent instanceof Door)
+                                .forEach(ent -> ((Door) ent).open());
 
-                }
-                else if (commands[0].equals("stop"))
-                    break;
-                else if (commands[0].equals("guguhacker")) { // cheat to see whole map
-                    renderer.printWholeMapv2(Dungeon.getInstance());
-                    System.out.println("safadinho...");
-                    scanner.nextLine();
+                        break;
+                    case "stop":
+                        break label;
+                    case "guguhacker":  // cheat to see whole map
+                        renderer.printWholeMapv2(Dungeon.getInstance());
+                        System.out.println("safadinho...");
+                        scanner.nextLine();
+                        break;
                 }
             }
         }

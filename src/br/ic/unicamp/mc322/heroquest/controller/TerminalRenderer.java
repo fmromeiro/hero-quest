@@ -179,4 +179,9 @@ public class TerminalRenderer implements Renderer {
         System.out.println("No spell with that name available");
     }
 
+    @Override
+    public void alertCouldNotMove() {
+        System.out.println("Can't move in that direction");
+    }
+
 }
