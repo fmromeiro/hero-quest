@@ -53,4 +53,6 @@ public interface Renderer {
     void alertInvalidSpell();
 
     void alertCouldNotMove();
+
+    void printChooseCharacter();
 }

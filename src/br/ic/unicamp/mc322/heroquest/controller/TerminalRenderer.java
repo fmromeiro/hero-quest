@@ -184,4 +184,9 @@ public class TerminalRenderer implements Renderer {
         System.out.println("Can't move in that direction");
     }
 
+    @Override
+    public void printChooseCharacter() {
+        System.out.println("Choose your character [barbarian/dwarf/elf/sorcerer]:");
+    }
+
 }

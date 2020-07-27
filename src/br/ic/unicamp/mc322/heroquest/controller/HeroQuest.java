@@ -45,7 +45,24 @@ public class HeroQuest {
         if(dungeonFile.isEmpty()) {
             // randomizar mapa, inimigos, tesouros, armadilhas etc
             createRandomMap();
-            Dungeon.getInstance().addEntity(Character.getSorcerer(), Dungeon.getInstance().getRandomFreePoint());
+            boolean end = false;
+            Character playerCharacter = null;
+            while (!end) {
+                renderer.printChooseCharacter();
+                String character = scanner.nextLine().trim().toLowerCase();
+                switch (character) {
+                    case "barbarian": playerCharacter = Character.getBarbarian();
+                    case "dwarf": playerCharacter = playerCharacter == null ? Character.getDwarf() : playerCharacter;
+                    case "sorcerer": playerCharacter = playerCharacter == null ? Character.getSorcerer() : playerCharacter;
+                    case "elf":
+                        playerCharacter = playerCharacter == null ? Character.getElf() : playerCharacter;
+                        end = true;
+                        break;
+                    default:
+                        renderer.alertCouldNotInterpretCommand();
+                }
+            }
+            Dungeon.getInstance().addEntity(playerCharacter, Dungeon.getInstance().getRandomFreePoint());
         }
         else {
             createMapFromXML(dungeonFile);
