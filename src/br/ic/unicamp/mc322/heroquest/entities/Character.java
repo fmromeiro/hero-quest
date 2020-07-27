@@ -101,8 +101,32 @@ public class Character implements Entity {
 
 
     // Character builders
-    public static Character getDefaultHero(char id) {
-        return new Character("Hero " + id, 2, 2, 10, 5, "H" + id, Dice.CombatDiceValue.HERO_SHIELD, false);
+    public static Character getBarbarian() {
+        Character barbarian = new Character("The Barbarian", 3, 2, 8, 2, "BB", Dice.CombatDiceValue.HERO_SHIELD, false);
+        barbarian.addToInventory(Weapon.getLongSword());
+        return barbarian;
+    }
+
+    public static Character getDwarf() {
+        Character dwarf = new Character("The Dwarf", 2, 2, 7, 3, "DW", Dice.CombatDiceValue.HERO_SHIELD, false);
+        dwarf.addToInventory(Weapon.getShortSword());
+        return dwarf;
+    }
+
+    public static Character getElf() {
+        Character elf = new Character("The Elf", 2, 2, 6, 4, "EL", Dice.CombatDiceValue.HERO_SHIELD, true);
+        elf.addToInventory(Weapon.getShortSword());
+        elf.loadSpell(Spell.getSimpleHeal(1));
+        return elf;
+    }
+
+    public static Character getSorcerer() {
+        Character sorcerer = new Character("The Sorcerer", 1, 2, 4, 6, "SO", Dice.CombatDiceValue.HERO_SHIELD, true);
+        for (int i = 0; i < 3; i++) sorcerer.addToInventory(Weapon.getDagger());
+        sorcerer.loadSpell(Spell.getMagicMissile(3));
+        sorcerer.loadSpell(Spell.getFireball(1));
+        sorcerer.loadSpell(Spell.getTeleport(1));
+        return sorcerer;
     }
 
     public static Enemy getMeleeSkeleton(char id) {
@@ -120,7 +144,7 @@ public class Character implements Entity {
     }
 
     public static Enemy getSkeletonMage(char id) {
-        Enemy skeletonMage = new Enemy("Skeleton Mage " + id, 2, 2, 1, 0, "M" + id, 6, EnemyFunctions.moveRandomly, EnemyFunctions.favourSpellThenWeaponDamage, true);
+        Enemy skeletonMage = new Enemy("Skeleton Mage " + id, 2, 2, 1, 3, "M" + id, 6, EnemyFunctions.moveRandomly, EnemyFunctions.favourSpellThenWeaponDamage, true);
         skeletonMage.loadSpell(Spell.getMagicMissile(10));
         return skeletonMage;
     }

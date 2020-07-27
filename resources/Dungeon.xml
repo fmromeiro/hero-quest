@@ -433,7 +433,7 @@
     </Rooms>
     <Entities>
         <Hero>
-            <Type> Default </Type>
+            <Type> Sorcerer </Type>
             <Position>
                 <X>16</X>
                 <Y>9</Y>
