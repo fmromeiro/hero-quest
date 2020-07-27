@@ -70,7 +70,7 @@ public class TerminalRenderer implements Renderer {
 
     @Override
     public void announceAttackTurn() {
-        System.out.println("Starting attack turn!");
+        System.out.println("Starting main action turn!");
     }
 
     @Override
